@@ -38,7 +38,16 @@
           {#if form?.error?.password}
           <p class="mt-1 text-sm text-red-600">{form.error.password}</p>
           {/if}
-        
+
+          <!-- Submit Button-->
+          <div>
+            <button
+            type="submit"
+            class=""
+            >
+            Sign Up
+          </button>
+          </div>  
         </form>
     </main>
   </div>
