@@ -16,9 +16,16 @@ export const actions: Actions = {
         }
 
         // check if the user already exists
+        
+
+
+        // hash password (will do this late wth bcrypt)
 
         // create the user
-        const userID = generateID
+        
+
+        // store in the database
+
 
 
     }
