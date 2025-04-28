@@ -28,8 +28,11 @@
 		"vite": "^6.2.5"
 	},
 	"dependencies": {
+		"@types/jsonwebtoken": "^9.0.9",
+		"cookie": "^1.0.2",
 		"dotenv": "^16.5.0",
 		"drizzle-orm": "^0.40.0",
+		"jsonwebtoken": "^9.0.2",
 		"postgres": "^3.4.5"
 	}
 }
