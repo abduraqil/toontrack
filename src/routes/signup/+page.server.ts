@@ -2,33 +2,67 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
-import { user } from '$lib/server/db/schema';
+import { users } from '$lib/server/db/schema';
+import argon2 from 'argon2';
 
+/* constants */
+const PWDLENMIN = 10;
+const PWDLENMAX = 999;
+const USRLENMIN = 1;
+const USRLENMAX = 64;
 
+/* TODO:
+remove email req
+created at is not working
+move constants somewhere else
+JWT session cookie
+*/
 
 export const actions: Actions = {
     default: async ({ request, cookies, locals }) => {
         // parse the form data
         const formData = await request.formData();
         const username = formData.get('username')?.toString().trim();
+        const email = formData.get('email')?.toString();
         const password = formData.get('password')?.toString();
+        const password2 = formData.get('password2')?.toString();
+        console.log(username);
+        console.log(email);
+        console.log(password);
+        console.log(password2);
 
-        // validae inputs
-        if (!username || !password) {
-            return fail(400, { message: 'Username and password are required' });
+        // validate inputs
+        if (!username || !password || !email) {
+            return fail(400, { message: 'Username, password, and E-mail are required' });
         }
 
-        if (!password || password.length <8) {
+        if (password.length < PWDLENMIN || password.length > PWDLENMAX) {
             return fail(400, {
-                error: {password: "{password} must be at least 8 characters long"},
+                error: {password: "password must be between {PWDLENMIN} and {PWDLENMAX} characters"},
                 fields: {password: password},
+            });
+        }
+        
+        // user length
+        if (username.length < USRLENMIN || username.length > USRLENMAX) {
+            return fail(400, {
+                error: {username: "username must be between {USRLENMIN} and {USRLENMAX} characters"},
+                fields: {username: username},
+            });
+        }
+
+        // password match
+        if (password != password2) {
+            return fail(400, {
+                error: {password: "passwords do not match"},
+                fields: {password: password, password2: password2},
             });
         }
 
         // check if the user already exists
         try {
-            const existingUser = await db.query.user.findFirst({
-                where: eq(user.username, username)
+            const existingUser = await db.query.users.findFirst({
+                where: eq(users.username, username)
             }); 
 
             if (existingUser) {
@@ -40,15 +74,24 @@ export const actions: Actions = {
             return fail(500, { message: 'Internal server error' });
         }
 
-
-        // hash password (will do this late wth bcrypt)
-
+        // hash password
+        const hashedPassword = await argon2.hash(password, {
+            type: argon2.argon2id,
+            memoryCost: 2 ** 18,
+            timeCost: 12,
+            hashLength: 149,
+            secret: Buffer.from('mysecret'),
+        });
+        
         // create the user
         try {
-            await db.insert(user).values({
+            let a = await db.insert(users).values({
                 username: username,
-                password: password
-            });
+                email: email,
+                pwd: hashedPassword,
+                //need to also add "created" timestamp
+            }).returning({ insertedId: users.id });;
+            console.error(a);
         } catch (error) {
             console.error('Error creating user:', error);
             return fail(500, { message: 'Internal server error' });
