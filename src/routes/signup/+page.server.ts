@@ -59,6 +59,9 @@ export const actions: Actions = {
         // redirect to the login page
         throw redirect(303, '/login');
 
+
+
+        
         // return success response
         return {sucess: true};
     }
