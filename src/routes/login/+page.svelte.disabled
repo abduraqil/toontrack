@@ -15,7 +15,7 @@
          <input
           type="text"
           id="username" 
-          name="username"
+         name="username"
           maxLength="64"
           minLength="1"
           required

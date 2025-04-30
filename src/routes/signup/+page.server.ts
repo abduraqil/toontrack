@@ -18,6 +18,12 @@ move constants somewhere else
 JWT session cookie
 */
 
+export interface ActionData {
+    message?: string;
+    errors?: Record<string, string>;
+    fields?: { username?: string };
+}
+
 export const actions: Actions = {
     default: async ({ request, cookies, locals }) => {
         // parse the form data
