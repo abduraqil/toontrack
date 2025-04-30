@@ -9,7 +9,6 @@ import { PASSWORD, USERNAME } from '$lib/constants/auth';
 /* TODO:
 remove email req
 created at is not working
-move constants somewhere else
 JWT session cookie
 */
 
@@ -24,16 +23,16 @@ export const actions: Actions = {
         // parse the form data
         const formData = await request.formData();
         const username = formData.get('username')?.toString().trim();
-        const email = formData.get('email')?.toString();
+        // const email = formData.get('email')?.toString();
         const password = formData.get('password')?.toString();
         const password2 = formData.get('password2')?.toString();
         console.log(username);
-        console.log(email);
+        // console.log(email);
         console.log(password);
         console.log(password2);
 
         // validate inputs
-        if (!username || !password || !email) {
+        if (!username || !password) {
             return fail(400, { message: 'Username, password, and E-mail are required' });
         }
 
@@ -89,7 +88,7 @@ export const actions: Actions = {
         try {
             let a = await db.insert(users).values({
                 username: username,
-                email: email,
+                // email: email,
                 pwd: hashedPassword,
                 //need to also add "created" timestamp
             }).returning({ insertedId: users.id });;
