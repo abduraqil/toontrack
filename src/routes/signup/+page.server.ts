@@ -47,9 +47,9 @@ export const actions: Actions = {
 
         // validate password
         if (password.length < PASSWORD.MIN_LENGTH || 
-            password.length > PWDLENMAX) {
+            password.length > PASSWORD.MAX_LENGTH) {
             return fail(400, {
-                error: `Password must be between ${PASSWORD.MIN_LENGTH}-${PWDLENMAX} characters`,
+                error: `Password must be between ${PASSWORD.MIN_LENGTH}-${PASSWORD.MAX_LENGTH} characters`,
             });
         }
 
