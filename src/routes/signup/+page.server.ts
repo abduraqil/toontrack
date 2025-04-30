@@ -4,6 +4,7 @@ import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import { users } from '$lib/server/db/schema';
 import argon2 from 'argon2';
+import { PASSWORD, USERNAME } from '$lib/constants/auth';
 
 /* constants */
 const PWDLENMIN = 10;
@@ -42,6 +43,7 @@ export const actions: Actions = {
             return fail(400, { message: 'Username, password, and E-mail are required' });
         }
 
+        
         if (password.length < PWDLENMIN || password.length > PWDLENMAX) {
             return fail(400, {
                 error: {password: "password must be between {PWDLENMIN} and {PWDLENMAX} characters"},
@@ -56,6 +58,8 @@ export const actions: Actions = {
                 fields: {username: username},
             });
         }
+
+        // 
 
         // password match
         if (password != password2) {
