@@ -6,12 +6,6 @@ import { users } from '$lib/server/db/schema';
 import argon2 from 'argon2';
 import { PASSWORD, USERNAME } from '$lib/constants/auth';
 
-/* constants */
-const PWDLENMIN = 10;
-const PWDLENMAX = 999;
-const USRLENMIN = 1;
-const USRLENMAX = 64;
-
 /* TODO:
 remove email req
 created at is not working
@@ -43,23 +37,21 @@ export const actions: Actions = {
             return fail(400, { message: 'Username, password, and E-mail are required' });
         }
 
-        
-        if (password.length < PWDLENMIN || password.length > PWDLENMAX) {
+        //validate username
+        if (username.length < USERNAME.MIN_LENGTH || 
+            username.length > USERNAME.MAX_LENGTH) {
             return fail(400, {
-                error: {password: "password must be between {PWDLENMIN} and {PWDLENMAX} characters"},
-                fields: {password: password},
-            });
-        }
-        
-        // user length
-        if (username.length < USRLENMIN || username.length > USRLENMAX) {
-            return fail(400, {
-                error: {username: "username must be between {USRLENMIN} and {USRLENMAX} characters"},
-                fields: {username: username},
+                error: `Username must be between ${USERNAME.MIN_LENGTH}-${USERNAME.MAX_LENGTH} characters`,
             });
         }
 
-        // 
+        // validate password
+        if (password.length < PASSWORD.MIN_LENGTH || 
+            password.length > PWDLENMAX) {
+            return fail(400, {
+                error: `Password must be between ${PASSWORD.MIN_LENGTH}-${PWDLENMAX} characters`,
+            });
+        }
 
         // password match
         if (password != password2) {
