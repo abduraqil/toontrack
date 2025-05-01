@@ -79,6 +79,14 @@ import { PASSWORD, USERNAME } from '$lib/constants/auth';
                   Sign Up
               </button>
           </div>
+
+          <!-- Signup Link -->
+          <div class="text-center text-sm text-gray-600 pt-2">
+            Have an account? 
+            <a href="/login" class="font-medium text-blue-600 hover:text-blue-500">
+            Login
+            </a>
+        </div>
       </form>
   </main>
 </div>
