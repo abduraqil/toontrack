@@ -2,19 +2,23 @@
   import { enhance } from "$app/forms";
   import type {ActionData} from "./$types";
   
+import { PASSWORD, USERNAME } from '$lib/constants/auth';
+  
   export let form: ActionData | undefined;
 </script>
 
 <div class="min-h-screen bg-[#fafafa] flex items-center justify-center p-4">
   <main class="bg-white shadow-lg rounded-lg w-full max-w-md overflow-hidden">
-      <h2 class="text-zinc-400 text-2xl font-semibold text-center mt-6">Sign up for Cartoon Chronicles</h2>
-      <form method="POST" use:enhance class="p-6 space-y-4">
+      <h2 class="text-zinc-400 text-2xl font-semibold text-center mt-6">Sign up to Cartoon Chronicles</h2>
+      <form method="POST" use:enhance class="p-6 space-y-6">
           <!-- Username -->
-          <label class="block text-sm font-medium text-gray-700" for="username">Username</label>
+          <!--<label class="block text-sm font-medium text-gray-700" for="username">Username</label>
+        -->
           <input
               type="text"
               id="username" 
               name="username"
+              placeholder="Username"
               maxLength="64"
               minLength="1"
               required
@@ -22,11 +26,13 @@
           >
 
           <!-- Password -->
-          <label class="block text-sm font-medium text-gray-700" for="password">Password</label>
+          <!--<label class="block text-sm font-medium text-gray-700" for="password">Password</label>
+        -->
           <input
               type="password"
               id="password"
               name="password"
+              placeholder="Password"
               maxLength="999"
               minLength="10"
               required
@@ -37,11 +43,13 @@
           {/if}
 
           <!-- Confirm Password -->
-          <label class="block text-sm font-medium text-gray-700" for="password2">Password again</label>
+          <!--<label class="block text-sm font-medium text-gray-700" for="password2">Password again</label>
+        -->
           <input
               type="password"
               id="password2"
               name="password2"
+              placeholder="Confirm Password"
               maxLength="999"
               minLength="10"
               required
