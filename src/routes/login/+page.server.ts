@@ -5,6 +5,11 @@ import { eq } from 'drizzle-orm';
 import { users } from '$lib/server/db/schema';
 import argon2, { argon2id } from 'argon2';
 
+export interface ActionData {
+    message?: string;
+    errors?: Record<string, string>;
+    fields?: { username?: string };
+}
 
 export const actions: Actions = {
     default: async ({ request, cookies }) => {
