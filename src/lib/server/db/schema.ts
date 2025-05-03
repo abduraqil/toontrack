@@ -1,4 +1,4 @@
-import {varchar, integer, timestamp, bigint, smallint, pgTable,} from 'drizzle-orm/pg-core';
+import {varchar, integer, timestamp, bigint, smallint, pgTable, serial, text, PgTimestamp} from 'drizzle-orm/pg-core';
 import { passive } from 'svelte/legacy';
 
 /* TODO:
@@ -12,6 +12,17 @@ export const users = pgTable('users', {
 	// email: varchar({ length: 254 }).notNull(),
 	pwd: varchar({ length: 256 }).notNull(),
 	created: timestamp().defaultNow(),
+});
+
+export const sessionTable = pgTable('session', {
+	id: text("id").primaryKey(),
+	userID: integer("userID")
+		.notNull()
+		.references(() => users.id),
+	expiresAt: timestamp("expires_at", {
+		withTimezone: true,
+		mode: "date"
+	}).notNull()
 });
 
 // export const profilecomments = pgTable('profilecomments', {
@@ -94,3 +105,5 @@ export const users = pgTable('users', {
 // 	cartoonid: integer().references(() => cartoons.id),
 // 	tagid: integer().references(() => tags.id),
 // });
+
+
