@@ -10,6 +10,7 @@ import { PASSWORD, USERNAME } from '$lib/constants/auth';
 remove email req
 created at is not working
 JWT session cookie
+users are case sensitive? fix or dont?
 */
 
 export interface ActionData {

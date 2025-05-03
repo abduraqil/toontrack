@@ -2,7 +2,7 @@
   import { enhance } from "$app/forms";
   import type {ActionData} from "./$types";
   
-import { PASSWORD, USERNAME } from '$lib/constants/auth';
+  import { PASSWORD, USERNAME } from '$lib/constants/auth';
   
   export let form: ActionData | undefined;
 </script>
