@@ -3,7 +3,7 @@ import type { Actions } from './$types';
 import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import { users } from '$lib/server/db/schema';
-import argon2, { argon2id } from 'argon2';
+import argon2 from 'argon2';
 
 export interface ActionData {
     message?: string;
@@ -25,16 +25,33 @@ export const actions: Actions = {
         try {
             const user = await db.query.users.findFirst({
                 where: eq(users.username, username),
+                columns: {
+                    id: true,
+                    username: true,
+                    pwd: true,
+                }
             });
 
         if (!user) {
-            return fail(400, { message: 'Invalid username or password' });
+            return fail(400, { message: 'Invalid username' });
         }
 
 
-        const isPasswordValid = await argon2.verify(user.pwd, password);
+        const isPasswordValid = await argon2.verify(
+            user.pwd, 
+            password,
+            {
+                secret: Buffer.from('mysecret'),
+            }
+        );
+
+        console.log('Password verification result:', isPasswordValid); // Debug
+
+
         if (!isPasswordValid) {
-            return fail(400, { message: 'Invalid username or password' });
+            return fail(400, { 
+                message: 'Invalid password',
+                fields: {password} });
         }
 
 
