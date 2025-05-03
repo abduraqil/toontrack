@@ -2,6 +2,7 @@
   import { enhance } from "$app/forms";
   import type { ActionData } from "./$types";
   
+  export let form: ActionData | undefined;
 </script>
 
 <div class="min-h-screen bg-[#fafafa] flex items-center justify-center p-4">
