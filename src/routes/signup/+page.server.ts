@@ -7,8 +7,6 @@ import argon2 from 'argon2';
 import { PASSWORD, USERNAME } from '$lib/constants/auth';
 
 /* TODO:
-remove email req
-created at is not working
 JWT session cookie
 users are case sensitive? fix or dont?
 */
