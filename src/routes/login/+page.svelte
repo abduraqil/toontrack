@@ -2,7 +2,6 @@
   import { enhance } from "$app/forms";
   import type { ActionData } from "./$types";
   
-  // export let form: ActionData | undefined;
 </script>
 
 <div class="min-h-screen bg-[#fafafa] flex items-center justify-center p-4">
@@ -36,6 +35,9 @@
         />
       </div>
 
+      {#if form?.message}
+        <p class="mt-1 text-sm text-red-600">{form.message}</p>
+      {/if}
 
       <!-- Submit Button -->
       <div class="pt-2">
