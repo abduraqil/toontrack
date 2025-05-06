@@ -1,6 +1,10 @@
-import { db } from "$lib/server/db";
-import type { Session } from "inspector/promises";
-import { encodeBase32LowerCaseNoPadding } from "@oslojs/encoding";
+import { db } from '$lib/server/db';
+import { users, sessionTable } from '$lib/server/db/schema';
+import { eq } from 'drizzle-orm';
+import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
+import { sha256 } from '@oslojs/crypto/sha2';
+import type { Session } from '$lib/server/db/schema'; // Import from your schema file
+
 
 export function generateSessionToken(): string {
     const bytes = new Uint8Array(20);
@@ -10,9 +14,23 @@ export function generateSessionToken(): string {
 
 }
 
-export async function createSession(token: string, userId: number): Promise<Session> {
+export async function createSession(token: string, userID: number): Promise<Session> {
 	// TODO
+	const sessionID = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	const session: Session = {
+		id: sessionID,
+		userID,
+		expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
+	};
+	await db.insert(sessionTable).values(session);
+	return session
 }
+
+/*
+Sessions are validated in two steps:
+1. Does the session exist in your database?
+2. Is it still within expiration?
+*/
 
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
 	// TODO
