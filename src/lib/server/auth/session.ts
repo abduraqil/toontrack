@@ -3,7 +3,7 @@ import { users, sessionTable } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } from '@oslojs/encoding';
 import { sha256 } from '@oslojs/crypto/sha2';
-import type { Session } from '$lib/server/db/schema'; // Import from your schema file
+import type { Session, User } from '$lib/server/db/schema'; // Import from your schema file
 
 
 export function generateSessionToken(): string {
