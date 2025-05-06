@@ -32,7 +32,34 @@ Sessions are validated in two steps:
 */
 
 export async function validateSessionToken(token: string): Promise<SessionValidationResult> {
-	// TODO
+	const sessionID = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	const result = await db
+		.select({user: users, session: sessionTable})
+		.from(sessionTable)
+		.innerJoin(users, eq(sessionTable.userID, users.id))
+		.where(eq(sessionTable.id, sessionID));
+	if (result.length < 1) {
+		return { session: null, user: null };
+	}
+
+	const {user, session} = result[0];
+
+	if (Date.now() > session.expiresAt.getTime()) {
+		await db.delete(sessionTable).where(eq(sessionTable.id, session.id));
+		return {session: null, user: null};
+	} 
+
+	if (Date.now() > session.expiresAt.getTime() - 100 * 60 * 60 * 24 * 15) {
+		session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
+		await db
+			.update(sessionTable)
+			.set({
+				expiresAt: session.expiresAt
+			})
+			.where(eq(sessionTable.id, session.id));
+	}
+
+	return { session, user };
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {
