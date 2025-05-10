@@ -1,63 +1,91 @@
 import { fail, redirect } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import { users } from '$lib/server/db/schema';
 import argon2 from 'argon2';
+import {
+    validateSessionToken,
+    setSessionTokenCookie,
+    deleteSessionTokenCookie,
+    generateSessionToken,
+    createSession
+} from "$lib/server/auth/session";
 
-export interface ActionData {
-    message?: string;
-    errors?: Record<string, string>;
-    fields?: { username?: string };
-}
+export const load: PageServerLoad = async (event) => {
+    const token = event.cookies.get("session_token");
+    
+    if (!token) {
+        throw redirect(302, '/login');
+    }
+
+    const validationResult = await validateSessionToken(token);
+    
+    if (!validationResult.session || !validationResult.user) {
+        deleteSessionTokenCookie(event);  // Pass full event
+        throw redirect(302, '/login');
+    }
+
+    setSessionTokenCookie(event, token, validationResult.session.expiresAt);
+    
+    return {
+        user: validationResult.user
+    };
+};
 
 export const actions: Actions = {
-    default: async ({ request, cookies }) => {
-        const formData = await request.formData();
+    login: async (event) => {
+        const formData = await event.request.formData();
         const username = formData.get('username')?.toString();
         const password = formData.get('password')?.toString();
 
         if (!username || !password) {
-            return fail(400, { message: 'Username and password are required' });
-
+            return fail(400, {
+                errors: { general: 'Username and password are required' },
+                fields: { username }
+            });
         }
 
         try {
             const user = await db.query.users.findFirst({
                 where: eq(users.username, username),
-                columns: {
-                    id: true,
-                    username: true,
-                    pwd: true,
-                }
+                columns: { id: true, username: true, pwd: true }
             });
 
-        if (!user) {
-            return fail(400, { message: 'Invalid username' });
-        }
-
-
-        const isPasswordValid = await argon2.verify(
-            user.pwd, 
-            password,
-            {
-                secret: Buffer.from('mysecret'),
+            if (!user) {
+                return fail(400, {
+                    errors: { username: 'Invalid username' },
+                    fields: { username }
+                });
             }
-        );
 
-        console.log('Password verification result:', isPasswordValid); // Debug
+            const isPasswordValid = await argon2.verify(user.pwd, password);
+            if (!isPasswordValid) {
+                return fail(400, {
+                    errors: { password: 'Invalid password' },
+                    fields: { username }
+                });
+            }
 
+            const token = generateSessionToken();
+            const { expiresAt } = await createSession(token, user.id);
+            
+            // Pass full event to cookie functions
+            setSessionTokenCookie(event, token, expiresAt);
 
-        if (!isPasswordValid) {
-            return fail(400, { 
-                message: 'Invalid password',
-                fields: {password} });
-        }
-
-
+            throw redirect(303, '/dashboard');
         } catch (error) {
-            return fail(500, { message: 'Login failed. Please try again.' });
+            console.error('Login error:', error);
+            return fail(500, {
+                errors: { general: 'Login failed. Please try again.' },
+                fields: { username }
+            });
         }
-    }
+    },
 
-} satisfies Actions; 
+    logout: async (event) => {
+        // Pass full event instead of destructuring
+        deleteSessionTokenCookie(event);
+        throw redirect(303, '/login');
+    }
+} satisfies Actions;
