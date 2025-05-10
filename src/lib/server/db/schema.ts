@@ -1,4 +1,5 @@
 import {varchar, integer, timestamp, bigint, smallint, pgTable, serial, text, PgTimestamp} from 'drizzle-orm/pg-core';
+import type { InferSelectModel, InferInsertModel } from 'drizzle-orm';
 import { passive } from 'svelte/legacy';
 
 /* TODO:
@@ -107,3 +108,5 @@ export const sessionTable = pgTable('session', {
 // });
 
 
+export type User = InferSelectModel<typeof users>;
+export type Session = InferSelectModel<typeof sessionTable>;
