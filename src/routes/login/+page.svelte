@@ -1,6 +1,18 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import type { ActionData } from "./$types";
+  
+  // Define the ActionData interface correctly here for use in this component
+  interface ActionData {
+    message?: string;
+    errors?: {
+      general?: string;
+      username?: string;
+      password?: string;
+    };
+    fields?: { 
+      username?: string;
+    };
+  }
   
   export let form: ActionData | undefined;
 </script>
@@ -20,7 +32,11 @@
           required
           class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm
                  placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:bg-white" 
+          value={form?.fields?.username || ""}
         />
+        {#if form?.errors?.username}
+          <p class="mt-1 text-sm text-red-600">{form.errors.username}</p>
+        {/if}
       </div>
 
       <!-- Password -->
@@ -34,10 +50,13 @@
           class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm
                  placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:bg-white"
         />
+        {#if form?.errors?.password}
+          <p class="mt-1 text-sm text-red-600">{form.errors.password}</p>
+        {/if}
       </div>
 
-      {#if form?.message}
-        <p class="mt-1 text-sm text-red-600">{form.message}</p>
+      {#if form?.errors?.general}
+        <p class="mt-1 text-sm text-red-600">{form.errors.general}</p>
       {/if}
 
       <!-- Submit Button -->

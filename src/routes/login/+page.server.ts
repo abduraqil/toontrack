@@ -12,29 +12,21 @@ import {
     createSession
 } from "$lib/server/auth/session";
 
-export const load: PageServerLoad = async (event) => {
-    const token = event.cookies.get("session_token");
-    
-    if (!token) {
-        throw redirect(302, '/login');
-    }
-
-    const validationResult = await validateSessionToken(token);
-    
-    if (!validationResult.session || !validationResult.user) {
-        deleteSessionTokenCookie(event);  // Pass full event
-        throw redirect(302, '/login');
-    }
-
-    setSessionTokenCookie(event, token, validationResult.session.expiresAt);
-    
-    return {
-        user: validationResult.user
+export interface ActionData {
+    message?: string;
+    errors?: {
+        general?: string;
+        username?: string;
+        password?: string;
     };
-};
+    fields?: { 
+        username?: string;
+    };
+}
+
 
 export const actions: Actions = {
-    login: async (event) => {
+    default: async (event) => {
         const formData = await event.request.formData();
         const username = formData.get('username')?.toString();
         const password = formData.get('password')?.toString();
@@ -47,6 +39,7 @@ export const actions: Actions = {
         }
 
         try {
+            console.log('Login attempt:', { username, password });
             const user = await db.query.users.findFirst({
                 where: eq(users.username, username),
                 columns: { id: true, username: true, pwd: true }
@@ -61,6 +54,7 @@ export const actions: Actions = {
 
             const isPasswordValid = await argon2.verify(user.pwd, password);
             if (!isPasswordValid) {
+                console.log('Invalid password for user:', username);
                 return fail(400, {
                     errors: { password: 'Invalid password' },
                     fields: { username }
@@ -73,7 +67,11 @@ export const actions: Actions = {
             // Pass full event to cookie functions
             setSessionTokenCookie(event, token, expiresAt);
 
-            throw redirect(303, '/dashboard');
+            console.log('Session creation result:', { token, expiresAt });
+            console.log('User from DB:', user);
+
+            console.log('Login successful:', user);
+            throw redirect(303, '/');
         } catch (error) {
             console.error('Login error:', error);
             return fail(500, {
@@ -83,9 +81,11 @@ export const actions: Actions = {
         }
     },
 
-    logout: async (event) => {
-        // Pass full event instead of destructuring
-        deleteSessionTokenCookie(event);
-        throw redirect(303, '/login');
-    }
+    
+
+    // logout: async (event) => {
+    //     // Pass full event instead of destructuring
+    //     deleteSessionTokenCookie(event);
+    //     throw redirect(303, '/login');
+    // }
 } satisfies Actions;
