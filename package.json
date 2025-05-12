@@ -36,7 +36,6 @@
 		"dotenv": "^16.5.0",
 		"drizzle-orm": "^0.40.0",
 		"jsonwebtoken": "^9.0.2",
-		"postgres": "^3.4.5",
-		"toastr": "^2.1.4"
+		"postgres": "^3.4.5"
 	}
 }
