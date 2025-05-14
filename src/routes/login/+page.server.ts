@@ -52,7 +52,10 @@ export const actions: Actions = {
                 });
             }
 
-            const isPasswordValid = await argon2.verify(user.pwd, password);
+            const isPasswordValid = await argon2.verify(user.pwd, password, 
+                {secret:Buffer.from('mysecret')       
+                });
+            console.log('Password verification result:', isPasswordValid);
             if (!isPasswordValid) {
                 console.log('Invalid password for user:', username);
                 return fail(400, {
@@ -71,7 +74,7 @@ export const actions: Actions = {
             console.log('User from DB:', user);
 
             console.log('Login successful:', user);
-            throw redirect(303, '/');
+            throw redirect(303, '/home');
         } catch (error) {
             console.error('Login error:', error);
             return fail(500, {
