@@ -21,7 +21,7 @@
   <main class="bg-white shadow-lg rounded-lg w-full max-w-md overflow-hidden">
     <h2 class="text-zinc-400 text-2xl font-semibold text-center mt-6">Log in to Cartoon Chronicles</h2>
     
-    <form method="POST" use:enhance class="p-6 space-y-6">
+    <form method="POST" action="?/login"use:enhance class="p-6 space-y-6">
       <!-- Username -->
       <div>
         <input

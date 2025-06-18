@@ -1,9 +1,10 @@
 import { fail, redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions, RequestEvent, PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import { users } from '$lib/server/db/schema';
 import argon2 from 'argon2';
+
 import {
     validateSessionToken,
     setSessionTokenCookie,
@@ -25,8 +26,8 @@ export interface ActionData {
 }
 
 
-export const actions: Actions = {
-    default: async (event) => {
+export const actions = {
+    login: async (event: RequestEvent) => {
         const formData = await event.request.formData();
         const username = formData.get('username')?.toString();
         const password = formData.get('password')?.toString();
@@ -84,11 +85,9 @@ export const actions: Actions = {
         }
     },
 
-    
-
-    // logout: async (event) => {
-    //     // Pass full event instead of destructuring
-    //     deleteSessionTokenCookie(event);
-    //     throw redirect(303, '/login');
-    // }
+    logout: async (event: RequestEvent) => {
+        // Pass full event instead of destructuring
+        deleteSessionTokenCookie(event);
+        throw redirect(303, '/login');
+    }
 } satisfies Actions;
