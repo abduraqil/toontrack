@@ -5,10 +5,14 @@ import { eq } from 'drizzle-orm';
 import { cartoons } from '$lib/server/db/schema';
 import { parse } from 'path';
 
+/*TODO
+add in type gaurd for cartoonID
+*/
+
 export const load: PageServerLoad = async ({ params }) => {
     const { id } = params;
 
-    const cartoonID = parseInt(id, 10);
+    const cartoonID = parseInt(id, 10); 
 
     try {
         const cartoon = await db.query.cartoons.findFirst({
