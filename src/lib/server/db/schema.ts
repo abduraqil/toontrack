@@ -1,6 +1,7 @@
 import {varchar, integer, timestamp, bigint, smallint, pgTable, serial, text, PgTimestamp} from 'drizzle-orm/pg-core';
 import type { InferSelectModel, InferInsertModel } from 'drizzle-orm';
 import { passive } from 'svelte/legacy';
+import { duration } from 'drizzle-orm/gel-core';
 
 /* TODO:
 created at is not working
@@ -40,18 +41,24 @@ export const sessionTable = pgTable('session', {
 // 	created: timestamp().defaultNow(),
 // });
 
-// export const cartoons = pgTable('cartoons', {
-// 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-// 	name: varchar({ length: 64 }).notNull(),
-// 	description: varchar({ length: 512 }),
-// 	cover_pic: varchar({ length: 64 }),
-// 	status: smallint().notNull(),
-// 	episodes: smallint(),
-// 	released: timestamp().defaultNow(),
-// 	age_rating: varchar({ length: 32 }),
-// 	country: varchar({ length: 64 }),
-// 	created: timestamp().defaultNow(),
-// });
+export const cartoons = pgTable('cartoons', {
+	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	name: varchar({ length: 128 }).notNull(),
+	description: varchar({ length: 512 }),
+	cover_pic: varchar({ length: 64 }),
+	status: smallint(),
+	episodes: smallint(),
+	air_start: timestamp(),
+	air_end: timestamp(),
+	source: varchar({ length: 64 }),
+	duration: smallint(),
+	age_rating: varchar({ length: 32 }),
+	country: varchar({ length: 128 }),
+	original_language: varchar({ length: 128 }),
+	links: varchar({ length: 512 }),
+	created: timestamp().defaultNow(),
+	edited: timestamp().defaultNow(),
+});
 
 // export const userlists = pgTable('userlists', {
 // 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
