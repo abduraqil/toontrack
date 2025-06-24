@@ -46,6 +46,7 @@ export const cartoons = pgTable('cartoons', {
 	name: varchar({ length: 128 }).notNull(),
 	description: varchar({ length: 512 }),
 	cover_pic: varchar({ length: 64 }),
+	of_type: smallint(),
 	status: smallint(),
 	episodes: smallint(),
 	air_start: timestamp(),
