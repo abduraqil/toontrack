@@ -3,7 +3,6 @@ import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import { cartoons } from '$lib/server/db/schema';
-import { parse } from 'path';
 
 /*TODO
 add in type gaurd for cartoonID
@@ -11,8 +10,18 @@ add in type gaurd for cartoonID
 
 export const load: PageServerLoad = async ({ params }) => {
     const { id } = params;
-
-    const cartoonID = parseInt(id, 10); 
+    
+    // Only allow numeric IDs
+    if (!/^\d+$/.test(id)) {
+        throw error(400, 'Invalid cartoon ID format');
+    }
+    
+    const cartoonID = parseInt(id, 10);
+    
+    // Additional safety check
+    if (cartoonID <= 0) {
+        throw error(400, 'Invalid cartoon ID');
+    }
 
     try {
         const cartoon = await db.query.cartoons.findFirst({
