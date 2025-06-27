@@ -20,8 +20,8 @@ Thumbs.db
 
 # Drizzle Visualizer
 Visualizer.json
-drizzle
-drizzle\meta
+drizzle/
+drizzle/meta/_journal.json
 
 # Vite
 vite.config.js.timestamp-*
@@ -29,3 +29,4 @@ vite.config.ts.timestamp-*
 
 # Debuging
 .vscode
+drizzle/meta/_journal.json
