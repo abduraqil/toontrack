@@ -30,6 +30,20 @@
         }
      }
 
+     function formatType(type: number | null) {
+        switch (type) {
+            case 0: return 'Unknown';
+            case 1: return 'Other';
+            case 2: return 'Series';
+            case 3: return 'Miniseries';
+            case 4: return 'Movie';
+            case 5: return 'Short';
+            case 6: return 'Anthology';
+            case 7: return 'Special';
+            default: return 'Unknown';
+        }
+     }
+
 </script>
 
 <svelte:head>
@@ -45,16 +59,32 @@
                 <!-- Cover Image -->
                 <div class="flex-shrink-0">
                     <img 
-                        src={cartoon.cover_pic || '/src/assets/nocover.jpg'} 
+                        src={'/src/assets/nocover.jpg'} 
                         alt={cartoon.name}
                         class="w-64 h-96 object-cover rounded-lg shadow-2xl border-4 border-white/20"
                     />
+                    
+                    <!-- Action Buttons-->
+                    <div>
+                         <div class="space-y-3">
+
+                         </div>
+
+                         <!-- Favorite Button -->
+                          
+                    </div>
+                    
                 </div>
                 <!-- Cartoon Main Information -->
                 <div class="flex-1 space-y-4">
                     <div class="space-y-2">
                         <h1 class="text-4xl font-bold leading-tight">{cartoon.name}</h1>
                         <div class="flex flex-wrap items-center gap-4 text-lg">
+                            {#if cartoon.of_type !== null}
+                                <span class="px-3 py-1 rounded-full text-sm font-medium bg-stone-500">
+                                    {formatType(cartoon.of_type)}
+                                </span>
+                            {/if}
                             {#if cartoon.status !== null}
                                 <span class="px-3 py-1 rounded-full text-sm font-medium {formatStatusColor(cartoon.status)}">
                                     {formatStatus(cartoon.status)}
@@ -66,7 +96,7 @@
                                 </span>
                             {/if}
                             {#if cartoon.duration !== null}
-                                {cartoon.duration} min
+                                {cartoon.duration}min
                             {/if}
                         </div>
                     </div>
