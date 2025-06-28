@@ -5,7 +5,6 @@ import {
 } from "$lib/server/auth/session";
 
 import type { Handle } from "@sveltejs/kit";
-import { resolve } from "path";
 
 export const handle: Handle = async ({event, resolve}) => {
     const token = event.cookies.get("session") || null;
