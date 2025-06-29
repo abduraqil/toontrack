@@ -104,10 +104,6 @@
                                         {cartoon.age_rating}
                                     </span>
                                 {/if}
-                            </div>
-                            
-                            <!-- Quick Stats -->
-                            <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
                                 {#if cartoon.air_start && cartoon.air_end}
                                     <span class="flex items-center gap-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
