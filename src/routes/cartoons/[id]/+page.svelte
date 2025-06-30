@@ -178,7 +178,15 @@
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h2 class="text-2xl font-semibold mb-4">Meta Information</h2>
                     <dl class="space-y-3">
-                        <p>test</p>
+                        {#each [
+                            cartoon.created !== null ? { label: 'Created', value: new Date(cartoon.created).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
+                            cartoon.edited !== null ? { label: 'Updated', value: new Date(cartoon.edited).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
+                        ].filter(detail => detail !== null) as detail}
+                            <div>
+                                <dt class="text-sm font-medium text-gray-700">{detail.label}</dt>
+                                <dd class="mt-1 text-gray-900">{detail.value}</dd>
+                            </div>
+                        {/each}
                     </dl>
                 </div>                 
             </div>
