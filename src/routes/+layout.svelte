@@ -7,7 +7,7 @@
 	const user = $derived(page.data.user);
 </script>
 
-<nav class="bg-gray-900 text-white">
+<nav class="text-white" style="background-color: oklch(37.2% 0.044 257.287);">
 	<div class="container mx-auto px-4 py-2">
 		<div class="flex items-center justify-between h-16">
 			<!-- Left Side - Logo/Home Page? -->
