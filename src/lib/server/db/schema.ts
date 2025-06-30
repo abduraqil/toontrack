@@ -61,6 +61,96 @@ export const cartoons = pgTable('cartoons', {
 	edited: timestamp().defaultNow(),
 });
 
+export const cartoonStats = pgTable('cartoonstats', {
+	fk_cartoon_id: integer().references(() => cartoons.id),
+	score: smallint(),
+	ranked: integer(),
+	popularity: integer(),
+	members: integer(),
+	favorites: integer(),
+});
+
+export const countries = pgTable('countries', {
+	id: integer().primaryKey().notNull().unique(),
+	name: varchar().notNull().unique(),
+	iso3166_1_3: varchar(),
+	cid: integer(),
+	continent: varchar(),
+	created: timestamp({ withTimezone: true }).defaultNow(),
+	edited: timestamp({ withTimezone: true }).defaultNow(),
+});
+
+export const companies = pgTable('companies', {
+	id: integer().primaryKey().notNull().unique(),
+	name: varchar().notNull().unique(),
+	description: varchar(),
+	cover_pic: varchar(),
+	established: timestamp({ withTimezone: true }),
+	defunct: timestamp({ withTimezone: true }),
+	fk_country_id: integer().references(() => countries.id),
+	links: varchar(),
+	created: timestamp({ withTimezone: true }).defaultNow(),
+	edited: timestamp({ withTimezone: true }).defaultNow(),
+});
+
+export const jt_cartoons_companies = pgTable('jt_cartoons_companies', {
+	role: smallint(),
+	fk_cartoon_id: integer().references(() => cartoons.id),
+	fk_producer_id: integer().references(() => companies.id),
+});
+
+// STAFF
+export const staff = pgTable('staff', {
+	id: integer().primaryKey().notNull().unique(),
+	name: varchar().notNull().unique(),
+	description: varchar(),
+	cover_pic: varchar(),
+	sex: integer(), // use 0/1 for boolean
+	birthday: timestamp({ withTimezone: true }),
+	deathday: timestamp({ withTimezone: true }),
+	country: varchar(),
+	languages: varchar(),
+	occupations: varchar(),
+	links: varchar(),
+	created: timestamp({ withTimezone: true }).defaultNow(),
+	edited: timestamp({ withTimezone: true }).defaultNow(),
+});
+
+export const characters = pgTable('characters', {
+	id: integer().primaryKey().notNull().unique(),
+	name: varchar().notNull().unique(),
+	description: varchar(),
+	cover_pic: varchar(),
+	fk_original_creator: integer().references(() => staff.id),
+	birthday: timestamp({ withTimezone: true }),
+	created: timestamp({ withTimezone: true }).defaultNow(),
+	edited: timestamp({ withTimezone: true }).defaultNow(),
+});
+
+export const jt_cartoons_staff = pgTable('jt_cartoons_staff', {
+	role: varchar(),
+	language: varchar(),
+	fk_cartoon_id: integer().references(() => cartoons.id),
+	fk_staff_id: integer().references(() => staff.id),
+	fk_character_id: integer().references(() => characters.id),
+});
+
+export const tags = pgTable('tags', {
+	id: integer().primaryKey().notNull().unique(),
+	name: varchar().notNull().unique(),
+	created: timestamp({ withTimezone: true }).defaultNow(),
+	edited: timestamp({ withTimezone: true }).defaultNow(),
+});
+
+export const jt_cartoons_tags = pgTable('jt_cartoons_tags', {
+	fk_cartoon_id: integer().references(() => cartoons.id),
+	fk_tag_id: integer().references(() => tags.id),
+	score: smallint(),
+});
+
+// User lists and more
+
+
 // export const userlists = pgTable('userlists', {
 // 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 // 	userid: bigint({ mode: 'number' }).references(() => users.id),
@@ -84,37 +174,12 @@ export const cartoons = pgTable('cartoons', {
 // 	created: timestamp().defaultNow(),
 // });
 
-// export const characters = pgTable('characters', {
-// 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-// 	name: varchar({ length: 64 }).notNull(),
-// 	bio: varchar({ length: 512 }),
-// 	created: timestamp().defaultNow(),
-// });
-
-// export const staff = pgTable('staff', {
-// 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-// 	name: varchar({ length: 64 }).notNull(),
-// 	bio: varchar({ length: 512 }),
-// 	created: timestamp().defaultNow(),
-// });
-
 // export const cartoonstaffrelation = pgTable('cartoonstaffrelation', {
 // 	role: varchar({ length: 64 }),
 // 	cartoonid: integer().references(() => cartoons.id),
 // 	staffid: integer().references(() => staff.id),
 // 	characterid: integer().references(() => characters.id),
 // });
-
-// export const tags = pgTable('tags', {
-// 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-// 	name: varchar({ length: 64 })
-// });
-
-// export const cartoontags = pgTable('cartoontags', {
-// 	cartoonid: integer().references(() => cartoons.id),
-// 	tagid: integer().references(() => tags.id),
-// });
-
 
 export type User = InferSelectModel<typeof users>;
 export type Session = InferSelectModel<typeof sessionTable>;
