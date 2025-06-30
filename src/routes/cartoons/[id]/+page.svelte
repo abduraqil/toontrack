@@ -151,9 +151,9 @@
 
     <!-- Detailed Information -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Side Bar -->
-            <div class="space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Left Side-Bar -->
+            <div class="lg:col-span-1 space-y-6">
                 <!-- Details -->
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h2 class="text-2xl font-semibold mb-4">Details</h2>
@@ -190,7 +190,27 @@
                             </div>
                         {/each}
                     </dl>
-                </div>                 
+                </div>
+            </div>
+            <!-- Right Content Area -->
+            <div class="lg:col-span-3 space-y-6" >
+                <!-- Navigation Tabs -->
+                 <div class="bg-white rounded-lg shadow-md">
+                    <div class="flex border-b border-gray-200">
+                        <button 
+                            class="px-6 py-3 text-sm font-medium border-b-2 border-blue-500 text-blue-600 bg-blue-50"
+                            type="button"
+                        >
+                            Overview
+                        </button>
+                        <button 
+                            class="px-6 py-3 text-sm font-medium border-b-2 border-blue-500 text-blue-600 bg-blue-50"
+                            type="button"
+                        >
+                            Characters
+                        </button>
+                    </div>
+                 </div>
             </div>
         </div>
     </div>
