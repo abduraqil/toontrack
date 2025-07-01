@@ -227,14 +227,12 @@
                             </button>
                         {/each}
                     </div>
-
-                    <!-- Tab Content -->
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-4">{currentTabData.label}</h3>
-                        <svelte:component this={currentTabData.component} {cartoon} />
-                    </div>
-
                  </div>
+                 <!-- Tab Content -->
+                <div class="bg-white rounded-lg shadow-md p-6 pt-6 mt-4">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">{currentTabData.label}</h3>
+                    <svelte:component this={currentTabData.component} {cartoon} />
+                </div>
             </div>
         </div>
     </div>
