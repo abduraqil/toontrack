@@ -1,9 +1,25 @@
 <script lang="ts">
     import Favorite from '../../../assets/components/favorite.svelte';
+    import OverviewTab from './tabs/StaffTab.svelte'
+    import StaffTab from './tabs/StaffTab.svelte';
+
     import type { PageData } from './$types';
     export let data: PageData;
     
      $: cartoon = data.cartoon;
+
+    let activeTab = 'overview';
+
+    const tabs = [
+        { id: 'overview', label: 'Overview', component: OverviewTab },
+        { id: 'staff', label: 'Staff', component: StaffTab },
+    ];
+
+    function setActiveTab(tab: string) {
+        activeTab = tab;
+    }
+
+    $: currentTabData = tabs.find(tab => tab.id === activeTab) || tabs[0];
 
      function formatStatus(status: number | null) {
         switch (status) {
@@ -196,20 +212,28 @@
             <div class="lg:col-span-3 space-y-6" >
                 <!-- Navigation Tabs -->
                  <div class="bg-white rounded-lg shadow-md">
-                    <div class="flex border-b border-gray-200">
-                        <button 
-                            class="px-6 py-3 text-sm font-medium border-b-2 border-blue-500 text-blue-600 bg-blue-50"
-                            type="button"
-                        >
-                            Overview
-                        </button>
-                        <button 
-                            class="px-6 py-3 text-sm font-medium border-b-2 border-blue-500 text-blue-600 bg-blue-50"
-                            type="button"
-                        >
-                            Characters
-                        </button>
+                    <!-- Tab Navigation -->
+                    <div class="flex justify-center border-b border-gray-200">
+                        {#each tabs as tab}
+                            <button 
+                                class="
+                                    px-6 py-3 text-sm font-medium border-b-2 transition-colors duration-200
+                                    {activeTab === tab.id ? 'border-purple-600 text-purple-700 bg-blue-50'
+                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
+                                type="button"
+                                on:click={() => setActiveTab(tab.id)}
+                            >
+                                {tab.label}
+                            </button>
+                        {/each}
                     </div>
+
+                    <!-- Tab Content -->
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">{currentTabData.label}</h3>
+                        <svelte:component this={currentTabData.component} {cartoon} />
+                    </div>
+
                  </div>
             </div>
         </div>
