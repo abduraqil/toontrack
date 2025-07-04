@@ -1,7 +1,20 @@
-import {varchar, integer, timestamp, bigint, smallint, pgTable, serial, text, PgTimestamp} from 'drizzle-orm/pg-core';
+import {
+  varchar, 
+  integer, 
+  timestamp, 
+  bigint, 
+  smallint, 
+  pgTable, 
+  serial, 
+  text, 
+  PgTimestamp,
+  primaryKey,  // ADD THIS
+  foreignKey   // ADD THIS
+} from 'drizzle-orm/pg-core';
+
 import type { InferSelectModel, InferInsertModel } from 'drizzle-orm';
+import { relations } from 'drizzle-orm';  // ADD THIS
 import { passive } from 'svelte/legacy';
-import { duration } from 'drizzle-orm/gel-core';
 
 /* TODO:
 created at is not working
@@ -142,11 +155,51 @@ export const tags = pgTable('tags', {
 	edited: timestamp({ withTimezone: true }).defaultNow(),
 });
 
+// export const jt_cartoons_tags = pgTable('jt_cartoons_tags', {
+// 	fk_cartoon_id: integer().references(() => cartoons.id),
+// 	fk_tag_id: integer().references(() => tags.id),
+// 	score: smallint(),
+// });
+
 export const jt_cartoons_tags = pgTable('jt_cartoons_tags', {
-	fk_cartoon_id: integer().references(() => cartoons.id),
-	fk_tag_id: integer().references(() => tags.id),
-	score: smallint(),
+  fk_cartoon_id: smallint('fk_cartoon_id').notNull(),
+  fk_tag_id: smallint('fk_tag_id').notNull(),
+  score: smallint('score').notNull(),
+}, (table) => {
+  return {
+    // Composite primary key
+    pk: primaryKey({ columns: [table.fk_cartoon_id, table.fk_tag_id] }),
+    // Foreign key constraints
+    cartoonFk: foreignKey({
+      columns: [table.fk_cartoon_id],
+      foreignColumns: [cartoons.id],
+    }),
+    tagFk: foreignKey({
+      columns: [table.fk_tag_id],
+      foreignColumns: [tags.id],
+    }),
+  };
 });
+
+// Relations for easier querying
+export const cartoonsRelations = relations(cartoons, ({ many }) => ({
+  cartoonTags: many(jt_cartoons_tags),
+}));
+
+export const tagsRelations = relations(tags, ({ many }) => ({
+  cartoonTags: many(jt_cartoons_tags),
+}));
+
+export const jt_cartoons_tagsRelations = relations(jt_cartoons_tags, ({ one }) => ({
+  cartoon: one(cartoons, {
+    fields: [jt_cartoons_tags.fk_cartoon_id],
+    references: [cartoons.id],
+  }),
+  tag: one(tags, {
+    fields: [jt_cartoons_tags.fk_tag_id],
+    references: [tags.id],
+  }),
+}));
 
 // User lists and more
 
