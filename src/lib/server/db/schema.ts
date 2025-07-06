@@ -84,7 +84,7 @@ export const cartoonStats = pgTable('cartoonstats', {
 });
 
 export const countries = pgTable('countries', {
-	id: integer().primaryKey().notNull().unique(),
+	id: integer().primaryKey().notNull(),
 	name: varchar().notNull().unique(),
 	iso3166_1_3: varchar(),
 	cid: integer(),
@@ -94,14 +94,14 @@ export const countries = pgTable('countries', {
 });
 
 export const companies = pgTable('companies', {
-	id: integer().primaryKey().notNull().unique(),
-	name: varchar().notNull().unique(),
-	description: varchar(),
-	cover_pic: varchar(),
+	id: integer().primaryKey(),
+	name: varchar({ length: 255 }).notNull().unique(),
+	description: varchar({ length: 1000 }),
+	cover_pic: varchar({ length: 255 }),
 	established: timestamp({ withTimezone: true }),
 	defunct: timestamp({ withTimezone: true }),
 	fk_country_id: integer().references(() => countries.id),
-	links: varchar(),
+	links: varchar({ length: 500 }),
 	created: timestamp({ withTimezone: true }).defaultNow(),
 	edited: timestamp({ withTimezone: true }).defaultNow(),
 });
@@ -140,14 +140,6 @@ export const characters = pgTable('characters', {
 	edited: timestamp({ withTimezone: true }).defaultNow(),
 });
 
-export const jt_cartoons_staff = pgTable('jt_cartoons_staff', {
-	role: varchar(),
-	language: varchar(),
-	fk_cartoon_id: integer().references(() => cartoons.id),
-	fk_staff_id: integer().references(() => staff.id),
-	fk_character_id: integer().references(() => characters.id),
-});
-
 export const tags = pgTable('tags', {
 	id: integer().primaryKey().notNull().unique(),
 	name: varchar().notNull().unique(),
@@ -155,36 +147,24 @@ export const tags = pgTable('tags', {
 	edited: timestamp({ withTimezone: true }).defaultNow(),
 });
 
-// export const jt_cartoons_tags = pgTable('jt_cartoons_tags', {
-// 	fk_cartoon_id: integer().references(() => cartoons.id),
-// 	fk_tag_id: integer().references(() => tags.id),
-// 	score: smallint(),
-// });
-
 export const jt_cartoons_tags = pgTable('jt_cartoons_tags', {
-  fk_cartoon_id: smallint('fk_cartoon_id').notNull(),
-  fk_tag_id: smallint('fk_tag_id').notNull(),
+  fk_cartoon_id: integer('fk_cartoon_id').notNull(), 
+  fk_tag_id: integer('fk_tag_id').notNull(),         
   score: smallint('score').notNull(),
-}, (table) => {
-  return {
-    // Composite primary key
-    pk: primaryKey({ columns: [table.fk_cartoon_id, table.fk_tag_id] }),
-    // Foreign key constraints
-    cartoonFk: foreignKey({
-      columns: [table.fk_cartoon_id],
-      foreignColumns: [cartoons.id],
-    }),
-    tagFk: foreignKey({
-      columns: [table.fk_tag_id],
-      foreignColumns: [tags.id],
-    }),
-  };
-});
+}, (table) => [
+  // Composite primary key
+  primaryKey({ columns: [table.fk_cartoon_id, table.fk_tag_id] }),
+  // Foreign key constraints
+  foreignKey({
+    columns: [table.fk_cartoon_id],
+    foreignColumns: [cartoons.id],
+  }),
+  foreignKey({
+    columns: [table.fk_tag_id],
+    foreignColumns: [tags.id],
+  }),
+]);
 
-// Relations for easier querying
-export const cartoonsRelations = relations(cartoons, ({ many }) => ({
-  cartoonTags: many(jt_cartoons_tags),
-}));
 
 export const tagsRelations = relations(tags, ({ many }) => ({
   cartoonTags: many(jt_cartoons_tags),
@@ -199,6 +179,53 @@ export const jt_cartoons_tagsRelations = relations(jt_cartoons_tags, ({ one }) =
     fields: [jt_cartoons_tags.fk_tag_id],
     references: [tags.id],
   }),
+}));
+
+// Junction table for staff and cartoons (many-to-many relationship)
+export const jt_cartoons_staff = pgTable('jt_cartoons_staff', {
+  fk_cartoon_id: integer('fk_cartoon_id').notNull(),
+  fk_staff_id: integer('fk_staff_id').notNull(),
+  role: varchar('role', { length: 128 }).notNull(),
+  character_name: varchar('character_name', { length: 128 }),
+  language: varchar('language', { length: 64 }),
+  episodes: varchar('episodes', { length: 256 }),
+  created: timestamp('created', { withTimezone: true }).defaultNow(),
+}, (table) => [
+  // Composite primary key
+  primaryKey({ columns: [table.fk_cartoon_id, table.fk_staff_id, table.role] }),
+  // Foreign key constraints
+  foreignKey({
+    columns: [table.fk_cartoon_id],
+    foreignColumns: [cartoons.id],
+  }),
+  foreignKey({
+    columns: [table.fk_staff_id],
+    foreignColumns: [staff.id],
+  }),
+]);
+
+export const staffRelations = relations(staff, ({ many }) => ({
+  cartoonStaff: many(jt_cartoons_staff),
+}));
+
+export const jt_cartoons_staffRelations = relations(jt_cartoons_staff, ({ one }) => ({
+  cartoon: one(cartoons, {
+    fields: [jt_cartoons_staff.fk_cartoon_id],
+    references: [cartoons.id],
+  }),
+  staff: one(staff, {
+    fields: [jt_cartoons_staff.fk_staff_id],
+    references: [staff.id],
+  }),
+}));
+
+
+
+
+// Relations for easier querying
+export const cartoonsRelations = relations(cartoons, ({ many }) => ({
+  cartoonTags: many(jt_cartoons_tags),
+  cartoonStaff: many(jt_cartoons_staff),
 }));
 
 // User lists and more
