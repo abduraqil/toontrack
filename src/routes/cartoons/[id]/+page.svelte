@@ -1,6 +1,6 @@
 <script lang="ts">
     import Favorite from '../../../assets/components/favorite.svelte';
-    import OverviewTab from './tabs/StaffTab.svelte'
+    import OverviewTab from './tabs/OverviewTab.svelte';
     import StaffTab from './tabs/StaffTab.svelte';
 
     import type { PageData } from './$types';
@@ -230,8 +230,7 @@
                  </div>
                  <!-- Tab Content -->
                 <div class="bg-white rounded-lg shadow-md p-6 pt-6 mt-4">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">{currentTabData.label}</h3>
-                    <svelte:component this={currentTabData.component} {cartoon} />
+                    <svelte:component this={currentTabData.component} {cartoon}/>
                 </div>
             </div>
         </div>

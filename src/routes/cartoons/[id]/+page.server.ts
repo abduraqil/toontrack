@@ -25,7 +25,12 @@ export const load: PageServerLoad = async ({ params }) => {
 
     try {
         const cartoon = await db.query.cartoons.findFirst({
-            where: eq(cartoons.id, cartoonID)
+            where: eq(cartoons.id, cartoonID),
+            with: {
+                cartoonStaff: {
+                    with: {staff: true}
+                }
+            }
         });
 
         if (!cartoon) {
