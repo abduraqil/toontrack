@@ -3,6 +3,7 @@ import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import { cartoons } from '$lib/server/db/schema';
+import '$lib/server/db/relations';
 
 /*TODO
 add in type gaurd for cartoonID
@@ -27,9 +28,11 @@ export const load: PageServerLoad = async ({ params }) => {
         const cartoon = await db.query.cartoons.findFirst({
             where: eq(cartoons.id, cartoonID),
             with: {
-                cartoonStaff: {
-                    with: {staff: true}
-                }
+                jtcartoonsStaff: {
+                    with: {
+                        staff: true,
+                    }
+                },
             }
         });
 
@@ -38,7 +41,7 @@ export const load: PageServerLoad = async ({ params }) => {
         }
 
         return {
-            cartoon,
+            cartoon
         };
     } catch (err) {
         console.error('Error fetching cartoon:', err);

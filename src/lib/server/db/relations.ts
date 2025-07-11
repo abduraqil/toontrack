@@ -1,5 +1,33 @@
 import { relations } from "drizzle-orm/relations";
-import { companies, jtCompaniesCompanyTags, companyTags, jtCompaniesCountries, countries, languages, jtLanguagesStaff, staff, occupations, jtOccupationsStaff, jtCountriesStaff, characters, cartoons, jtCartoonsCartoonTypes, cartoonTypes, jtCartoonsLanguages, jtCartoonsCountries, jtCartoonsCompanies, jtCartoonsStaff, jtCartoonsTags, tags, cartoonStats, users, sessions, profileComments, follows, userLists, reviews } from "./schema";
+import {
+	companies,
+	jtCompaniesCompanyTags,
+	companyTags,
+	jtCompaniesCountries,
+	countries,
+	languages,
+	jtLanguagesStaff,
+	staff,
+	occupations,
+	jtOccupationsStaff,
+	jtCountriesStaff,
+	characters,
+	cartoons,
+	jtCartoonsCartoonTypes,
+	cartoonTypes,
+	jtCartoonsLanguages,
+	jtCartoonsCountries,
+	jtCartoonsCompanies,
+	jtCartoonsStaff,
+	jtCartoonsTags,
+	tags, cartoonStats,
+	users,
+	sessions,
+	profileComments,
+	follows,
+	userLists,
+	reviews
+} from "./schema";
 
 export const jtCompaniesCompanyTagsRelations = relations(jtCompaniesCompanyTags, ({one}) => ({
 	company: one(companies, {
@@ -114,7 +142,7 @@ export const cartoonsRelations = relations(cartoons, ({many}) => ({
 	jtCartoonsLanguages: many(jtCartoonsLanguages),
 	jtCartoonsCountries: many(jtCartoonsCountries),
 	jtCartoonsCompanies: many(jtCartoonsCompanies),
-	jtCartoonsStaffs: many(jtCartoonsStaff),
+	jtcartoonsStaff: many(jtCartoonsStaff),
 	jtCartoonsTags: many(jtCartoonsTags),
 	cartoonStats: many(cartoonStats),
 	userLists: many(userLists),
@@ -158,11 +186,7 @@ export const jtCartoonsCompaniesRelations = relations(jtCartoonsCompanies, ({one
 	}),
 }));
 
-export const jtCartoonsStaffRelations = relations(jtCartoonsStaff, ({one}) => ({
-	language: one(languages, {
-		fields: [jtCartoonsStaff.fkLanguageId],
-		references: [languages.id]
-	}),
+export const jtCartoonsStaffRelations = relations(jtCartoonsStaff, ({ one }) => ({
 	cartoon: one(cartoons, {
 		fields: [jtCartoonsStaff.fkCartoonId],
 		references: [cartoons.id]
@@ -171,11 +195,16 @@ export const jtCartoonsStaffRelations = relations(jtCartoonsStaff, ({one}) => ({
 		fields: [jtCartoonsStaff.fkStaffId],
 		references: [staff.id]
 	}),
+	language: one(languages, {
+		fields: [jtCartoonsStaff.fkLanguageId],
+		references: [languages.id]
+	}),
 	character: one(characters, {
 		fields: [jtCartoonsStaff.fkCharacterId],
 		references: [characters.id]
-	}),
+	})
 }));
+
 
 export const jtCartoonsTagsRelations = relations(jtCartoonsTags, ({one}) => ({
 	cartoon: one(cartoons, {
