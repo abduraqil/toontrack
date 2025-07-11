@@ -1,352 +1,475 @@
-import {
-  varchar,
-  integer,
-  timestamp,
-  smallint,
-  pgTable,
-  boolean,
-  text,
-  primaryKey,
-  foreignKey
-} from 'drizzle-orm/pg-core';
+import { 
+	pgTable,
+	integer,
+	varchar,
+	timestamp,
+	foreignKey,
+	smallint,
+	boolean,
+	unique
+} from "drizzle-orm/pg-core"
+import { sql } from "drizzle-orm"
+import type { InferSelectModel} from 'drizzle-orm';
 
-import type { InferSelectModel, InferInsertModel } from 'drizzle-orm';
-import { relations } from 'drizzle-orm';  // ADD THIS
-import { passive } from 'svelte/legacy';
 
-export const languages = pgTable('languages', {
+
+export const companies = pgTable("companies", {
+	id: integer().primaryKey().notNull(),
+	name: varchar().notNull(),
+	description: varchar(),
+	coverPic: varchar("cover_pic"),
+	established: timestamp({ withTimezone: true, mode: 'string' }),
+	defunct: timestamp({ withTimezone: true, mode: 'string' }),
+	links: varchar(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+});
+
+export const jtCompaniesCompanyTags = pgTable("jt_companies_company_tags", {
+	fkCompanyId: integer("fk_company_id").notNull(),
+	fkCompanyTagId: integer("fk_company_tag_id").notNull(),
+	score: smallint(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkCompanyId],
+			foreignColumns: [companies.id],
+			name: "jt_companies_company_tags_fk_company_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkCompanyTagId],
+			foreignColumns: [companyTags.id],
+			name: "jt_companies_company_tags_fk_company_tag_id_fkey"
+		}),
+]);
+
+export const companyTags = pgTable("company_tags", {
+	id: integer().primaryKey().notNull(),
+	name: varchar().notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+});
+
+export const jtCompaniesCountries = pgTable("jt_companies_countries", {
+	fkCompanyId: integer("fk_company_id").notNull(),
+	fkCountryId: integer("fk_country_id"),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkCompanyId],
+			foreignColumns: [companies.id],
+			name: "jt_companies_countries_fk_company_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkCountryId],
+			foreignColumns: [countries.id],
+			name: "jt_companies_countries_fk_country_id_fkey"
+		}),
+]);
+
+export const countries = pgTable("countries", {
+	id: integer().primaryKey().notNull(),
+	name: varchar().notNull(),
+	iso316613: varchar("iso3166_1_3"),
+	cid: integer(),
+	continent: varchar(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+});
+
+export const languages = pgTable("languages", {
 	id: integer().primaryKey().notNull(),
 	name: varchar().notNull(),
 	iso639: varchar(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 });
 
-export const countries = pgTable('countries', {
-	id: integer().primaryKey().notNull(),
-	name: varchar().notNull().unique(),
-	iso3166_1_3: varchar(),
-	cid: integer(),
-	continent: varchar(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
+export const jtLanguagesStaff = pgTable("jt_languages_staff", {
+	fkLanguageId: integer("fk_language_id").notNull(),
+	fkStaffId: integer("fk_staff_id").notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkLanguageId],
+			foreignColumns: [languages.id],
+			name: "jt_languages_staff_fk_language_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkStaffId],
+			foreignColumns: [staff.id],
+			name: "jt_languages_staff_fk_staff_id_fkey"
+		}),
+]);
 
-export const companyTags = pgTable('company_tags', {
+export const staff = pgTable("staff", {
 	id: integer().primaryKey().notNull(),
 	name: varchar().notNull(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
+	description: varchar(),
+	coverPic: varchar("cover_pic"),
+	sex: boolean(),
+	birthday: timestamp({ withTimezone: true, mode: 'string' }),
+	deathday: timestamp({ withTimezone: true, mode: 'string' }),
+	links: varchar(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 });
 
-export const companies = pgTable('companies', {
+export const occupations = pgTable("occupations", {
+	id: integer().primaryKey().notNull(),
+	name: varchar().notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+});
+
+export const jtOccupationsStaff = pgTable("jt_occupations_staff", {
+	fkOccupationId: integer("fk_occupation_id").notNull(),
+	fkStaffId: integer("fk_staff_id").notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkOccupationId],
+			foreignColumns: [occupations.id],
+			name: "jt_occupations_staff_fk_occupation_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkStaffId],
+			foreignColumns: [staff.id],
+			name: "jt_occupations_staff_fk_staff_id_fkey"
+		}),
+]);
+
+export const jtCountriesStaff = pgTable("jt_countries_staff", {
+	fkCountryId: integer("fk_country_id").notNull(),
+	fkStaffId: integer("fk_staff_id").notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkCountryId],
+			foreignColumns: [countries.id],
+			name: "jt_countries_staff_fk_country_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkStaffId],
+			foreignColumns: [staff.id],
+			name: "jt_countries_staff_fk_staff_id_fkey"
+		}),
+]);
+
+export const characters = pgTable("characters", {
 	id: integer().primaryKey().notNull(),
 	name: varchar().notNull(),
 	description: varchar(),
-	coverPic: varchar('cover_pic'),
-	established: timestamp({ withTimezone: true }),
-	defunct: timestamp({ withTimezone: true }),
-	links: varchar(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
-
-export const jtCompaniesCompanyTags = pgTable('jt_companies_company_tags', {
-	fkCompanyID: integer('fk_company_id').references(() => companies.id),
-	fkCompanyTagID: integer('fk_company_tag_id').references(() => companyTags.id),
-	score: smallint().notNull(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
-
-export const jt_companies_countries = pgTable('jt_companies_countries', {
-	fkCompanyId: integer('fk_company_id').references(() => companies.id),
-	fkCountryId: integer('fk_country_id').references(() => countries.id),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
-
-export const occupations = pgTable('occupations', {
-	id: integer().primaryKey().notNull().unique(),
-	name: varchar().notNull().unique(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
-
-export const staff = pgTable('staff', {
-	id: integer().primaryKey().notNull().unique(),
-	name: varchar().notNull().unique(),
-	description: varchar(),
-	coverPic: varchar('cover_pic'),
+	coverPic: varchar("cover_pic"),
+	fkOriginalCreator: integer("fk_original_creator"),
 	sex: boolean(),
-	birthday: timestamp({ withTimezone: true }),
-	deathday: timestamp({ withTimezone: true }),
-	links: varchar(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
+	birthday: timestamp({ withTimezone: true, mode: 'string' }),
+	inception: timestamp({ withTimezone: true, mode: 'string' }),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkOriginalCreator],
+			foreignColumns: [staff.id],
+			name: "characters_fk_original_creator_fkey"
+		}),
+	unique("characters_name_key").on(table.name),
+]);
 
-export const jtLanguagesStaff = pgTable('jt_languages_staff', {
-	fkLanguageId: integer('fk_language_id').references(() => languages.id),
-	fkStaffId: integer('fk_staff_id').references(() => staff.id),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
-
-export const jtOccupationsStaff = pgTable('jt_occupations_staff', {
-	fkOccupationId: integer('fk_occupation_id').references(() => occupations.id),
-	fkStaffId: integer('fk_staff_id').references(() => staff.id),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
-
-export const jtCountriesStaff = pgTable('jt_countries_staff', {
-	fkCountryId: integer('fk_country_id').references(() => countries.id),
-	fkStaffId: integer('fk_staff_id').references(() => staff.id),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
-
-export const characters = pgTable('characters', {
-	id: integer().primaryKey().notNull().unique(),
-	name: varchar().notNull().unique(),
+export const cartoons = pgTable("cartoons", {
+	id: integer().primaryKey().notNull(),
+	name: varchar().notNull(),
 	description: varchar(),
-	coverPic: varchar('cover_pic'),
-	fkOriginalCreator: integer('fk_original_creator').references(() => staff.id),
-	sex: boolean(),
-	birthday: timestamp({ withTimezone: true }),
-	inception: timestamp({ withTimezone: true }),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
-
-export const tags = pgTable('tags', {
-	id: integer().primaryKey().notNull().unique(),
-	name: varchar().notNull().unique(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
-
-export const cartoonTypes = pgTable('cartoon_types', {
-	id: integer().primaryKey().notNull().unique(),
-	name: varchar().notNull().unique(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
-
-export const cartoons = pgTable('cartoons', {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	name: varchar({ length: 128 }).notNull(),
-	description: varchar({ length: 512 }),
 	coverPic: varchar("cover_pic"),
 	seasons: smallint(),
 	episodes: smallint(),
 	duration: smallint(),
 	status: smallint(),
-	airStart: timestamp('air_start'),
-	airEnd: timestamp('air_end'),
-	source: varchar({ length: 64 }),
-	ageRating: varchar('age_rating'),
-	links: varchar({ length: 512 }),
-	created: timestamp().defaultNow(),
-	edited: timestamp().defaultNow(),
+	airStart: timestamp("air_start", { withTimezone: true, mode: 'string' }),
+	airEnd: timestamp("air_end", { withTimezone: true, mode: 'string' }),
+	source: varchar(),
+	ageRating: varchar("age_rating"),
+	links: varchar(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 });
 
-export const jtCartoonsCartoonTypes = pgTable('jt_cartoons_cartoon_types', {
-	score: smallint().notNull(),
-	fkCartoonID: integer('fk_cartoon_id').references(() => cartoons.id),
-	fkCartoonTypeID: integer('fk_cartoon_type_id').references(() => cartoonTypes.id),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
+export const jtCartoonsCartoonTypes = pgTable("jt_cartoons_cartoon_types", {
+	score: smallint().default(0),
+	fkCartoonId: integer("fk_cartoon_id").notNull(),
+	fkCartoonTypeId: integer("fk_cartoon_type_id").notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkCartoonId],
+			foreignColumns: [cartoons.id],
+			name: "jt_cartoons_cartoon_types_fk_cartoon_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkCartoonTypeId],
+			foreignColumns: [cartoonTypes.id],
+			name: "jt_cartoons_cartoon_types_fk_cartoon_type_id_fkey"
+		}),
+]);
+
+export const cartoonTypes = pgTable("cartoon_types", {
+	id: integer().primaryKey().notNull(),
+	name: varchar().notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 });
 
-export const jtCartoonsLanguages = pgTable('jt_cartoons_languages', {
-	score: smallint().notNull(),
-	fkCartoonID: integer('fk_cartoon_id').references(() => cartoons.id),
-	fkLanguageID: integer('fk_language_id').references(() => languages.id),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
+export const jtCartoonsLanguages = pgTable("jt_cartoons_languages", {
+	score: smallint().default(0),
+	fkCartoonId: integer("fk_cartoon_id").notNull(),
+	fkLanguageId: integer("fk_language_id").notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkCartoonId],
+			foreignColumns: [cartoons.id],
+			name: "jt_cartoons_languages_fk_cartoon_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkLanguageId],
+			foreignColumns: [languages.id],
+			name: "jt_cartoons_languages_fk_language_id_fkey"
+		}),
+]);
 
-export const jtCartoonsCountries = pgTable('jt_cartoons_countries', {
-	fkCartoonID: integer('fk_cartoon_id').references(() => cartoons.id),
-	fkCountryID: integer('fk_country_id').references(() => countries.id),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
+export const jtCartoonsCountries = pgTable("jt_cartoons_countries", {
+	fkCartoonId: integer("fk_cartoon_id").notNull(),
+	fkCountryId: integer("fk_country_id").notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkCartoonId],
+			foreignColumns: [cartoons.id],
+			name: "jt_cartoons_countries_fk_cartoon_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkCountryId],
+			foreignColumns: [countries.id],
+			name: "jt_cartoons_countries_fk_country_id_fkey"
+		}),
+]);
 
-export const jtCartoonsCompanies = pgTable('jt_cartoons_companies', {
-	role: smallint(),
-	fkCartoonID: integer('fk_cartoon_id').references(() => cartoons.id),
-	fkCompanyID: integer('fk_company_id').references(() => companies.id),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
+export const jtCartoonsCompanies = pgTable("jt_cartoons_companies", {
+	role: smallint().default(0),
+	fkCartoonId: integer("fk_cartoon_id").notNull(),
+	fkCompanyId: integer("fk_company_id").notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkCartoonId],
+			foreignColumns: [cartoons.id],
+			name: "jt_cartoons_companies_fk_cartoon_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkCompanyId],
+			foreignColumns: [companies.id],
+			name: "jt_cartoons_companies_fk_company_id_fkey"
+		}),
+]);
 
-export const jtCartoonsStaff = pgTable('jt_cartoons_staff', {
-	role: varchar('role', { length: 128 }).notNull(),
+export const jtCartoonsStaff = pgTable("jt_cartoons_staff", {
+	role: varchar(),
 	credited: boolean(),
-	fkLanguageID: integer('fk_language_id').notNull(),
-	fkCartoonID: integer('fk_cartoon_id').notNull(),
-	fkStaffID: integer('fk_staff_id').notNull(),
-	fkCharacterID: integer('fk_character_id').notNull(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
+	fkLanguageId: integer("fk_language_id"),
+	fkCartoonId: integer("fk_cartoon_id"),
+	fkStaffId: integer("fk_staff_id"),
+	fkCharacterId: integer("fk_character_id"),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 }, (table) => [
-	// Composite primary key
-	primaryKey({ columns: [table.fkCartoonID, table.fkStaffID, table.role] }),
-	// Foreign key constraints
 	foreignKey({
-		columns: [table.fkCartoonID],
-		foreignColumns: [cartoons.id],
-	}),
+			columns: [table.fkLanguageId],
+			foreignColumns: [languages.id],
+			name: "jt_cartoons_staff_fk_language_id_fkey"
+		}),
 	foreignKey({
-		columns: [table.fkStaffID],
-		foreignColumns: [staff.id],
-	}),
+			columns: [table.fkCartoonId],
+			foreignColumns: [cartoons.id],
+			name: "jt_cartoons_staff_fk_cartoon_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkStaffId],
+			foreignColumns: [staff.id],
+			name: "jt_cartoons_staff_fk_staff_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkCharacterId],
+			foreignColumns: [characters.id],
+			name: "jt_cartoons_staff_fk_character_id_fkey"
+		}),
 ]);
 
-export const jtCartoonsTags = pgTable('jt_cartoons_tags', {
-	fkCartoonID: integer('fk_cartoon_id').notNull(),
-	fkTagID: integer('fk_tag_id').notNull(),
-	score: smallint('score').notNull(),
+export const jtCartoonsTags = pgTable("jt_cartoons_tags", {
+	fkCartoonId: integer("fk_cartoon_id").notNull(),
+	fkTagId: integer("fk_tag_id").notNull(),
+	score: smallint(),
 	spoiler: boolean(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
 }, (table) => [
-	// Composite primary key
-	primaryKey({ columns: [table.fkCartoonID, table.fkTagID] }),
-	// Foreign key constraints
 	foreignKey({
-		columns: [table.fkCartoonID],
-		foreignColumns: [cartoons.id],
-	}),
+			columns: [table.fkCartoonId],
+			foreignColumns: [cartoons.id],
+			name: "jt_cartoons_tags_fk_cartoon_id_fkey"
+		}),
 	foreignKey({
-		columns: [table.fkTagID],
-		foreignColumns: [tags.id],
-	}),
+			columns: [table.fkTagId],
+			foreignColumns: [tags.id],
+			name: "jt_cartoons_tags_fk_tag_id_fkey"
+		}),
 ]);
 
-export const cartoonStats = pgTable('cartoon_stats', {
-	fkCartoonID: integer('fk_cartoon_id').references(() => cartoons.id),
+export const tags = pgTable("tags", {
+	id: integer().primaryKey().notNull(),
+	name: varchar().notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+});
+
+export const cartoonStats = pgTable("cartoon_stats", {
+	fkCartoonId: integer("fk_cartoon_id"),
 	score: smallint(),
 	ranked: integer(),
 	popularity: integer(),
 	members: integer(),
 	favorites: integer(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkCartoonId],
+			foreignColumns: [cartoons.id],
+			name: "cartoon_stats_fk_cartoon_id_fkey"
+		}),
+]);
 
-/* TODO:
-	created at is not working
-*/
-export const users = pgTable('users', {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	username: varchar({ length: 64 }).notNull().unique(),
-	bio: varchar({ length: 512 }),
-	coverPic: varchar('cover_pic'),
-	// email: varchar({ length: 254 }).notNull(),
+export const users = pgTable("users", {
+	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "users_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+	name: varchar({ length: 64 }).notNull(),
+	description: varchar(),
+	coverPic: varchar("cover_pic"),
 	pwd: varchar({ length: 256 }).notNull(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-	lastLogin: timestamp('last_login', { withTimezone: true }),
-});
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	lastLogin: timestamp("last_login", { withTimezone: true, mode: 'string' }),
+}, (table) => [
+	unique("users_name_key").on(table.name),
+]);
 
-export const sessions = pgTable('sessions', {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	fkUserID: integer('fk_user_id').notNull().references(() => users.id),
-	expiresAt: timestamp("expires_at", {withTimezone: true,
-			     mode: "date"}).notNull(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
+export const sessions = pgTable("sessions", {
+	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "sessions_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+	fkUserId: integer("fk_user_id").notNull(),
+	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'string' }).notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkUserId],
+			foreignColumns: [users.id],
+			name: "sessions_fk_user_id_fkey"
+		}),
+]);
 
-export const profileComments = pgTable('profile_comments', {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	fkCommenterID: integer('fk_commenter_id').notNull().references(() => users.id),
-	userComment: varchar('user_comment').notNull(),
-	fkUserID: integer('fk_user_id').references(() => users.id),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
+export const profileComments = pgTable("profile_comments", {
+	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "profile_comments_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+	fkCommenterId: integer("fk_commenter_id").notNull(),
+	userComment: varchar("user_comment").notNull(),
+	fkUserId: integer("fk_user_id").notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkUserId],
+			foreignColumns: [users.id],
+			name: "profile_comments_fk_user_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkCommenterId],
+			foreignColumns: [users.id],
+			name: "profile_comments_fk_commenter_id_fkey"
+		}),
+]);
 
-export const follows = pgTable('follows', {
-	fkFollowingID: integer('fk_following_id').references(() => users.id),
-	fkFollowerID: integer('fk_follower_id').references(() => users.id),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
+export const follows = pgTable("follows", {
+	fkFollowingId: integer("fk_following_id"),
+	fkFollowerId: integer("fk_follower_id"),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkFollowingId],
+			foreignColumns: [users.id],
+			name: "follows_fk_following_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkFollowerId],
+			foreignColumns: [users.id],
+			name: "follows_fk_follower_id_fkey"
+		}),
+]);
 
-export const userLists = pgTable('user_lists', {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	fkUserID: integer('fk_user_id').references(() => users.id),
-	fkCartoonID: integer('fk_cartoon_id').references(() => cartoons.id),
+export const userLists = pgTable("user_lists", {
+	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "user_lists_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+	fkUserId: integer("fk_user_id").notNull(),
+	fkCartoonId: integer("fk_cartoon_id").notNull(),
 	status: smallint().notNull(),
 	score: smallint(),
-	startDate: timestamp('start_date').defaultNow(),
-	finishDate: timestamp('finish_date').defaultNow(),
+	startDate: timestamp("start_date", { withTimezone: true, mode: 'string' }),
+	finishDate: timestamp("finish_date", { withTimezone: true, mode: 'string' }),
 	rewatches: smallint(),
-	episodesWatched: smallint('episodes_watched'),
-	favorite: smallint(),
+	episodesWatched: smallint("episodes_watched"),
 	notes: varchar(),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-	// TODO:  UNIQUE (fk_cartoon_id, fk_user_id)
-});
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	favorite: smallint(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkUserId],
+			foreignColumns: [users.id],
+			name: "user_lists_fk_user_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkCartoonId],
+			foreignColumns: [cartoons.id],
+			name: "user_lists_fk_cartoon_id_fkey"
+		}),
+	unique("user_lists_fk_cartoon_id_fk_user_id_key").on(table.fkUserId, table.fkCartoonId),
+]);
 
-export const reviews = pgTable('reviews', {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	review: varchar().notNull(),
+export const reviews = pgTable("reviews", {
+	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "reviews_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+	review: varchar(),
 	score: smallint().notNull(),
-	fkUserID: integer('fk_user_id').notNull().references(() => users.id),
-	fkCartoonID: integer('fk_cartoon_id').notNull().references(() => cartoons.id),
-	created: timestamp({ withTimezone: true }).defaultNow(),
-	edited: timestamp({ withTimezone: true }).defaultNow(),
-});
-
-// Relations for easier querying
-export const tagsRelations = relations(tags, ({ many }) => ({
-	cartoonTags: many(jtCartoonsTags),
-}));
-
-export const jtCartoonsTagsRelations = relations(jtCartoonsTags, ({ one }) => ({
-	cartoon: one(cartoons, {
-		fields: [jtCartoonsTags.fkCartoonID],
-		references: [cartoons.id],
-	}),
-	tag: one(tags, {
-		fields: [jtCartoonsTags.fkTagID],
-		references: [tags.id],
-	}),
-}));
-
-export const cartoonstaffrelation = pgTable('cartoonstaffrelation', {
-	role: varchar({ length: 64 }),
-	cartoonid: integer().references(() => cartoons.id),
-	staffid: integer().references(() => staff.id),
-	characterid: integer().references(() => characters.id),
-});
-
-export const staffRelations = relations(staff, ({ many }) => ({
-	cartoonStaff: many(jtCartoonsStaff),
-}));
-
-export const jtCartoonsStaffRelations = relations(jtCartoonsStaff, ({ one }) => ({
-	cartoon: one(cartoons, {
-		fields: [jtCartoonsStaff.fkCartoonID],
-		references: [cartoons.id],
-	}),
-	staff: one(staff, {
-		fields: [jtCartoonsStaff.fkStaffID],
-		references: [staff.id],
-	}),
-}));
-
-export const cartoonsRelations = relations(cartoons, ({ many }) => ({
-	cartoonTags: many(jtCartoonsTags),
-	cartoonStaff: many(jtCartoonsStaff),
-}));
+	fkUserId: integer("fk_user_id").notNull(),
+	fkCartoonId: integer("fk_cartoon_id").notNull(),
+	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	foreignKey({
+			columns: [table.fkUserId],
+			foreignColumns: [users.id],
+			name: "reviews_fk_user_id_fkey"
+		}),
+	foreignKey({
+			columns: [table.fkCartoonId],
+			foreignColumns: [cartoons.id],
+			name: "reviews_fk_cartoon_id_fkey"
+		}),
+]);
 
 export type User = InferSelectModel<typeof users>;
 export type Session = InferSelectModel<typeof sessions>;
