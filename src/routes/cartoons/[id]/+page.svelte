@@ -182,7 +182,7 @@
                             cartoon.ageRating !== null ? { label: 'Age Rating', value: cartoon.ageRating } : null,
                             cartoon.airStart !== null ? { label: "Start Date", value: new Date(cartoon.airStart).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
                             cartoon.airEnd !== null ? { label: "End Date", value: new Date(cartoon.airEnd).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
-                            cartoon.country !== null ? { label: 'Country', value: cartoon.country } : null,
+                            cartoon.jtCartoonsCountries && cartoon.jtCartoonsCountries.length > 0 ? { label: 'Countries', value: cartoon.jtCartoonsCountries.map(c => c.country.name).join(', ') } : null,
                         ].filter(detail => detail !== null) as detail}
                             <div>
                                 <dt class="text-sm font-medium text-gray-700">{detail.label}</dt>

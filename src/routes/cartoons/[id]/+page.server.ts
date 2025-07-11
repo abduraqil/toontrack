@@ -33,6 +33,11 @@ export const load: PageServerLoad = async ({ params }) => {
                         staff: true,
                     }
                 },
+                jtCartoonsCountries: {
+                    with: {
+                        country: true
+                    }
+                },
             }
         });
 
