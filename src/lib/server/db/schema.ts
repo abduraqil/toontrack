@@ -44,6 +44,11 @@ export const jtCompaniesCompanyTags = pgTable("jt_companies_company_tags", {
 		}),
 ]);
 
+/*
+ TODO: add foreign key actions on non user tables
+ https://orm.drizzle.team/docs/relations#foreign-key-actions
+	 */
+
 export const companyTags = pgTable("company_tags", {
 	id: integer().primaryKey().notNull(),
 	name: varchar().notNull(),
@@ -281,8 +286,8 @@ export const jtCartoonsCompanies = pgTable("jt_cartoons_companies", {
 		}),
 ]);
 
-export const jtCartoonsStaff = pgTable("jt_cartoons_staff", {
-	role: varchar(),
+export const jtCartoonsStaff = pgTable('jt_cartoons_staff', {
+	role: varchar().notNull(),
 	credited: boolean(),
 	fkLanguageId: integer("fk_language_id"),
 	fkCartoonId: integer("fk_cartoon_id"),

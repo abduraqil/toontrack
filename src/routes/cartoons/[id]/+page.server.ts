@@ -6,27 +6,27 @@ import { cartoons } from '$lib/server/db/schema';
 import '$lib/server/db/relations';
 
 /*TODO
-add in type gaurd for cartoonID
+add in type gaurd for characterID
 */
 
 export const load: PageServerLoad = async ({ params }) => {
     const { id } = params;
-    
+
     // Only allow numeric IDs
     if (!/^\d+$/.test(id)) {
-        throw error(400, 'Invalid cartoon ID format');
+        throw error(400, 'Invalid character ID format');
     }
-    
-    const cartoonID = parseInt(id, 10);
-    
+
+    const characterID = parseInt(id, 10);
+
     // Additional safety check
-    if (cartoonID <= 0) {
-        throw error(400, 'Invalid cartoon ID');
+    if (characterID <= 0) {
+        throw error(400, 'Invalid character ID');
     }
 
     try {
-        const cartoon = await db.query.cartoons.findFirst({
-            where: eq(cartoons.id, cartoonID),
+        const character = await db.query.characters.findFirst({
+            where: eq(characters.id, characterID),
             with: {
                 jtcartoonsStaff: {
                     with: {
@@ -46,16 +46,16 @@ export const load: PageServerLoad = async ({ params }) => {
             }
         });
 
-        if (!cartoon) {
-            throw error(404, 'Cartoon not found');
+        if (!character) {
+            throw error(404, 'character not found');
         }
 
         return {
             cartoon
         };
     } catch (err) {
-        console.error('Error fetching cartoon:', err);
-        throw error(500, 'Failed to load cartoon');
+        console.error('Error fetching character:', err);
+        throw error(500, 'Failed to load character');
     }
 
     
