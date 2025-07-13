@@ -5,14 +5,19 @@ import {
   smallint,
   pgTable,
   boolean,
-  text,
   primaryKey,
-  foreignKey
+  foreignKey,
+  unique
 } from 'drizzle-orm/pg-core';
 
 import type { InferSelectModel, InferInsertModel } from 'drizzle-orm';
-import { relations } from 'drizzle-orm';  // ADD THIS
+import { relations } from 'drizzle-orm';  // TODO: ADD THIS
 import { passive } from 'svelte/legacy';
+
+/*
+ TODO: add foreign key actions on non user tables
+ https://orm.drizzle.team/docs/relations#foreign-key-actions
+	 */
 
 export const languages = pgTable('languages', {
 	id: integer().primaryKey().notNull(),
@@ -43,7 +48,7 @@ export const companies = pgTable('companies', {
 	id: integer().primaryKey().notNull(),
 	name: varchar().notNull(),
 	description: varchar(),
-	coverPic: varchar(),
+	coverPic: varchar('cover_pic'),
 	established: timestamp({ withTimezone: true }),
 	defunct: timestamp({ withTimezone: true }),
 	links: varchar(),
@@ -59,7 +64,7 @@ export const jtCompaniesCompanyTags = pgTable('jt_companies_company_tags', {
 	edited: timestamp({ withTimezone: true }).defaultNow(),
 });
 
-export const jt_companies_countries = pgTable('jt_companies_countries', {
+export const jtCompaniesCountries = pgTable('jt_companies_countries', {
 	fkCompanyId: integer('fk_company_id').references(() => companies.id),
 	fkCountryId: integer('fk_country_id').references(() => countries.id),
 	created: timestamp({ withTimezone: true }).defaultNow(),
@@ -77,7 +82,7 @@ export const staff = pgTable('staff', {
 	id: integer().primaryKey().notNull().unique(),
 	name: varchar().notNull().unique(),
 	description: varchar(),
-	coverPic: varchar(),
+	coverPic: varchar('cover_pic'),
 	sex: boolean(),
 	birthday: timestamp({ withTimezone: true }),
 	deathday: timestamp({ withTimezone: true }),
@@ -111,7 +116,7 @@ export const characters = pgTable('characters', {
 	id: integer().primaryKey().notNull().unique(),
 	name: varchar().notNull().unique(),
 	description: varchar(),
-	coverPic: varchar(),
+	coverPic: varchar('cover_pic'),
 	fkOriginalCreator: integer('fk_original_creator').references(() => staff.id),
 	sex: boolean(),
 	birthday: timestamp({ withTimezone: true }),
@@ -136,18 +141,18 @@ export const cartoonTypes = pgTable('cartoon_types', {
 
 export const cartoons = pgTable('cartoons', {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	name: varchar({ length: 128 }).notNull(),
-	description: varchar({ length: 512 }),
-	coverPic: varchar({ length: 64 }),
+	name: varchar().notNull(),
+	description: varchar(),
+	coverPic: varchar('cover_pic'),
 	seasons: smallint(),
 	episodes: smallint(),
 	duration: smallint(),
 	status: smallint(),
 	airStart: timestamp('air_start'),
 	airEnd: timestamp('air_end'),
-	source: varchar({ length: 64 }),
+	source: varchar(),
 	ageRating: varchar('age_rating'),
-	links: varchar({ length: 512 }),
+	links: varchar(),
 	created: timestamp().defaultNow(),
 	edited: timestamp().defaultNow(),
 });
@@ -184,7 +189,7 @@ export const jtCartoonsCompanies = pgTable('jt_cartoons_companies', {
 });
 
 export const jtCartoonsStaff = pgTable('jt_cartoons_staff', {
-	role: varchar('role', { length: 128 }).notNull(),
+	role: varchar().notNull(),
 	credited: boolean(),
 	fkLanguageID: integer('fk_language_id').notNull(),
 	fkCartoonID: integer('fk_cartoon_id').notNull(),
@@ -292,8 +297,9 @@ export const userLists = pgTable('user_lists', {
 	notes: varchar(),
 	created: timestamp({ withTimezone: true }).defaultNow(),
 	edited: timestamp({ withTimezone: true }).defaultNow(),
-	// TODO:  UNIQUE (fk_cartoon_id, fk_user_id)
-});
+}, (table) => ({
+	first: unique('userListsUniqueConstraint').on(table.fkCartoonID, table.fkUserID),
+}));
 
 export const reviews = pgTable('reviews', {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -306,6 +312,34 @@ export const reviews = pgTable('reviews', {
 });
 
 // Relations for easier querying
+export const languagesRelation = relations(languages, ({ many }) => ({
+	cartoonLanguages: many(jtCartoonsLanguages),
+	languagesStaff: many(jtLanguagesStaff),
+	//TODO jtCartoonsStaff.languages
+}));
+
+export const countriesRelation = relations(countries, ({ many }) => ({
+	cartoonCountries: many(jtCartoonsCountries),
+	companiesCountries: many(jtCompaniesCountries),
+	countriesStaff: many(jtCountriesStaff),
+}));
+
+export const jtCompaniesCompanyTagsRelations = relations(jtCompaniesCompanyTags, ({ one }) => ({
+	cartoon: one(companies, {
+		fields: [jtCompaniesCompanyTags.fkCompanyID],
+		references: [companies.id],
+	}),
+	companyTags: one(companyTags, {
+		fields: [jtCompaniesCompanyTags.fkCompanyTagID],
+		references: [companyTags.id],
+	}),
+}));
+
+export const cartoonsRelations = relations(cartoons, ({ many }) => ({
+	cartoonTags: many(jtCartoonsTags),
+	cartoonStaff: many(jtCartoonsStaff),
+}));
+
 export const tagsRelations = relations(tags, ({ many }) => ({
 	cartoonTags: many(jtCartoonsTags),
 }));
@@ -321,15 +355,8 @@ export const jtCartoonsTagsRelations = relations(jtCartoonsTags, ({ one }) => ({
 	}),
 }));
 
-export const cartoonstaffrelation = pgTable('cartoonstaffrelation', {
-	role: varchar({ length: 64 }),
-	cartoonid: integer().references(() => cartoons.id),
-	staffid: integer().references(() => staff.id),
-	characterid: integer().references(() => characters.id),
-});
-
 export const staffRelations = relations(staff, ({ many }) => ({
-	cartoonStaff: many(jtCartoonsStaff),
+	cartoonsStaff: many(jtCartoonsStaff),
 }));
 
 export const jtCartoonsStaffRelations = relations(jtCartoonsStaff, ({ one }) => ({
@@ -343,10 +370,6 @@ export const jtCartoonsStaffRelations = relations(jtCartoonsStaff, ({ one }) => 
 	}),
 }));
 
-export const cartoonsRelations = relations(cartoons, ({ many }) => ({
-	cartoonTags: many(jtCartoonsTags),
-	cartoonStaff: many(jtCartoonsStaff),
-}));
 
 export type User = InferSelectModel<typeof users>;
 export type Session = InferSelectModel<typeof sessions>;

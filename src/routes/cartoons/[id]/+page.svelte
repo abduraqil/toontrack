@@ -5,7 +5,7 @@
 
     import type { PageData } from './$types';
     export let data: PageData;
-    
+
      $: cartoon = data.cartoon;
 
     let activeTab = 'overview';
@@ -75,34 +75,34 @@
         <div class="h-50 bg-gradient-to-r from-blue-900 to-purple-900 relative overflow-hidden">
             <!-- Optional: Add banner image here -->
         </div>
-        
+
         <!-- White Content Area -->
         <div class="bg-white relative">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="flex flex-col lg:flex-row gap-8">
                     <!-- Cover Image - positioned to overlap banner and white area -->
                     <div class="flex-shrink-0 relative">
-                        <img 
-                            src={'/src/assets/nocover.jpg'} 
+                        <img
+                            src={'/src/assets/nocover.jpg'}
                             alt={cartoon.name}
                             class="w-56 h-80 object-cover rounded-lg shadow-lg -mt-20 relative z-10"
                         />
-                        
+
                         <!-- Action Buttons -->
                         <div class="mt-4 space-y-3">
                             <!--TODO: Add action buttons like add to watched, dropped, etc -->
-                            
+
                             <!-- Favorite Button -->
                             <Favorite></Favorite>
                         </div>
                     </div>
-                    
+
                     <!-- Cartoon Information -->
                     <div class="flex-1 space-y-6">
                         <!-- Title and Basic Info -->
                         <div class="space-y-4">
                             <h1 class="text-4xl font-bold text-gray-900 leading-tight">{cartoon.name}</h1>
-                            
+
                             <!-- Tags/Badges -->
                             <div class="flex flex-wrap items-center gap-3">
                                 {#if cartoon.of_type !== null}
@@ -113,22 +113,22 @@
                                     {formatType(cartoon.of_type)}
                                     </span>
                                 {/if}
-                                {#if cartoon.age_rating !== null}
+                                {#if cartoon.ageRating !== null}
                                     <span class="flex items-center gap-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                                     </svg>
-                                    
-                                    {cartoon.age_rating}
+
+                                    {cartoon.ageRating}
                                     </span>
                                 {/if}
-                                {#if cartoon.air_start && cartoon.air_end}
+                                {#if cartoon.airStart && cartoon.airEnd}
                                     <span class="flex items-center gap-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Zm-.001 4.5h.006v.006h-.006v-.005Zm-2.25.001h.005v.006H9.75v-.006Zm-2.25 0h.005v.005h-.006v-.005Zm6.75-2.247h.005v.005h-.005v-.005Zm0 2.247h.006v.006h-.006v-.006Zm2.25-2.248h.006V15H16.5v-.005Z" />
                                         </svg>
 
-                                        {new Date(cartoon.air_start).getFullYear()}-{new Date(cartoon.air_end).getFullYear()}
+                                        {new Date(cartoon.airStart).getFullYear()}-{new Date(cartoon.airEnd).getFullYear()}
                                     </span>
                                 {/if}
                                 {#if cartoon.episodes !== null}
@@ -151,7 +151,7 @@
                                 {/if}
                             </div>
                         </div>
-                        
+
                         <!-- Description -->
                         {#if cartoon.description != null}
                             <div class="space-y-2">
@@ -179,9 +179,9 @@
                             cartoon.episodes !== null ? { label: 'Episodes', value: cartoon.episodes } : null,
                             cartoon.duration !== null ? { label: 'Duration', value: `${cartoon.duration} min` } : null,
                             cartoon.status !== null ? { label: 'Status', value: formatStatus(cartoon.status) } : null,
-                            cartoon.age_rating !== null ? { label: 'Age Rating', value: cartoon.age_rating } : null,
-                            cartoon.air_start !== null ? { label: "Start Date", value: new Date(cartoon.air_start).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
-                            cartoon.air_end !== null ? { label: "End Date", value: new Date(cartoon.air_end).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
+                            cartoon.ageRating !== null ? { label: 'Age Rating', value: cartoon.ageRating } : null,
+                            cartoon.airStart !== null ? { label: "Start Date", value: new Date(cartoon.airStart).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
+                            cartoon.airEnd !== null ? { label: "End Date", value: new Date(cartoon.airEnd).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
                             cartoon.country !== null ? { label: 'Country', value: cartoon.country } : null,
                         ].filter(detail => detail !== null) as detail}
                             <div>
@@ -191,7 +191,7 @@
                         {/each}
                     </dl>
                 </div>
-                
+
                 <!-- Meta Info -->
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h2 class="text-2xl font-semibold mb-4">Meta Information</h2>
@@ -215,7 +215,7 @@
                     <!-- Tab Navigation -->
                     <div class="flex justify-center border-b border-gray-200">
                         {#each tabs as tab}
-                            <button 
+                            <button
                                 class="
                                     px-6 py-3 text-sm font-medium border-b-2 transition-colors duration-200
                                     {activeTab === tab.id ? 'border-purple-600 text-purple-700 bg-blue-50'
