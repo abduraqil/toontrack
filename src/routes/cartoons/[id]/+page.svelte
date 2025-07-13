@@ -176,6 +176,7 @@
                     <dl class="space-y-3">
                         {#each [
                             cartoon.of_type !== null ? { label: 'Format', value: formatType(cartoon.of_type) } : null,
+                            cartoon.jtCartoonsCartoonTypes && cartoon.jtCartoonsCartoonTypes.length > 0 ? { label: 'Type', value: cartoon.jtCartoonsCartoonTypes.map(ct => ct.cartoonType.name).join(', ') } : null,
                             cartoon.episodes !== null ? { label: 'Episodes', value: cartoon.episodes } : null,
                             cartoon.duration !== null ? { label: 'Duration', value: `${cartoon.duration} min` } : null,
                             cartoon.status !== null ? { label: 'Status', value: formatStatus(cartoon.status) } : null,

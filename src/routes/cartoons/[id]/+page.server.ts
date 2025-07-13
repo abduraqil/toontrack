@@ -38,6 +38,11 @@ export const load: PageServerLoad = async ({ params }) => {
                         country: true
                     }
                 },
+                jtCartoonsCartoonTypes: {
+                    with: {
+                        cartoonType: true
+                    }
+                }
             }
         });
 
@@ -52,4 +57,6 @@ export const load: PageServerLoad = async ({ params }) => {
         console.error('Error fetching cartoon:', err);
         throw error(500, 'Failed to load cartoon');
     }
+
+    
 };

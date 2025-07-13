@@ -25,6 +25,20 @@
         
         return Array.from(grouped.values());
     }
+
+    function convertRole(role: string | null ) {
+        switch (role) {
+            case '0': return 'Unknown';
+            case '1': return 'Creator';
+            case '2': return 'Director';
+            case '3': return 'Cast Member';
+            case '4': return 'Voice Actor';
+            case '5': return 'Composer';
+            case '6': return 'Producer';
+            case '7': return 'Audio';
+            default: return 'Other';
+        }
+    }
     
     // Use the correct property name from your relations
     $: groupedStaff = cartoon.jtcartoonsStaff && cartoon.jtcartoonsStaff.length > 0 
@@ -42,7 +56,7 @@
                         <div class="space-y-1">
                             {#each staff.roles as role}
                                 <span class="inline-block bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full mr-1 mb-1">
-                                    {role}
+                                    {convertRole(role)}
                                 </span>
                             {/each}
                         </div>
