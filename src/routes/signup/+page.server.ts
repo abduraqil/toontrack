@@ -62,7 +62,7 @@ export const actions: Actions = {
         // check if the user already exists
         try {
             const existingUser = await db.query.users.findFirst({
-                where: eq(users.username, username)
+                where: eq(users.name, username)
             }); 
 
             if (existingUser) {
@@ -86,7 +86,7 @@ export const actions: Actions = {
         // create the user
         try {
             let a = await db.insert(users).values({
-                username: username,
+                name: username,
                 // email: email,
                 pwd: hashedPassword,
                 //need to also add "created" timestamp

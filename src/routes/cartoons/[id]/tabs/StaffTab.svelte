@@ -1,6 +1,10 @@
 <script lang="ts">
     export let cartoon: any;
     
+    /* TODO
+    Update href link to link to staff profile page
+    */
+
     // Group staff by name to consolidate roles
     function groupStaffByName(cartoonStaff: any[]) {
         const grouped = new Map();
@@ -16,8 +20,10 @@
             if (grouped.has(name)) {
                 grouped.get(name).roles.push(role);
             } else {
-                grouped.set(name, {
+                grouped.set(name, { // include the staff properties you need
                     name: name,
+                    birthday: staff.birthday || 'Unknown',
+                    coverPic: staff.coverPic || null,
                     roles: [role]
                 });
             }
@@ -51,16 +57,29 @@
         {#if groupedStaff.length > 0}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {#each groupedStaff as staff}
-                    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
-                        <h3 class="font-semibold text-lg text-gray-900 mb-2">{staff.name}</h3>
-                        <div class="space-y-1">
-                            {#each staff.roles as role}
-                                <span class="inline-block bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full mr-1 mb-1">
-                                    {convertRole(role)}
-                                </span>
-                            {/each}
+                    <a href="/home"> 
+                        <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex overflow-hidden h-24">
+                            <div class="flex-1 p-4 flex flex-col justify-center">
+                                <h3 class="font-semibold text-lg text-gray-900 mb-1 line-clamp-1">{staff.name}</h3>
+                                <div class="flex flex-wrap gap-1">
+                                    {#each staff.roles as role}
+                                        <span class="inline-block bg-purple-100 text-gray-800 text-xs px-2 py-1 rounded-full">
+                                            {convertRole(role)}
+                                        </span>
+                                    {/each}
+                                </div>
+                            </div>
+                            <div class="w-24 h-24">
+                                {#if staff.coverPic}
+                                <img 
+                                    src={staff.coverPic}
+                                    alt={staff.name}
+                                    class="w-full h-full object-cover"
+                                />
+                                {/if}
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 {/each}
             </div>
         {:else}

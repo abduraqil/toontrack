@@ -82,11 +82,13 @@
                 <div class="flex flex-col lg:flex-row gap-8">
                     <!-- Cover Image - positioned to overlap banner and white area -->
                     <div class="flex-shrink-0 relative">
-                        <img
-                            src={'/src/assets/nocover.jpg'}
-                            alt={cartoon.name}
-                            class="w-56 h-80 object-cover rounded-lg shadow-lg -mt-20 relative z-10"
-                        />
+                        <div class="w-56 h-80 flex items-center justify-center relative -mt-20 z-10 rounded-lg">
+                            <img
+                                src={cartoon.coverPic ? cartoon.coverPic : '/src/assets/nocover.jpg'}
+                                alt={cartoon.name}
+                                class="object-contain rounded-lg shadow-lg"
+                            />
+                        </div>
 
                         <!-- Action Buttons -->
                         <div class="mt-4 space-y-3">
@@ -174,9 +176,7 @@
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h2 class="text-2xl font-semibold mb-4">Details</h2>
                     <dl class="space-y-3">
-                        {#each [
-                            cartoon.of_type !== null ? { label: 'Format', value: formatType(cartoon.of_type) } : null,
-                            cartoon.jtCartoonsCartoonTypes && cartoon.jtCartoonsCartoonTypes.length > 0 ? { label: 'Type', value: cartoon.jtCartoonsCartoonTypes.map(ct => ct.cartoonType.name).join(', ') } : null,
+                        {#each [                            cartoon.jtCartoonsCartoonTypes && cartoon.jtCartoonsCartoonTypes.length > 0 ? { label: 'Type', value: cartoon.jtCartoonsCartoonTypes.map(ct => ct.cartoonType.name).join(', ') } : null,
                             cartoon.episodes !== null ? { label: 'Episodes', value: cartoon.episodes } : null,
                             cartoon.duration !== null ? { label: 'Duration', value: `${cartoon.duration} min` } : null,
                             cartoon.status !== null ? { label: 'Status', value: formatStatus(cartoon.status) } : null,

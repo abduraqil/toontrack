@@ -30,7 +30,7 @@ export const load: PageServerLoad = async ({ params }) => {
             with: {
                 jtcartoonsStaff: {
                     with: {
-                        staff: true,
+                        staff: true, // not sure if this includes all cols from staff
                     }
                 },
                 jtCartoonsCountries: {
@@ -42,7 +42,7 @@ export const load: PageServerLoad = async ({ params }) => {
                     with: {
                         cartoonType: true
                     }
-                }
+                },
             }
         });
 

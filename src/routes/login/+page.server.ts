@@ -42,9 +42,10 @@ export const actions = {
         try {
             console.log('Login attempt:', { username, password });
             const user = await db.query.users.findFirst({
-                where: eq(users.username, username),
-                columns: { id: true, username: true, pwd: true }
+                where: eq(users.name, username),
+                //columns: { id: true, name: true, pwd: true }
             });
+            
 
             if (!user) {
                 return fail(400, {
@@ -68,8 +69,11 @@ export const actions = {
             const token = generateSessionToken();
             const { expiresAt } = await createSession(token, user.id);
             
+            // Convert expiresAt to Date if it's a string
+            const expiresDate = typeof expiresAt === 'string' ? new Date(expiresAt) : expiresAt;
+
             // Pass full event to cookie functions
-            setSessionTokenCookie(event, token, expiresAt);
+            setSessionTokenCookie(event, token, expiresDate);
 
             console.log('Session creation result:', { token, expiresAt });
             console.log('User from DB:', user);
