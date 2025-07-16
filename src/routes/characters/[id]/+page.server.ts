@@ -4,6 +4,7 @@ import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import { characters, staff } from '$lib/server/db/schema';
 import { jtCartoonsStaff } from '$lib/server/db/schema';
+import '$lib/server/db/relations';
 
 /*TODO
 add in type guard for characterID
@@ -25,30 +26,32 @@ export const load: PageServerLoad = async ({ params }) => {
     }
 
     try {
-        const character = await db.query.characters.findFirst({
-            where: eq(characters.id, characterID),
-            // with: {
-            //     characterStaff: {
-            //         with: {staff: true}
-            //     }
-            // }
-        });
-        const cartoonStaff = await db.query.jtCartoonsStaff.findFirst({
-            where: eq(jtCartoonsStaff.fkCharacterID, characterID),
-        });
-        const creator = await db.query.staff.findFirst({
-            where: eq(staff.id, character?.fkOriginalCreator),
-        });
-	console.log(creator);
+    const character = await db.query.characters.findFirst({
+        where: eq(characters.id, characterID),
+        with: {
+            jtCartoonsStaffs: {
+                with: {
+                    staff: true
+                }
+            },
+        }
+    });
+        // const cartoonStaff = await db.query.jtCartoonsStaff.findFirst({
+        //     where: eq(jtCartoonsStaff.fkCharacterID, characterID),
+        // });
+        // const creator = await db.query.staff.findFirst({
+        //     where: eq(staff.id, character?.fkOriginalCreator),
+        // });
+	// console.log(creator);
 	console.log(character);
-	console.log(cartoonStaff);
+	// console.log(cartoonStaff);
 
         if (!character) {
             throw error(404, 'character not found');
         }
 
         return {
-            character,cartoonStaff,creator
+            character,
         };
     } catch (err) {
         console.error('Error fetching character:', err);

@@ -77,18 +77,18 @@
 
 								{#if character.birthday!== null}
 									<span class="flex items-center gap-1">
-										<b>Birthday:</b> {character.birthday.toDateString()}
+										<b>Birthday:</b> {new Date(character.birthday).toDateString()}
 									</span>
 								{/if}
 								{#if character.inception!== null}
 									<span class="flex items-center gap-1">
-										<b>Inception:</b> {character.inception.toDateString()}
+										<b>Inception:</b> {new Date(character.inception).toDateString()}
 									</span>
 								{/if}
 
-								{#if data.creator?.name!== null}
+								{#if character.fkOriginalCreator !== null}
 									<span class="flex items-center gap-1">
-										<b>Creator(s):</b> {data.creator?.name}
+										<b>Creator ID:</b> {character.fkOriginalCreator}
 									</span>
 								{/if}
 							</div>
