@@ -2,6 +2,7 @@
     import Favorite from '../../../assets/components/favorite.svelte';
     import OverviewTab from './tabs/OverviewTab.svelte';
     import StaffTab from './tabs/StaffTab.svelte';
+    import ReviewTab from './tabs/ReviewTab.svelte';
 
     import type { PageData } from './$types';
     export let data: PageData;
@@ -13,6 +14,7 @@
     const tabs = [
         { id: 'overview', label: 'Overview', component: OverviewTab },
         { id: 'staff', label: 'Staff', component: StaffTab },
+        { id: 'reviews', label: 'Reviews', component: ReviewTab}
     ];
 
     function setActiveTab(tab: string) {
@@ -72,7 +74,7 @@
     <!-- Banner Section -->
     <div class="relative">
         <!-- Banner Background -->
-        <div class="h-50 bg-gradient-to-r from-blue-900 to-purple-900 relative overflow-hidden">
+        <div class="h-35 bg-gradient-to-r from-blue-900 to-purple-900 relative overflow-hidden">
             <!-- Optional: Add banner image here -->
         </div>
 

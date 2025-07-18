@@ -132,7 +132,7 @@
 				 </div>
 				 <!-- Tab Content -->
 				<div class="bg-white rounded-lg shadow-md p-6 pt-6 mt-4">
-					<svelte:component this={currentTabData.component} {character}/>
+					<!-- <svelte:component this={currentTabData.component} {character}/> -->
 				</div>
 			</div>
 		</div>
