@@ -2,46 +2,69 @@ import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
-import { cartoons } from '$lib/server/db/schema';
+import { staff } from '$lib/server/db/schema';
+import '$lib/server/db/schema';
 
 /*TODO
-add in type gaurd for cartoonID
+add in type gaurd for staffID
 */
 
 export const load: PageServerLoad = async ({ params }) => {
     const { id } = params;
-    
+
     // Only allow numeric IDs
     if (!/^\d+$/.test(id)) {
-        throw error(400, 'Invalid cartoon ID format');
+        throw error(400, 'Invalid staff ID format');
     }
-    
-    const cartoonID = parseInt(id, 10);
-    
+
+    const staffID = parseInt(id, 10);
+
     // Additional safety check
-    if (cartoonID <= 0) {
-        throw error(400, 'Invalid cartoon ID');
+    if (staffID <= 0) {
+        throw error(400, 'Invalid staff ID');
     }
 
     try {
-        const cartoon = await db.query.cartoons.findFirst({
-            where: eq(cartoons.id, cartoonID),
+        const staffMember = await db.query.staff.findFirst({
+            where: eq(staff.id, staffID),
             with: {
-                cartoonStaff: {
-                    with: {staff: true}
+                jtCartoonsStaff: {
+                    with: {
+                        cartoon: true,
+                        character: true,
+                        language: true
+                    }
                 }
             }
         });
+    staffMember?.jtCartoonsStaff.forEach(role => {
+     role: role.role
+     character: {
+         id: role.fkCharacterId
+         name: role.character?.name
+     }
+     language: {
+         id: role.fkLanguageId
+         name: role.language?.name
+     }
+     cartoon: {
+         id: role.cartoon?.id
+         name: role.cartoon?.name
+         start: role.cartoon?.airStart
+         end: role.cartoon?.airEnd
+     }
+    })
+    console.log(staffMember?.jtCartoonsStaff[0].cartoon)
 
-        if (!cartoon) {
-            throw error(404, 'Cartoon not found');
+        if (!staffMember) {
+            throw error(404, 'staff not found');
         }
 
         return {
-            cartoon,
+            staffMember,
         };
     } catch (err) {
-        console.error('Error fetching cartoon:', err);
-        throw error(500, 'Failed to load cartoon');
+        console.error('Error fetching staff:', err);
+        throw error(500, 'Failed to load staff');
     }
 };

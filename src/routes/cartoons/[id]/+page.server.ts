@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ params }) => {
         const cartoon = await db.query.cartoons.findFirst({
             where: eq(cartoons.id, cartoonID),
             with: {
-                jtcartoonsStaff: {
+                jtCartoonsStaff: {
                     with: {
                         staff: true, // not sure if this includes all cols from staff
                     }
@@ -58,5 +58,4 @@ export const load: PageServerLoad = async ({ params }) => {
         throw error(500, 'Failed to load cartoon');
     }
 
-    
 };

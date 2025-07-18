@@ -34,19 +34,6 @@
         }
      }
 
-    //  function formatStatusColor(status: number | null) {
-    //     switch (status) {
-    //         case 0: return 'bg-gray-500';
-    //         case 1: return 'bg-yellow-500';
-    //         case 2: return 'bg-green-500';
-    //         case 3: return 'bg-blue-500';
-    //         case 4: return 'bg-orange-500';
-    //         case 5: return 'bg-red-500';
-    //         case 6: return 'bg-purple-500';
-    //         default: return 'bg-gray-500';
-    //     }
-    //  }
-
      function formatType(type: number | null) {
         switch (type) {
             case 0: return 'Unknown';
@@ -120,7 +107,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                                     </svg>
-                                    
+
                                     {cartoon.ageRating}
                                     </span>
                                 {/if}
@@ -184,22 +171,6 @@
                             cartoon.airStart !== null ? { label: "Start Date", value: new Date(cartoon.airStart).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
                             cartoon.airEnd !== null ? { label: "End Date", value: new Date(cartoon.airEnd).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
                             cartoon.jtCartoonsCountries && cartoon.jtCartoonsCountries.length > 0 ? { label: 'Countries', value: cartoon.jtCartoonsCountries.map(c => c.country.name).join(', ') } : null,
-                        ].filter(detail => detail !== null) as detail}
-                            <div>
-                                <dt class="text-sm font-medium text-gray-700">{detail.label}</dt>
-                                <dd class="mt-1 text-gray-900">{detail.value}</dd>
-                            </div>
-                        {/each}
-                    </dl>
-                </div>
-
-                <!-- Meta Info -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-2xl font-semibold mb-4">Meta Information</h2>
-                    <dl class="space-y-3">
-                        {#each [
-                            cartoon.created !== null ? { label: 'Created', value: new Date(cartoon.created).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
-                            cartoon.edited !== null ? { label: 'Updated', value: new Date(cartoon.edited).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
                         ].filter(detail => detail !== null) as detail}
                             <div>
                                 <dt class="text-sm font-medium text-gray-700">{detail.label}</dt>

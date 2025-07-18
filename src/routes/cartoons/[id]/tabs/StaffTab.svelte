@@ -1,6 +1,6 @@
 <script lang="ts">
     export let cartoon: any;
-    
+
     /* TODO
     Update href link to link to staff profile page
     */
@@ -8,14 +8,15 @@
     // Group staff by name to consolidate roles
     function groupStaffByName(cartoonStaff: any[]) {
         const grouped = new Map();
-        
+
         cartoonStaff.forEach(staffRelation => {
             // Access the staff data through the relation
             const staff = staffRelation.staff;
             const role = staffRelation.role;
-            
+            const id = staffRelation.fkStaffId;
+
             if (!staff) return; // Skip if staff data is missing
-            
+
             const name = staff.name;
             if (grouped.has(name)) {
                 grouped.get(name).roles.push(role);
@@ -24,11 +25,12 @@
                     name: name,
                     birthday: staff.birthday || 'Unknown',
                     coverPic: staff.coverPic || null,
-                    roles: [role]
+                    roles: [role],
+                    id: id
                 });
             }
         });
-        
+        console.log(Array.from(grouped.values()));
         return Array.from(grouped.values());
     }
 
@@ -45,10 +47,10 @@
             default: return 'Other';
         }
     }
-    
+
     // Use the correct property name from your relations
-    $: groupedStaff = cartoon.jtcartoonsStaff && cartoon.jtcartoonsStaff.length > 0 
-        ? groupStaffByName(cartoon.jtcartoonsStaff) 
+    $: groupedStaff = cartoon.jtCartoonsStaff && cartoon.jtCartoonsStaff.length > 0
+        ? groupStaffByName(cartoon.jtCartoonsStaff)
         : [];
 </script>
 
@@ -57,7 +59,7 @@
         {#if groupedStaff.length > 0}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {#each groupedStaff as staff}
-                    <a href="/home"> 
+                    <a href="/staff/{staff.id}">
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex overflow-hidden h-24">
                             <div class="flex-1 p-4 flex flex-col justify-center">
                                 <h3 class="font-semibold text-lg text-gray-900 mb-1 line-clamp-1">{staff.name}</h3>
@@ -71,7 +73,7 @@
                             </div>
                             <div class="w-24 h-24">
                                 {#if staff.coverPic}
-                                <img 
+                                <img
                                     src={staff.coverPic}
                                     alt={staff.name}
                                     class="w-full h-full object-cover"
