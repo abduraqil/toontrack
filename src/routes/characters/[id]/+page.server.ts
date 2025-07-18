@@ -2,8 +2,7 @@ import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
-import { characters, staff } from '$lib/server/db/schema';
-import { jtCartoonsStaff } from '$lib/server/db/schema';
+import { characters } from '$lib/server/db/schema';
 import '$lib/server/db/relations';
 
 /*TODO
@@ -29,22 +28,19 @@ export const load: PageServerLoad = async ({ params }) => {
     const character = await db.query.characters.findFirst({
         where: eq(characters.id, characterID),
         with: {
-            jtCartoonsStaffs: {
+            jtCartoonsStaff: {
                 with: {
                     staff: true
                 }
             },
+            staff: {
+                with: {
+                    // id: true
+                }
+            },
         }
     });
-        // const cartoonStaff = await db.query.jtCartoonsStaff.findFirst({
-        //     where: eq(jtCartoonsStaff.fkCharacterID, characterID),
-        // });
-        // const creator = await db.query.staff.findFirst({
-        //     where: eq(staff.id, character?.fkOriginalCreator),
-        // });
-	// console.log(creator);
-	console.log(character);
-	// console.log(cartoonStaff);
+	// console.log(character);
 
         if (!character) {
             throw error(404, 'character not found');

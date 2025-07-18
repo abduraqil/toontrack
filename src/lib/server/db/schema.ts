@@ -1,4 +1,4 @@
-import { 
+import {
 	pgTable,
 	integer,
 	varchar,
@@ -18,19 +18,19 @@ export const companies = pgTable("companies", {
 	name: varchar().notNull(),
 	description: varchar(),
 	coverPic: varchar("cover_pic"),
-	established: timestamp({ withTimezone: true, mode: 'string' }),
-	defunct: timestamp({ withTimezone: true, mode: 'string' }),
+	established: timestamp({ mode: 'date' }),
+	defunct: timestamp({ mode: 'date' }),
 	links: varchar(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 });
 
 export const jtCompaniesCompanyTags = pgTable("jt_companies_company_tags", {
 	fkCompanyId: integer("fk_company_id").notNull(),
 	fkCompanyTagId: integer("fk_company_tag_id").notNull(),
 	score: smallint(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkCompanyId],
@@ -52,15 +52,15 @@ export const jtCompaniesCompanyTags = pgTable("jt_companies_company_tags", {
 export const companyTags = pgTable("company_tags", {
 	id: integer().primaryKey().notNull(),
 	name: varchar().notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 });
 
 export const jtCompaniesCountries = pgTable("jt_companies_countries", {
 	fkCompanyId: integer("fk_company_id").notNull(),
 	fkCountryId: integer("fk_country_id"),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkCompanyId],
@@ -80,23 +80,36 @@ export const countries = pgTable("countries", {
 	iso316613: varchar("iso3166_1_3"),
 	cid: integer(),
 	continent: varchar(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 });
 
 export const languages = pgTable("languages", {
 	id: integer().primaryKey().notNull(),
 	name: varchar().notNull(),
 	iso639: varchar(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+});
+
+export const staff = pgTable("staff", {
+	id: integer().primaryKey().notNull(),
+	name: varchar().notNull(),
+	description: varchar(),
+	coverPic: varchar("cover_pic"),
+	sex: boolean(),
+	birthday: timestamp({ mode: 'date' }),
+	deathday: timestamp({ mode: 'date' }),
+	links: varchar(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 });
 
 export const jtLanguagesStaff = pgTable("jt_languages_staff", {
 	fkLanguageId: integer("fk_language_id").notNull(),
 	fkStaffId: integer("fk_staff_id").notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkLanguageId],
@@ -110,31 +123,18 @@ export const jtLanguagesStaff = pgTable("jt_languages_staff", {
 		}),
 ]);
 
-export const staff = pgTable("staff", {
-	id: integer().primaryKey().notNull(),
-	name: varchar().notNull(),
-	description: varchar(),
-	coverPic: varchar("cover_pic"),
-	sex: boolean(),
-	birthday: timestamp({ withTimezone: true, mode: 'string' }),
-	deathday: timestamp({ withTimezone: true, mode: 'string' }),
-	links: varchar(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-});
-
 export const occupations = pgTable("occupations", {
 	id: integer().primaryKey().notNull(),
 	name: varchar().notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 });
 
 export const jtOccupationsStaff = pgTable("jt_occupations_staff", {
 	fkOccupationId: integer("fk_occupation_id").notNull(),
 	fkStaffId: integer("fk_staff_id").notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkOccupationId],
@@ -151,8 +151,8 @@ export const jtOccupationsStaff = pgTable("jt_occupations_staff", {
 export const jtCountriesStaff = pgTable("jt_countries_staff", {
 	fkCountryId: integer("fk_country_id").notNull(),
 	fkStaffId: integer("fk_staff_id").notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkCountryId],
@@ -173,10 +173,10 @@ export const characters = pgTable("characters", {
 	coverPic: varchar("cover_pic"),
 	fkOriginalCreator: integer("fk_original_creator"),
 	sex: boolean(),
-	birthday: timestamp({ withTimezone: true, mode: 'string' }),
-	inception: timestamp({ withTimezone: true, mode: 'string' }),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	birthday: timestamp({ mode: 'date' }),
+	inception: timestamp({mode: 'date' }),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkOriginalCreator],
@@ -195,21 +195,21 @@ export const cartoons = pgTable("cartoons", {
 	episodes: smallint(),
 	duration: smallint(),
 	status: smallint(),
-	airStart: timestamp("air_start", { withTimezone: true, mode: 'string' }),
-	airEnd: timestamp("air_end", { withTimezone: true, mode: 'string' }),
+	airStart: timestamp("air_start", { mode: 'date' }),
+	airEnd: timestamp("air_end", { mode: 'date' }),
 	source: varchar(),
 	ageRating: varchar("age_rating"),
 	links: varchar(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 });
 
 export const jtCartoonsCartoonTypes = pgTable("jt_cartoons_cartoon_types", {
 	score: smallint().default(0),
 	fkCartoonId: integer("fk_cartoon_id").notNull(),
 	fkCartoonTypeId: integer("fk_cartoon_type_id").notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkCartoonId],
@@ -226,16 +226,16 @@ export const jtCartoonsCartoonTypes = pgTable("jt_cartoons_cartoon_types", {
 export const cartoonTypes = pgTable("cartoon_types", {
 	id: integer().primaryKey().notNull(),
 	name: varchar().notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 });
 
 export const jtCartoonsLanguages = pgTable("jt_cartoons_languages", {
 	score: smallint().default(0),
 	fkCartoonId: integer("fk_cartoon_id").notNull(),
 	fkLanguageId: integer("fk_language_id").notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkCartoonId],
@@ -252,8 +252,8 @@ export const jtCartoonsLanguages = pgTable("jt_cartoons_languages", {
 export const jtCartoonsCountries = pgTable("jt_cartoons_countries", {
 	fkCartoonId: integer("fk_cartoon_id").notNull(),
 	fkCountryId: integer("fk_country_id").notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkCartoonId],
@@ -271,8 +271,8 @@ export const jtCartoonsCompanies = pgTable("jt_cartoons_companies", {
 	role: smallint().default(0),
 	fkCartoonId: integer("fk_cartoon_id").notNull(),
 	fkCompanyId: integer("fk_company_id").notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkCartoonId],
@@ -293,8 +293,8 @@ export const jtCartoonsStaff = pgTable('jt_cartoons_staff', {
 	fkCartoonId: integer("fk_cartoon_id"),
 	fkStaffId: integer("fk_staff_id"),
 	fkCharacterId: integer("fk_character_id"),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkLanguageId],
@@ -323,8 +323,8 @@ export const jtCartoonsTags = pgTable("jt_cartoons_tags", {
 	fkTagId: integer("fk_tag_id").notNull(),
 	score: smallint(),
 	spoiler: boolean(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkCartoonId],
@@ -341,8 +341,8 @@ export const jtCartoonsTags = pgTable("jt_cartoons_tags", {
 export const tags = pgTable("tags", {
 	id: integer().primaryKey().notNull(),
 	name: varchar().notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 });
 
 export const cartoonStats = pgTable("cartoon_stats", {
@@ -352,8 +352,8 @@ export const cartoonStats = pgTable("cartoon_stats", {
 	popularity: integer(),
 	members: integer(),
 	favorites: integer(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkCartoonId],
@@ -368,9 +368,9 @@ export const users = pgTable("users", {
 	description: varchar(),
 	coverPic: varchar("cover_pic"),
 	pwd: varchar({ length: 256 }).notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	lastLogin: timestamp("last_login", { withTimezone: true, mode: 'string' }),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	lastLogin: timestamp("last_login", { withTimezone: true, mode: 'date' }),
 }, (table) => [
 	unique("users_name_key").on(table.name),
 ]);
@@ -378,9 +378,9 @@ export const users = pgTable("users", {
 export const sessions = pgTable("sessions", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "sessions_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
 	fkUserId: integer("fk_user_id").notNull(),
-	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'string' }).notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'date' }).notNull(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkUserId],
@@ -394,8 +394,8 @@ export const profileComments = pgTable("profile_comments", {
 	fkCommenterId: integer("fk_commenter_id").notNull(),
 	userComment: varchar("user_comment").notNull(),
 	fkUserId: integer("fk_user_id").notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkUserId],
@@ -412,8 +412,8 @@ export const profileComments = pgTable("profile_comments", {
 export const follows = pgTable("follows", {
 	fkFollowingId: integer("fk_following_id"),
 	fkFollowerId: integer("fk_follower_id"),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkFollowingId],
@@ -433,13 +433,13 @@ export const userLists = pgTable("user_lists", {
 	fkCartoonId: integer("fk_cartoon_id").notNull(),
 	status: smallint().notNull(),
 	score: smallint(),
-	startDate: timestamp("start_date", { withTimezone: true, mode: 'string' }),
-	finishDate: timestamp("finish_date", { withTimezone: true, mode: 'string' }),
+	startDate: timestamp("start_date", { withTimezone: true, mode: 'date' }),
+	finishDate: timestamp("finish_date", { withTimezone: true, mode: 'date' }),
 	rewatches: smallint(),
 	episodesWatched: smallint("episodes_watched"),
 	notes: varchar(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 	favorite: smallint(),
 }, (table) => [
 	foreignKey({
@@ -461,8 +461,8 @@ export const reviews = pgTable("reviews", {
 	score: smallint().notNull(),
 	fkUserId: integer("fk_user_id").notNull(),
 	fkCartoonId: integer("fk_cartoon_id").notNull(),
-	created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
 	foreignKey({
 			columns: [table.fkUserId],

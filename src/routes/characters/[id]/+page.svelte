@@ -77,18 +77,19 @@
 
 								{#if character.birthday!== null}
 									<span class="flex items-center gap-1">
-										<b>Birthday:</b> {new Date(character.birthday).toDateString()}
+										<b>Birthday:</b> {character.birthday.toDateString()}
 									</span>
 								{/if}
 								{#if character.inception!== null}
 									<span class="flex items-center gap-1">
-										<b>Inception:</b> {new Date(character.inception).toDateString()}
+										<b>First Appearance:</b> {character.inception.toDateString()}
 									</span>
 								{/if}
 
 								{#if character.fkOriginalCreator !== null}
 									<span class="flex items-center gap-1">
-										<b>Creator ID:</b> {character.fkOriginalCreator}
+										<b>Creator:</b>
+                    <a href="/staff/{character.fkOriginalCreator}">{character.staff.name}</a>
 									</span>
 								{/if}
 							</div>

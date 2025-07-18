@@ -63,7 +63,7 @@ export const jtCompaniesCountriesRelations = relations(jtCompaniesCountries, ({o
 
 export const countriesRelations = relations(countries, ({many}) => ({
 	jtCompaniesCountries: many(jtCompaniesCountries),
-	jtCountriesStaffs: many(jtCountriesStaff),
+	jtCountriesStaff: many(jtCountriesStaff),
 	jtCartoonsCountries: many(jtCartoonsCountries),
 }));
 
@@ -79,17 +79,17 @@ export const jtLanguagesStaffRelations = relations(jtLanguagesStaff, ({one}) => 
 }));
 
 export const languagesRelations = relations(languages, ({many}) => ({
-	jtLanguagesStaffs: many(jtLanguagesStaff),
+	jtLanguagesStaff: many(jtLanguagesStaff),
 	jtCartoonsLanguages: many(jtCartoonsLanguages),
-	jtCartoonsStaffs: many(jtCartoonsStaff),
+	jtCartoonsStaff: many(jtCartoonsStaff),
 }));
 
 export const staffRelations = relations(staff, ({many}) => ({
-	jtLanguagesStaffs: many(jtLanguagesStaff),
-	jtOccupationsStaffs: many(jtOccupationsStaff),
-	jtCountriesStaffs: many(jtCountriesStaff),
+	jtLanguagesStaff: many(jtLanguagesStaff),
+	jtOccupationsStaff: many(jtOccupationsStaff),
+	jtCountriesStaff: many(jtCountriesStaff),
 	characters: many(characters),
-	jtCartoonsStaffs: many(jtCartoonsStaff),
+	jtCartoonsStaff: many(jtCartoonsStaff),
 }));
 
 export const jtOccupationsStaffRelations = relations(jtOccupationsStaff, ({one}) => ({
@@ -104,7 +104,7 @@ export const jtOccupationsStaffRelations = relations(jtOccupationsStaff, ({one})
 }));
 
 export const occupationsRelations = relations(occupations, ({many}) => ({
-	jtOccupationsStaffs: many(jtOccupationsStaff),
+	jtOccupationsStaff: many(jtOccupationsStaff),
 }));
 
 export const jtCountriesStaffRelations = relations(jtCountriesStaff, ({one}) => ({
@@ -123,7 +123,8 @@ export const charactersRelations = relations(characters, ({one, many}) => ({
 		fields: [characters.fkOriginalCreator],
 		references: [staff.id]
 	}),
-	jtCartoonsStaffs: many(jtCartoonsStaff),
+	jtCartoonsStaff: many(jtCartoonsStaff),
+	cartoons: many(jtCartoonsStaff),
 }));
 
 export const jtCartoonsCartoonTypesRelations = relations(jtCartoonsCartoonTypes, ({one}) => ({
@@ -142,7 +143,7 @@ export const cartoonsRelations = relations(cartoons, ({many}) => ({
 	jtCartoonsLanguages: many(jtCartoonsLanguages),
 	jtCartoonsCountries: many(jtCartoonsCountries),
 	jtCartoonsCompanies: many(jtCartoonsCompanies),
-	jtcartoonsStaff: many(jtCartoonsStaff),
+	jtCartoonsStaff: many(jtCartoonsStaff),
 	jtCartoonsTags: many(jtCartoonsTags),
 	cartoonStats: many(cartoonStats),
 	userLists: many(userLists),
