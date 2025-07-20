@@ -39,8 +39,8 @@
 
 	$: sortedReviews = [...cartoon.reviews].sort((a, b) => {
 		if (currentSort === 'Date') {
-			const aDate = new Date(a.createdAt).getTime();
-			const bDate = new Date(b.createdAt).getTime();
+			const aDate = new Date(a.created).getTime();
+			const bDate = new Date(b.created).getTime();
 			return isAscending ? aDate - bDate : bDate - aDate;
 		}
 		if (currentSort === 'Score') {
@@ -61,7 +61,7 @@
 <div class="space-y-4">
 	<div class="prose max-w-none">
 		<div class="flex items-center gap-2">
-			<div>
+			<div class="flex items-center gap-2 pb-3.5">
 				<span class="text-sm font-medium text-gray-700">Sort by</span>
 				<!-- Sort By Dropdown -->
 				<div class="relative inline-block text-left" id="sort-dropdown">
