@@ -269,6 +269,7 @@ export const jtCartoonsCountries = pgTable("jt_cartoons_countries", {
 
 export const jtCartoonsCompanies = pgTable("jt_cartoons_companies", {
 	role: smallint().default(0),
+	credited: boolean(),
 	fkCartoonId: integer("fk_cartoon_id").notNull(),
 	fkCompanyId: integer("fk_company_id").notNull(),
 	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
@@ -287,7 +288,7 @@ export const jtCartoonsCompanies = pgTable("jt_cartoons_companies", {
 ]);
 
 export const jtCartoonsStaff = pgTable('jt_cartoons_staff', {
-	role: varchar().notNull(),
+	role: smallint().notNull(),
 	credited: boolean(),
 	fkLanguageId: integer("fk_language_id"),
 	fkCartoonId: integer("fk_cartoon_id"),

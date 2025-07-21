@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ params }) => {
     }
 
     try {
-        const staffMember = await db.query.staff.findFirst({
+        const tmpStaffer = await db.query.staff.findFirst({
             where: eq(staff.id, staffID),
             with: {
                 jtCartoonsStaff: {
@@ -37,31 +37,52 @@ export const load: PageServerLoad = async ({ params }) => {
                 }
             }
         });
-    staffMember?.jtCartoonsStaff.forEach(role => {
-     role: role.role
-     character: {
-         id: role.fkCharacterId
-         name: role.character?.name
-     }
-     language: {
-         id: role.fkLanguageId
-         name: role.language?.name
-     }
-     cartoon: {
-         id: role.cartoon?.id
-         name: role.cartoon?.name
-         start: role.cartoon?.airStart
-         end: role.cartoon?.airEnd
-     }
-    })
-    console.log(staffMember?.jtCartoonsStaff[0].cartoon)
 
-        if (!staffMember) {
+        if (!tmpStaffer) {
             throw error(404, 'staff not found');
         }
 
+        let roles: any[] = []
+        tmpStaffer?.jtCartoonsStaff.forEach(role => {
+            roles = roles.concat(
+                {
+                    role: role.role,
+                    character: {
+                        id: role.fkCharacterId,
+                        name: role.character?.name,
+                        coverPic: role.character?.coverPic,
+                    },
+                    language: {
+                        id: role.fkLanguageId,
+                        name: role.language?.name,
+                    },
+                    cartoon: {
+                        id: role.cartoon?.id,
+                        name: role.cartoon?.name,
+                        start: role.cartoon?.airStart,
+                        end: role.cartoon?.airEnd,
+                        coverPic: role.cartoon?.coverPic,
+                    },
+                }
+            )
+        })
+
+        let staffer = {
+            id: tmpStaffer?.id,
+            name: tmpStaffer?.name,
+            description: tmpStaffer?.description,
+            coverPic: tmpStaffer?.coverPic,
+            sex: tmpStaffer?.sex,
+            birthday: tmpStaffer?.birthday,
+            deathday: tmpStaffer?.deathday,
+            links: tmpStaffer?.links,
+            roles: roles
+        }
+
+        console.log(staffer)
+
         return {
-            staffMember,
+            staffer
         };
     } catch (err) {
         console.error('Error fetching staff:', err);

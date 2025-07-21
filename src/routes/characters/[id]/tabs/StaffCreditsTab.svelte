@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let staffer: any;
+    export let character: any;
 
     /* TODO
     Update href link to link to role profile page
@@ -20,22 +20,40 @@
     }
 
     // Use the correct property name from your relations
-    let roles = staffer.roles.filter((x: { role: number; }) => x.role != 4)
+
+    let roles = character.roles;
     $: roles
 </script>
 
 <div class="space-y-4">
     <div class="prose max-w-none">
         {#if roles.length > 0}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                 {#each roles as role}
                     <!-- <a href="/cartoons/{role.cartoon.id}"> -->
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex overflow-hidden h-24">
+                            <div class="w-24 h-24">
+                                <img
+                                    src={role.staff.coverPic ? role.staff.coverPic : '/src/assets/nocover.jpg'}
+                                    alt={role.staff.name}
+                                    class="w-full h-full object-cover"
+                                />
+                            </div>
                             <div class="flex-1 p-4 flex flex-col justify-center">
+                                <!-- <h3 class="font-semibold text-lg text-gray-900 mb-1 line-clamp-1">{convertRole(role.role)}</h3> -->
+                                {#if role.role == 4}
+                                    <a href="/staff/{role.staff.id}" class="font-semibold text-sm text-gray-900 mb-1 line-clamp-1">{role.staff.name}</a>
+                                    <a style="display: flex; justify-content: flex-end" href="/cartoons/{role.cartoon.id}" class="font-semibold text-sm text-gray-900 mb-1 line-clamp-1">{role.cartoon.name}</a>
+                                {:else}
                                     <a href="/cartoons/{role.cartoon.id}" class="font-semibold text-lg text-gray-900 mb-1 line-clamp-1">{role.cartoon.name}</a>
+                                {/if}
                                 <div class="flex flex-wrap gap-1">
                                         <span class="inline-block bg-purple-100 text-gray-800 text-xs px-2 py-1 rounded-full">
+                                {#if role.role == 4}
+                                    {role.language.name}
+                                {:else}
                                             {convertRole(role.role)}
+                                {/if}
                                         </span>
                                 </div>
                             </div>
@@ -57,7 +75,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                 </div>
-                <p class="text-gray-600 text-lg">No roles information available.</p>
+                <p class="text-gray-600 text-lg">No role information available.</p>
             </div>
         {/if}
     </div>

@@ -25,12 +25,17 @@ export const load: PageServerLoad = async ({ params }) => {
     }
 
     try {
-        const cartoon = await db.query.cartoons.findFirst({
+        const tmpCartoon = await db.query.cartoons.findFirst({
             where: eq(cartoons.id, cartoonID),
             with: {
-                jtCartoonsStaff: {
+                jtCartoonsCartoonTypes: {
                     with: {
-                        staff: true, // not sure if this includes all cols from staff
+                        cartoonType: true
+                    }
+                },
+                jtCartoonsLanguages: {
+                    with: {
+                        language: true,
                     }
                 },
                 jtCartoonsCountries: {
@@ -38,20 +43,133 @@ export const load: PageServerLoad = async ({ params }) => {
                         country: true
                     }
                 },
-                jtCartoonsCartoonTypes: {
+                jtCartoonsCompanies: {
                     with: {
-                        cartoonType: true
+                        company: true
+                    }
+                },
+                jtCartoonsStaff: {
+                    with: {
+                        staff: true, // not sure if this includes all cols from staff
+                        character: true,
+                        language: true
+                    }
+                },
+                jtCartoonsTags: {
+                    with: {
+                        tag: true,
+                    }
+                },
+                cartoonStats: {
+                    with: {
+                        cartoon: true,
                     }
                 },
             }
         });
 
-        if (!cartoon) {
+        if (!tmpCartoon) {
             throw error(404, 'cartoon not found');
         }
 
+    let cartoonTypes: any[] = []
+    tmpCartoon?.jtCartoonsCartoonTypes.forEach(type => {
+        cartoonTypes = cartoonTypes.concat({
+            id: type.fkCartoonTypeId,
+            name: type.cartoonType.name,
+            score: type.score,
+        })
+    })
+
+    let cartoonLanguages: any[] = []
+    tmpCartoon?.jtCartoonsLanguages.forEach(tag => {
+        cartoonLanguages = cartoonLanguages.concat({
+            id: tag.fkLanguageId,
+            name: tag.language.name,
+            iso639: tag.language.iso639,
+            score: tag.score,
+        })
+    })
+
+    let cartoonCountries: any[] = []
+    tmpCartoon?.jtCartoonsCountries.forEach(tag => {
+        cartoonCountries = cartoonCountries.concat({
+            id: tag.fkCountryId,
+            name: tag.country.name,
+            iso316613: tag.country.iso316613,
+        })
+    })
+
+    let cartoonCompanies: any[] = []
+    tmpCartoon?.jtCartoonsCompanies.forEach(company => {
+        cartoonCompanies = cartoonCompanies.concat({
+            role: company.role,
+            credited: company.credited,
+            id: company.fkCompanyId,
+            name: company.company.name,
+            coverPic: company.company.coverPic,
+        })
+    })
+
+    let cartoonStaff : any[] = []
+    tmpCartoon?.jtCartoonsStaff.forEach(role => {
+        cartoonStaff = cartoonStaff.concat({
+            role: role.role,
+            credited: role.credited,
+            staff: {
+                id: role.fkStaffId,
+                name: role.staff?.name,
+                coverPic: role.staff?.coverPic,
+            },
+            language: {
+                id: role.fkLanguageId,
+                name: role.language?.name,
+            },
+            character: {
+                id: role.fkCharacterId,
+                name: role.character?.name,
+                coverPic: role.character?.coverPic,
+            },
+        })
+    })
+
+    let cartoonTags: any[] = []
+    tmpCartoon?.jtCartoonsTags.forEach(tag => {
+        cartoonTags = cartoonTags.concat({
+            id: tag.fkTagId,
+            name: tag.tag.name,
+            score: tag.score,
+            spoiler: tag.spoiler,
+        })
+    })
+
+    const cartoon = {
+        id: tmpCartoon.id,
+        name: tmpCartoon.name,
+        description: tmpCartoon.description,
+        coverPic: tmpCartoon.coverPic,
+        seasons: tmpCartoon.seasons,
+        episodes: tmpCartoon.episodes,
+        duration: tmpCartoon.duration,
+        status: tmpCartoon.status,
+        airStart: tmpCartoon.airStart,
+        airEnd: tmpCartoon.airEnd,
+        source: tmpCartoon.source,
+        ageRating: tmpCartoon.ageRating,
+        links: tmpCartoon.links,
+        types: cartoonTypes,
+        languages: cartoonLanguages,
+        countries: cartoonCountries,
+        companies: cartoonCompanies,
+        staff: cartoonStaff,
+        tags: cartoonTags,
+    };
+
+    console.log( "cartoon", cartoon)
+    // console.log( "filter", cartoon.staff.filter(x => x.role == 4))
+
         return {
-            cartoon
+            cartoon,
         };
     } catch (err) {
         console.error('Error fetching cartoon:', err);
