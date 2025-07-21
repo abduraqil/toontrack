@@ -2,86 +2,56 @@
     export let cartoon: any;
 
     /* TODO
-    Update href link to link to staff profile page
+    Update href link to link to role profile page
     */
 
-    // Group staff by name to consolidate roles
-    function groupStaffByName(cartoonStaff: any[]) {
-        const grouped = new Map();
-
-        cartoonStaff.forEach(staffRelation => {
-            // Access the staff data through the relation
-            const staff = staffRelation.staff;
-            const role = staffRelation.role;
-            const id = staffRelation.fkStaffId;
-
-            if (!staff) return; // Skip if staff data is missing
-
-            const name = staff.name;
-            if (grouped.has(name)) {
-                grouped.get(name).roles.push(role);
-            } else {
-                grouped.set(name, { // include the staff properties you need
-                    name: name,
-                    birthday: staff.birthday || 'Unknown',
-                    coverPic: staff.coverPic || null,
-                    roles: [role],
-                    id: id
-                });
-            }
-        });
-        console.log(Array.from(grouped.values()));
-        return Array.from(grouped.values());
-    }
-
-    function convertRole(role: string | null ) {
+    function convertRole(role: number | null ) {
         switch (role) {
-            case '0': return 'Unknown';
-            case '1': return 'Creator';
-            case '2': return 'Director';
-            case '3': return 'Cast Member';
-            case '4': return 'Voice Actor';
-            case '5': return 'Composer';
-            case '6': return 'Producer';
-            case '7': return 'Audio';
+            case 0: return 'Unknown';
+            case 1: return 'Creator';
+            case 2: return 'Director';
+            case 3: return 'Cast Member';
+            case 4: return 'Voice Actor';
+            case 5: return 'Composer';
+            case 6: return 'Producer';
+            case 7: return 'Audio';
             default: return 'Other';
         }
     }
 
     // Use the correct property name from your relations
-    $: groupedStaff = cartoon.jtCartoonsStaff && cartoon.jtCartoonsStaff.length > 0
-        ? groupStaffByName(cartoon.jtCartoonsStaff)
-        : [];
+    let staff = cartoon.staff.filter((x: { role: number; }) => x.role != 4)
+    $: staff
 </script>
 
 <div class="space-y-4">
     <div class="prose max-w-none">
-        {#if groupedStaff.length > 0}
+        {#if staff.length > 0}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {#each groupedStaff as staff}
-                    <a href="/staff/{staff.id}">
+                {#each staff as role}
+                    <!-- <a href="/cartoons/{role.cartoon.id}"> -->
+                      {#if role.role != 4}
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex overflow-hidden h-24">
                             <div class="flex-1 p-4 flex flex-col justify-center">
-                                <h3 class="font-semibold text-lg text-gray-900 mb-1 line-clamp-1">{staff.name}</h3>
+                                    <a href="/staff/{role.staff.id}" class="font-semibold text-lg text-gray-900 mb-1 line-clamp-1">{role.staff.name}</a>
                                 <div class="flex flex-wrap gap-1">
-                                    {#each staff.roles as role}
                                         <span class="inline-block bg-purple-100 text-gray-800 text-xs px-2 py-1 rounded-full">
-                                            {convertRole(role)}
+                                            {convertRole(role.role)}
                                         </span>
-                                    {/each}
                                 </div>
                             </div>
                             <div class="w-24 h-24">
-                                {#if staff.coverPic}
+                                {#if role.staff.coverPic}
                                 <img
-                                    src={staff.coverPic}
-                                    alt={staff.name}
+                                    src={role.staff.coverPic ? role.staff.coverPic : '/src/assets/nocover.jpg'}
+                                    alt={role.staff.name}
                                     class="w-full h-full object-cover"
                                 />
                                 {/if}
                             </div>
                         </div>
-                    </a>
+                      {/if}
+                    <!-- </a> -->
                 {/each}
             </div>
         {:else}

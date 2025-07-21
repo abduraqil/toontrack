@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Favorite from '../../../assets/components/favorite.svelte';
-	import CartoonsTab from './tabs/CartoonsTab.svelte';
+	import StaffCredits from './tabs/StaffCreditsTab.svelte';
 
 	import type { PageData } from './$types';
 	export let data: PageData;
@@ -10,7 +10,7 @@
 	let activeTab = 'overview';
 
 	const tabs = [
-		{ id: 'cartoons', label: 'Cartoons', component: CartoonsTab },
+		{ id: 'credits', label: 'Credits', component: StaffCredits },
 	];
 
 	function setActiveTab(tab: string) {
@@ -41,7 +41,7 @@
 					<!-- Cover Image - positioned to overlap banner and white area -->
 					<div class="flex-shrink-0 relative">
 						<img
-							src={character.coverPic}
+              src={character.coverPic ? character.coverPic : '/src/assets/nocover.jpg'}
 							alt={character.name}
 							class="w-56 h-80 object-cover rounded-lg shadow-lg -mt-20 relative z-10"
 						/>
@@ -89,7 +89,7 @@
 								{#if character.fkOriginalCreator !== null}
 									<span class="flex items-center gap-1">
 										<b>Creator:</b>
-                    <a href="/staff/{character.fkOriginalCreator}">{character.staff.name}</a>
+                    <a href="/staff/{character.fkOriginalCreator}">{character.originalCreator}</a>
 									</span>
 								{/if}
 							</div>
@@ -112,28 +112,28 @@
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 		<div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 			<!-- Right Content Area -->
-			<div class="lg:col-span-3 space-y-6" >
+			<div class="lg:col-span-4 space-y-6" >
 				<!-- Navigation Tabs -->
-				 <div class="bg-white rounded-lg shadow-md">
+				 <!-- <div class="bg-white rounded-lg shadow-md"> -->
 					<!-- Tab Navigation -->
-					<div class="flex justify-center border-b border-gray-200">
-						{#each tabs as tab}
-							<button
-								class="
-									px-6 py-3 text-sm font-medium border-b-2 transition-colors duration-200
-									{activeTab === tab.id ? 'border-purple-600 text-purple-700 bg-blue-50'
-									 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
-								type="button"
-								on:click={() => setActiveTab(tab.id)}
-							>
-								{tab.label}
-							</button>
-						{/each}
-					</div>
-				 </div>
+					<!-- <div class="flex justify-center border-b border-gray-200"> -->
+					<!-- 	{#each tabs as tab} -->
+					<!-- 		<button -->
+					<!-- 			class=" -->
+					<!-- 				px-6 py-3 text-sm font-medium border-b-2 transition-colors duration-200 -->
+					<!-- 				{activeTab === tab.id ? 'border-purple-600 text-purple-700 bg-blue-50' -->
+					<!-- 				 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}" -->
+					<!-- 			type="button" -->
+					<!-- 			on:click={() => setActiveTab(tab.id)} -->
+					<!-- 		> -->
+					<!-- 			{tab.label} -->
+					<!-- 		</button> -->
+					<!-- 	{/each} -->
+					<!-- </div> -->
+					<!-- </div> -->
 				 <!-- Tab Content -->
 				<div class="bg-white rounded-lg shadow-md p-6 pt-6 mt-4">
-					<!-- <svelte:component this={currentTabData.component} {character}/> -->
+					<svelte:component this={currentTabData.component} {character}/>
 				</div>
 			</div>
 		</div>

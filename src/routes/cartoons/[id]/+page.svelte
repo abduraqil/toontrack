@@ -1,7 +1,9 @@
 <script lang="ts">
     import Favorite from '../../../assets/components/favorite.svelte';
     import OverviewTab from './tabs/OverviewTab.svelte';
+    import VoiceActorsTab from './tabs/VoiceActorsTab.svelte';
     import StaffTab from './tabs/StaffTab.svelte';
+    import CompaniesTab from './tabs/CompaniesTab.svelte';
     import ReviewTab from './tabs/ReviewTab.svelte';
 
     import type { PageData } from './$types';
@@ -13,7 +15,9 @@
 
     const tabs = [
         { id: 'overview', label: 'Overview', component: OverviewTab },
+        { id: 'voice actors', label: 'Voice Actors', component: VoiceActorsTab},
         { id: 'staff', label: 'Staff', component: StaffTab },
+        { id: 'companies', label: 'Companies', component: CompaniesTab },
         { id: 'reviews', label: 'Reviews', component: ReviewTab}
     ];
 
@@ -49,7 +53,6 @@
             default: return 'Unknown';
         }
      }
-
 </script>
 
 <svelte:head>
@@ -119,7 +122,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 2.994v2.25m10.5-2.25v2.25m-14.252 13.5V7.491a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v11.251m-18 0a2.25 2.25 0 0 0 2.25 2.25h13.5a2.25 2.25 0 0 0 2.25-2.25m-18 0v-7.5a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v7.5m-6.75-6h2.25m-9 2.25h4.5m.002-2.25h.005v.006H12v-.006Zm-.001 4.5h.006v.006h-.006v-.005Zm-2.25.001h.005v.006H9.75v-.006Zm-2.25 0h.005v.005h-.006v-.005Zm6.75-2.247h.005v.005h-.005v-.005Zm0 2.247h.006v.006h-.006v-.006Zm2.25-2.248h.006V15H16.5v-.005Z" />
                                         </svg>
 
-                                        {new Date(cartoon.airStart).getFullYear()}-{new Date(cartoon.airEnd).getFullYear()}
+                                        {cartoon.airStart.getFullYear()}-{cartoon.airEnd.getFullYear()}
                                     </span>
                                 {/if}
                                 {#if cartoon.episodes !== null}
@@ -165,19 +168,36 @@
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h2 class="text-2xl font-semibold mb-4">Details</h2>
                     <dl class="space-y-3">
-                        {#each [                            cartoon.jtCartoonsCartoonTypes && cartoon.jtCartoonsCartoonTypes.length > 0 ? { label: 'Type', value: cartoon.jtCartoonsCartoonTypes.map(ct => ct.cartoonType.name).join(', ') } : null,
+                        {#each [
+                            cartoon.types && cartoon.types.length > 0 ? { label: 'Type', value: cartoon.types.map(ct => ct.name).join(', ') } : null,
+                            cartoon.seasons !== null ? { label: 'Seasons', value: cartoon.seasons } : null,
                             cartoon.episodes !== null ? { label: 'Episodes', value: cartoon.episodes } : null,
                             cartoon.duration !== null ? { label: 'Duration', value: `${cartoon.duration} min` } : null,
                             cartoon.status !== null ? { label: 'Status', value: formatStatus(cartoon.status) } : null,
                             cartoon.ageRating !== null ? { label: 'Age Rating', value: cartoon.ageRating } : null,
-                            cartoon.airStart !== null ? { label: "Start Date", value: new Date(cartoon.airStart).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
-                            cartoon.airEnd !== null ? { label: "End Date", value: new Date(cartoon.airEnd).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
-                            cartoon.jtCartoonsCountries && cartoon.jtCartoonsCountries.length > 0 ? { label: 'Countries', value: cartoon.jtCartoonsCountries.map(c => c.country.name).join(', ') } : null,
+                            cartoon.airStart !== null ? { label: "Start Date", value: cartoon.airStart.toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
+                            cartoon.airEnd !== null ? { label: "End Date", value: cartoon.airEnd.toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }) } : null,
+                            cartoon.countries && cartoon.countries.length > 0 ? { label: 'Countries', value: cartoon.countries.map(c => c.name).join(', ') } : null,
                         ].filter(detail => detail !== null) as detail}
                             <div>
                                 <dt class="text-sm font-medium text-gray-700">{detail.label}</dt>
                                 <dd class="mt-1 text-gray-900">{detail.value}</dd>
                             </div>
+                        {/each}
+                    </dl>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-semibold mb-4">Tags</h2>
+                    <dl class="space-y-3">
+                        <!-- {#each [cartoonTags && cartoonTags.length > 0 ? -->
+                        <!-- { value: cartoonTags.map(ct => ct.name) } : null, -->
+                        <!-- ].filter(detail => detail !== null) as detail} -->
+                        <!--     <div> -->
+                        <!--         <dd class="mt-1 text-gray-900">{detail.value}</dd> -->
+                        <!--     </div> -->
+                        <!-- {/each} -->
+                        {#each cartoon.tags as tag} <!-- TODO: clicking these takes you to the search page -->
+                            <dd class="mt-1 text-gray-900">{tag.name}</dd>
                         {/each}
                     </dl>
                 </div>
@@ -190,8 +210,7 @@
                     <div class="flex justify-center border-b border-gray-200">
                         {#each tabs as tab}
                             <button
-                                class="
-                                    px-6 py-3 text-sm font-medium border-b-2 transition-colors duration-200
+                                class="px-6 py-3 text-sm font-medium border-b-2 transition-colors duration-200
                                     {activeTab === tab.id ? 'border-purple-600 text-purple-700 bg-blue-50'
                                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
                                 type="button"

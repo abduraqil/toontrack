@@ -25,29 +25,63 @@ export const load: PageServerLoad = async ({ params }) => {
     }
 
     try {
-    const character = await db.query.characters.findFirst({
+    const tmpCharacter = await db.query.characters.findFirst({
         where: eq(characters.id, characterID),
         with: {
-            jtCartoonsStaff: {
-                with: {
-                    staff: true
+                staff: true,
+                jtCartoonsStaff: {
+                    with: {
+                        cartoon: true,
+                        staff: true,
+                        language: true
+                    }
                 }
-            },
-            staff: {
-                with: {
-                    // id: true
-                }
-            },
-        }
+        },
     });
-	// console.log(character);
 
-        if (!character) {
-            throw error(404, 'character not found');
-        }
+    if (!tmpCharacter) {
+        throw error(404, 'character not found');
+    }
+
+    let roles: any[] = []
+    tmpCharacter?.jtCartoonsStaff.forEach(role => {
+        roles = roles.concat({
+            role: role.role,
+            staff: {
+                id: role.fkStaffId,
+                name: role.staff?.name,
+                coverPic: role.staff?.coverPic,
+            },
+            language: {
+                id: role.fkLanguageId,
+                name: role.language?.name,
+            },
+            cartoon: {
+                id: role.cartoon?.id,
+                name: role.cartoon?.name,
+                start: role.cartoon?.airStart,
+                end: role.cartoon?.airEnd,
+                coverPic: role.cartoon?.coverPic,
+            },
+        })
+    })
+
+    let character = {
+        id: tmpCharacter.id,
+        name: tmpCharacter.name,
+        description: tmpCharacter.description,
+        coverPic: tmpCharacter.coverPic,
+        fkOriginalCreator: tmpCharacter.fkOriginalCreator,
+        originalCreator: tmpCharacter.staff?.name,
+        sex: tmpCharacter.sex,
+        birthday: tmpCharacter.birthday,
+        inception: tmpCharacter.inception,
+        roles: roles,
+    }
+    console.log(character)
 
         return {
-            character,
+            character
         };
     } catch (err) {
         console.error('Error fetching character:', err);

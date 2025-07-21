@@ -1,15 +1,17 @@
 <script lang="ts">
 	import Favorite from '../../../assets/components/favorite.svelte';
 	import StaffCredits from './tabs/StaffCreditsTab.svelte';
+	import VoiceActingCredits from './tabs/VoiceActingCreditsTab.svelte';
 
 	import type { PageData } from './$types';
 	export let data: PageData;
 
-	 $: staffMember = data.staffMember;
+	 $: staffer = data.staffer;
 
 	let activeTab = 'overview';
 
 	const tabs = [
+		{ id: 'voice acting', label: 'Voice Credits', component: VoiceActingCredits},
 		{ id: 'credits', label: 'Credits', component: StaffCredits },
 	];
 
@@ -22,8 +24,8 @@
 </script>
 
 <svelte:head>
-	<title>{staffMember.name} - staffMember Database</title>
-	<meta name="description" content="{staffMember.description || 'No description available.'}" />
+	<title>{staffer.name} - staffMember Database</title>
+	<meta name="description" content="{staffer.description || 'No description available.'}" />
 </svelte:head>
 
 <div class="min-h-screen bg-gray-100">
@@ -41,8 +43,8 @@
 					<!-- Cover Image - positioned to overlap banner and white area -->
 					<div class="flex-shrink-0 relative">
 						<img
-							src={staffMember.coverPic}
-							alt={staffMember.name}
+              src={staffer.coverPic ? staffer.coverPic : '/src/assets/nocover.jpg'}
+							alt={staffer.name}
 							class="w-56 h-80 object-cover rounded-lg shadow-lg -mt-20 relative z-10"
 						/>
 
@@ -59,30 +61,29 @@
 					<div class="flex-1 space-y-6">
 						<!-- Title and Basic Info -->
 						<div class="space-y-4">
-							<h1 class="text-4xl font-bold text-gray-900 leading-tight">{staffMember.name}</h1>
+							<h1 class="text-4xl font-bold text-gray-900 leading-tight">{staffer.name}</h1>
 
 							<!-- Tags/Badges -->
-							<!-- <div class="flex flex-wrap items-center gap-3"> -->
-							<div>
-								{#if staffMember.sex!== null}
+							<div class="flex flex-wrap items-center gap-3">
+								{#if staffer.sex !== null}
 									<span class="flex items-center gap-1">
 										<b>Gender:</b>
-										{#if staffMember.sex == false}
+										{#if staffer.sex == false}
 											male
-										{:else if staffMember.sex == true}
+										{:else if staffer.sex == true}
 											female
 										{/if}
 									</span>
 								{/if}
 
-								{#if staffMember.birthday !== null}
+								{#if staffer.birthday !== null}
 									<span class="flex items-center gap-1">
-										<b>Birthday:</b> {staffMember.birthday.toDateString()}
+										<b>Birthday:</b> {staffer.birthday.toDateString()}
 									</span>
 								{/if}
-								{#if staffMember.deathday !== null}
+								{#if staffer.deathday !== null}
 									<span class="flex items-center gap-1">
-										<b>Date of Death:</b> {staffMember.deathday.toDateString()}
+										<b>Date of Death:</b> {staffer.deathday.toDateString()}
 									</span>
 								{/if}
 
@@ -90,19 +91,19 @@
 						</div>
 
 						<!-- Description -->
-						{#if staffMember.description != null}
+						{#if staffer.description != null}
 							<div class="space-y-2">
 								<h3 class="text-lg font-semibold text-gray-900">Description</h3>
-								<p class="text-gray-700 leading-relaxed">{staffMember.description}</p>
+								<p class="text-gray-700 leading-relaxed">{staffer.description}</p>
 							</div>
 						{/if}
 
             <!-- Links -->
 						<div class="space-y-0">
-						{#if staffMember.links != null}
+						{#if staffer.links != null}
 	  				  <p class="text-md font-semibold text-gray-900">Links</p>
               {"| "}
-							{#each staffMember.links.split(';') as link }
+							{#each staffer.links.split(';') as link }
 						    {#if link != ''}
                   <a href={link}>{link.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)\./)[1]}</a>
                   {"| "}
@@ -121,7 +122,7 @@
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 		<div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 			<!-- Right Content Area -->
-			<div class="lg:col-span-3 space-y-6" >
+			<div class="lg:col-span-4 space-y-6" >
 				<!-- Navigation Tabs -->
 				 <div class="bg-white rounded-lg shadow-md">
 					<!-- Tab Navigation -->
@@ -142,7 +143,7 @@
 				 </div>
 				 <!-- Tab Content -->
 				<div class="bg-white rounded-lg shadow-md p-6 pt-6 mt-4">
-					<svelte:component this={currentTabData.component} {staffMember}/>
+					<svelte:component this={currentTabData.component} {staffer}/>
 				</div>
 			</div>
 		</div>
