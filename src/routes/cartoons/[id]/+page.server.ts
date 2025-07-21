@@ -65,6 +65,11 @@ export const load: PageServerLoad = async ({ params }) => {
                         cartoon: true,
                     }
                 },
+                reviews: {
+                    with: {
+                        user: true,
+                    }
+                }
             }
         });
 

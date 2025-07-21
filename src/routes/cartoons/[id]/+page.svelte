@@ -4,6 +4,7 @@
     import VoiceActorsTab from './tabs/VoiceActorsTab.svelte';
     import StaffTab from './tabs/StaffTab.svelte';
     import CompaniesTab from './tabs/CompaniesTab.svelte';
+    import ReviewTab from './tabs/ReviewTab.svelte';
 
     import type { PageData } from './$types';
     export let data: PageData;
@@ -17,6 +18,7 @@
         { id: 'voice actors', label: 'Voice Actors', component: VoiceActorsTab},
         { id: 'staff', label: 'Staff', component: StaffTab },
         { id: 'companies', label: 'Companies', component: CompaniesTab },
+        { id: 'reviews', label: 'Reviews', component: ReviewTab}
     ];
 
     function setActiveTab(tab: string) {
@@ -62,7 +64,7 @@
     <!-- Banner Section -->
     <div class="relative">
         <!-- Banner Background -->
-        <div class="h-50 bg-gradient-to-r from-blue-900 to-purple-900 relative overflow-hidden">
+        <div class="h-35 bg-gradient-to-r from-blue-900 to-purple-900 relative overflow-hidden">
             <!-- Optional: Add banner image here -->
         </div>
 
