@@ -168,6 +168,7 @@ export const load: PageServerLoad = async ({ params }) => {
         companies: cartoonCompanies,
         staff: cartoonStaff,
         tags: cartoonTags,
+        reviews: tmpCartoon.reviews,
     };
 
     console.log( "cartoon", cartoon)
