@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Favorite from '/src/lib/components/favorite.svelte';
+	import Favorite from '$lib/components/favorite.svelte';
 	import StaffCredits from './tabs/StaffCreditsTab.svelte';
 
 	import type { PageData } from './$types';

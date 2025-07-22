@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Favorite from '/src/lib/components/favorite.svelte';
+    import Favorite from '$lib/components/favorite.svelte';
     import OverviewTab from './tabs/OverviewTab.svelte';
     import VoiceActorsTab from './tabs/VoiceActorsTab.svelte';
     import StaffTab from './tabs/StaffTab.svelte';
