@@ -43,7 +43,7 @@
                             <div class="w-24 h-24">
                                 {#if role.staff.coverPic}
                                 <img
-                                    src={role.staff.coverPic ? role.staff.coverPic : '/src/assets/nocover.jpg'}
+                                    src={role.staff.coverPic ? role.staff.coverPic : '/nocover.jpg'}
                                     alt={role.staff.name}
                                     class="w-full h-full object-cover"
                                 />

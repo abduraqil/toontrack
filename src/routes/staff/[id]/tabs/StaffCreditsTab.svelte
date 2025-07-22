@@ -41,7 +41,7 @@
                             </div>
                             <div class="w-24 h-24">
                                 <img
-                                    src={role.cartoon.coverPic ? role.cartoon.coverPic : '/src/assets/nocover.jpg'}
+                                    src={role.cartoon.coverPic ? role.cartoon.coverPic : '/nocover.jpg'}
                                     alt={role.cartoon.name}
                                     class="w-full h-full object-cover"
                                 />
