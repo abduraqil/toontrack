@@ -377,17 +377,25 @@ export const users = pgTable("users", {
 ]);
 
 export const sessions = pgTable("sessions", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "sessions_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
-	fkUserId: integer("fk_user_id").notNull(),
-	expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'date' }).notNull(),
-	created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
-	edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+    id: integer().primaryKey().generatedAlwaysAsIdentity({ 
+        name: "sessions_id_seq", 
+        startWith: 1, 
+        increment: 1, 
+        minValue: 1, 
+        maxValue: 2147483647, 
+        cache: 1 
+    }),
+    token: varchar({ length: 64 }).unique(), // Add this line
+    fkUserId: integer("fk_user_id").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true, mode: 'date' }).notNull(),
+    created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+    edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
 }, (table) => [
-	foreignKey({
-			columns: [table.fkUserId],
-			foreignColumns: [users.id],
-			name: "sessions_fk_user_id_fkey"
-		}),
+    foreignKey({
+        columns: [table.fkUserId],
+        foreignColumns: [users.id],
+        name: "sessions_fk_user_id_fkey"
+    }),
 ]);
 
 export const profileComments = pgTable("profile_comments", {
@@ -478,4 +486,12 @@ export const reviews = pgTable("reviews", {
 ]);
 
 export type User = InferSelectModel<typeof users>;
-export type Session = InferSelectModel<typeof sessions>;
+//export type Session = InferSelectModel<typeof sessions>;
+export type Session = {
+    id: number;
+    token: string | null; // Add this
+    fkUserId: number;
+    expiresAt: Date;
+    created: Date | null;
+    edited: Date | null;
+};

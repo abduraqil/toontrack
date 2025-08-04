@@ -41,12 +41,17 @@ export const actions = {
 
         try {
             console.log('Login attempt:', { username, password });
-            const user = await db.query.users.findFirst({
-                where: eq(users.name, username),
-                //columns: { id: true, name: true, pwd: true }
-            });
-            
+            const user = await db.select()
+                .from(users)
+                .where(eq(users.name, username))
+                .limit(1);
+            console.log('User query result:', user);
 
+            // console.log('Database instance:', typeof db, db);
+            // console.log('Users table:', typeof users, users);
+            // console.log('Username:', username);
+            console.log("line 53")
+            
             if (!user) {
                 return fail(400, {
                     errors: { username: 'Invalid username' },
@@ -54,20 +59,15 @@ export const actions = {
                 });
             }
 
-            const isPasswordValid = await argon2.verify(user.pwd, password, 
-                {secret:Buffer.from('mysecret')       
+            const isPasswordValid = await argon2.verify(user[0].pwd, password, 
+                {
+                    secret: Buffer.from('mysecret')       
                 });
             console.log('Password verification result:', isPasswordValid);
-            if (!isPasswordValid) {
-                console.log('Invalid password for user:', username);
-                return fail(400, {
-                    errors: { password: 'Invalid password' },
-                    fields: { username }
-                });
-            }
+            
 
             const token = generateSessionToken();
-            const { expiresAt } = await createSession(token, user.id);
+            const { expiresAt } = await createSession(token, user[0].id);
             
             // Convert expiresAt to Date if it's a string
             const expiresDate = typeof expiresAt === 'string' ? new Date(expiresAt) : expiresAt;
