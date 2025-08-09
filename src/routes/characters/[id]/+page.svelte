@@ -30,7 +30,7 @@
 	<!-- Banner Section -->
 	<div class="relative">
 		<!-- Banner Background -->
-		<div class="h-50 bg-gradient-to-r from-blue-900 to-purple-900 relative overflow-hidden">
+		<div class="h-35 bg-gradient-to-r from-blue-900 to-purple-900 relative overflow-hidden">
 			<!-- Optional: Add banner image here -->
 		</div>
 
@@ -41,25 +41,26 @@
 					<!-- Cover Image - positioned to overlap banner and white area -->
 					<div class="flex-shrink-0 relative">
 						<img
-              src={character.coverPic ? character.coverPic : '/nocover.jpg'}
+              				src={character.coverPic ? character.coverPic : '/nocover.jpg'}
 							alt={character.name}
 							class="w-56 h-80 object-cover rounded-lg shadow-lg -mt-20 relative z-10"
 						/>
 
-						<!-- Action Buttons -->
-						<div class="mt-4 space-y-3">
-							<!--TODO: Add action buttons like add to watched, dropped, etc -->
-
-							<!-- Favorite Button -->
-							<Favorite></Favorite>
-						</div>
 					</div>
 
 					<!-- character Information -->
 					<div class="flex-1 space-y-6">
 						<!-- Title and Basic Info -->
 						<div class="space-y-4">
-							<h1 class="text-4xl font-bold text-gray-900 leading-tight">{character.name}</h1>
+							<div class="flex items-center justify-between">
+                                <h1
+                                    class="text-4xl font-bold text-gray-900 leading-tight"
+                                >
+                                    {character.name}
+                                </h1>
+								<!-- Action Buttons -->
+                                <Favorite />
+                            </div>
 
 							<!-- Tags/Badges -->
 							<!-- <div class="flex flex-wrap items-center gap-3"> -->

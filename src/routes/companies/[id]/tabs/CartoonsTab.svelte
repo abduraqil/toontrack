@@ -38,12 +38,21 @@
                                         </span>
                                 </div>
                             </div>
-                            <div class="w-24 h-24">
+                            <!-- <div class="w-24 h-24">
                                 <img
                                     src={cartoon.coverPic ? cartoon.coverPic : '/nocover.jpg'}
                                     alt={cartoon.name}
                                     class="w-full h-full object-cover"
+                                />  
+                            </div> -->
+                            <div class="w-24 h-24 flex items-center justify-center pr-2">
+                                {#if cartoon.coverPic}
+                                <img
+                                    src={cartoon.coverPic ? cartoon.coverPic : '/nocover.jpg'}
+                                    alt={cartoon.name}
+                                    class="max-w-full max-h-full object-contain"
                                 />
+                                {/if}
                             </div>
                         </div>
                     <!-- </a> -->

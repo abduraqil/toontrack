@@ -30,7 +30,7 @@
 	<!-- Banner Section -->
 	<div class="relative">
 		<!-- Banner Background -->
-		<div class="h-50 bg-gradient-to-r from-blue-900 to-purple-900 relative overflow-hidden">
+		<div class="h-35 bg-gradient-to-r from-blue-900 to-purple-900 relative overflow-hidden">
 			<!-- Optional: Add banner image here -->
 		</div>
 
@@ -40,11 +40,13 @@
 				<div class="flex flex-col lg:flex-row gap-8">
 					<!-- Cover Image - positioned to overlap banner and white area -->
 					<div class="flex-shrink-0 relative">
-						<img
-              src={company.coverPic ? company.coverPic : '/nocover.jpg'}
-							alt={company.name}
-							class="w-56 h-80 object-cover rounded-lg shadow-lg -mt-20 relative z-10"
-						/>
+						<div class="w-56 h-80 flex items-center justify-center relative -mt-20 z-10 rounded-lg">
+							<img
+								src={company.coverPic ? company.coverPic : '/nocover.jpg'}
+								alt={company.name}
+								class="object-contain rounded-lg shadow-lg"
+							/>
+						</div>
 
 						<!-- Action Buttons -->
 						<div class="mt-4 space-y-3">

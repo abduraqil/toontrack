@@ -1,9 +1,11 @@
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { eq } from 'drizzle-orm';
-import { cartoons } from '$lib/server/db/schema';
+import { and, eq } from 'drizzle-orm';
+import { cartoons, userLists } from '$lib/server/db/schema';
+import { page } from '$app/state';
 import '$lib/server/db/relations';
+import { userListsRelations } from '$lib/server/db/relations';
 
 /*TODO
 add in type gaurd for cartoonID
@@ -19,12 +21,29 @@ export const load: PageServerLoad = async ({ params }) => {
 
     const cartoonID = parseInt(id, 10);
 
+    const user = $derived(page.data.user);
+
     // Additional safety check
     if (cartoonID <= 0) {
         throw error(400, 'Invalid cartoon ID');
     }
 
     try {
+
+        let userListEntry = null;
+        let isFavorited = false;
+
+        if (user) {
+            userListEntry = await db.query.userLists.findFirst({
+                where: and(
+                    eq(userLists.fkUserId, user.id),
+                    eq(userLists.fkCartoonId, cartoonID)
+                )
+            })
+        }
+
+        if (userListEntry.favorite) {}
+
         const tmpCartoon = await db.query.cartoons.findFirst({
             where: eq(cartoons.id, cartoonID),
             with: {
@@ -68,6 +87,12 @@ export const load: PageServerLoad = async ({ params }) => {
                 reviews: {
                     with: {
                         user: true,
+                    }
+                },
+                userLists: {
+                    with: {
+                        user: true,
+                        cartoon: true
                     }
                 }
             }
@@ -170,6 +195,8 @@ export const load: PageServerLoad = async ({ params }) => {
         tags: cartoonTags,
         reviews: tmpCartoon.reviews,
         stats: tmpCartoon.cartoonStats,
+        list: userListEntry, // changed from userLists to userListEntry
+        isFavorited: !userListEntry?.favorite, // set based on userListEntry
     };
 
     console.log( "cartoon", cartoon)
