@@ -16,11 +16,7 @@
 
     const tabs = [
         { id: "overview", label: "Overview", component: OverviewTab },
-        {
-            id: "voice actors",
-            label: "Voice Actors",
-            component: VoiceActorsTab,
-        },
+        { id: "voice actors", label: "Characters", component: VoiceActorsTab, },
         { id: "staff", label: "Staff", component: StaffTab },
         { id: "companies", label: "Companies", component: CompaniesTab },
         { id: "reviews", label: "Reviews", component: ReviewTab },
@@ -127,9 +123,7 @@
                             class="w-70 h-80 flex items-center justify-center relative -mt-20 z-10 rounded-lg"
                         >
                             <img
-                                src={cartoon.coverPic
-                                    ? cartoon.coverPic
-                                    : "/nocover.jpg"}
+                                src={cartoon.coverPic ? cartoon.coverPic : "/nocover.jpg"}
                                 alt={cartoon.name}
                                 class="object-contain rounded-lg shadow-lg"
                             />

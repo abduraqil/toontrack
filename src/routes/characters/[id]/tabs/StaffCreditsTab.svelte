@@ -34,36 +34,36 @@
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex overflow-hidden h-24">
                             <div class="w-24 h-24">
                                 <img
-                                    src={role.staff.coverPic ? role.staff.coverPic : '/nocover.jpg'}
-                                    alt={role.staff.name}
-                                    class="w-full h-full object-cover"
-                                />
-                            </div>
-                            <div class="flex-1 p-4 flex flex-col justify-center">
-                                <!-- <h3 class="font-semibold text-lg text-gray-900 mb-1 line-clamp-1">{convertRole(role.role)}</h3> -->
-                                {#if role.role == 4}
-                                    <a href="/staff/{role.staff.id}" class="font-semibold text-sm text-gray-900 mb-1 line-clamp-1">{role.staff.name}</a>
-                                    <a style="display: flex; justify-content: flex-end" href="/cartoons/{role.cartoon.id}" class="font-semibold text-sm text-gray-900 mb-1 line-clamp-1">{role.cartoon.name}</a>
-                                {:else}
-                                    <a href="/cartoons/{role.cartoon.id}" class="font-semibold text-lg text-gray-900 mb-1 line-clamp-1">{role.cartoon.name}</a>
-                                {/if}
-                                <div class="flex flex-wrap gap-1">
-                                        <span class="inline-block bg-purple-100 text-gray-800 text-xs px-2 py-1 rounded-full">
-                                {#if role.role == 4}
-                                    {role.language.name}
-                                {:else}
-                                            {convertRole(role.role)}
-                                {/if}
-                                        </span>
-                                </div>
-                            </div>
-                            <div class="w-24 h-24">
-                                <img
                                     src={role.cartoon.coverPic ? role.cartoon.coverPic : '/nocover.jpg'}
                                     alt={role.cartoon.name}
                                     class="w-full h-full object-cover"
                                 />
                             </div>
+                            <div class="flex-1 p-4 flex flex-col justify-center">
+                                <!-- <h3 class="font-semibold text-lg text-gray-900 mb-1 line-clamp-1">{convertRole(role.role)}</h3> -->
+                                {#if role.staff.id != null}
+                                    <a href="/cartoons/{role.cartoon.id}" class="font-semibold text-sm text-gray-900 mb-1 line-clamp-1">{role.cartoon.name}</a>
+                                    <a href="/staff/{role.staff.id}" style="display: flex; justify-content: flex-end" class="font-semibold text-sm text-gray-900 mb-1 line-clamp-1">{role.staff.name}</a>
+                                {:else}
+                                    <a href="/cartoons/{role.cartoon.id}" class="font-semibold text-lg text-gray-900 mb-1 line-clamp-1">{role.cartoon.name}</a>
+                                {/if}
+                                {#if role.language.name != null}
+                                <div class="flex flex-wrap gap-1">
+                                        <span class="inline-block bg-purple-100 text-gray-800 text-xs px-2 py-1 rounded-full">
+                                    {role.language.name}
+                                        </span>
+                                </div>
+                                {/if}
+                            </div>
+                                {#if role.staff.id != null}
+                            <div class="w-24 h-24">
+                                <img
+                                    src={role.staff.coverPic ? role.staff.coverPic : '/nocover.jpg'}
+                                    alt={role.staff.name}
+                                    class="w-full h-full object-cover"
+                                />
+                            </div>
+                                {/if}
                         </div>
                     <!-- </a> -->
                 {/each}

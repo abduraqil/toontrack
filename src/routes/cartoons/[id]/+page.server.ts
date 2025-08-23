@@ -1,134 +1,154 @@
-import type { PageServerLoad } from './$types';
-import { error } from '@sveltejs/kit';
-import { db } from '$lib/server/db';
-import { and, eq } from 'drizzle-orm';
-import { cartoons, userLists } from '$lib/server/db/schema';
-import '$lib/server/db/relations';
-import test from 'node:test';
+import type { PageServerLoad } from './$types'
+import { error } from '@sveltejs/kit'
+import { db } from '$lib/server/db'
+import { and, eq } from 'drizzle-orm'
+import { cartoons, userLists } from '$lib/server/db/schema'
+import '$lib/server/db/relations'
+import test from 'node:test'
 
 // Type definitions for better type safety
 interface TransformedCartoon {
-  id: number;
-  name: string;
-  description: string | null;
-  coverPic: string | null;
-  seasons: number | null;
-  episodes: number | null;
-  duration: number | null;
-  status: string | null;
-  airStart: Date | null;
-  airEnd: Date | null;
-  source: string | null;
-  ageRating: string | null;
-  links: any;
-  types: CartoonType[];
-  languages: CartoonLanguage[];
-  countries: CartoonCountry[];
-  companies: CartoonCompany[];
-  staff: CartoonStaff[];
-  tags: CartoonTag[];
-  reviews: any[];
-  stats: any[];
-  userListEntry: any | null;
-  isFavorited: boolean;
+  id: number
+  name: string
+  description: string | null
+  coverPic: string | null
+  seasons: number | null
+  episodes: number | null
+  duration: number | null
+  status: string | null
+  airStart: Date | null
+  airEnd: Date | null
+  source: string | null
+  ageRating: string | null
+  links: any
+  types: CartoonType[]
+  languages: CartoonLanguage[]
+  countries: CartoonCountry[]
+  companies: CartoonCompany[]
+  staff: CartoonStaff[]
+  characters: CartoonCharacters[]
+  tags: CartoonTag[]
+  reviews: any[]
+  stats: any[]
+  userListEntry: any | null
+  isFavorited: boolean
 }
 
 interface CartoonType {
-  id: number;
-  name: string;
-  score: number | null;
+  id: number
+  name: string
+  score: number | null
 }
 
 interface CartoonLanguage {
-  id: number;
-  name: string;
-  iso639: string | null;
-  score: number | null;
+  id: number
+  name: string
+  iso639: string | null
+  score: number | null
 }
 
 interface CartoonCountry {
-  id: number;
-  name: string;
-  iso316613: string | null;
+  id: number
+  name: string
+  iso316613: string | null
 }
 
 interface CartoonCompany {
-  role: string | null;
-  credited: boolean | null;
-  id: number;
-  name: string;
-  coverPic: string | null;
+  role: string | null
+  credited: boolean | null
+  id: number
+  name: string
+  coverPic: string | null
 }
 
 interface CartoonStaff {
-  role: number | null;
-  credited: boolean | null;
+  role: number | null
+  credited: boolean | null
   staff: {
-    id: number;
-    name: string | null;
-    coverPic: string | null;
-  };
+    id: number
+    name: string | null
+    coverPic: string | null
+  }
   language: {
-    id: number | null;
-    name: string | null;
-  };
+    id: number | null
+    name: string | null
+  }
+  // character: {
+  //   id: number | null;
+  //   name: string | null;
+  //   coverPic: string | null;
+  // };
+}
+
+interface CartoonCharacters {
+  role: number | null
+  credited: boolean | null
+  staff: {
+    id: number
+    name: string | null
+    coverPic: string | null
+  }
+  language: {
+    id: number | null
+    name: string | null
+  }
   character: {
-    id: number | null;
-    name: string | null;
-    coverPic: string | null;
-  };
+    id: number | null
+    name: string | null
+    coverPic: string | null
+  }
 }
 
 interface CartoonTag {
-  id: number;
-  name: string;
-  score: number | null;
-  spoiler: boolean | null;
+  id: number
+  name: string
+  score: number | null
+  spoiler: boolean | null
 }
 
 // Validate cartoon ID parameter
-function validateCartoonId(id: string): number {
+function validateCartoonId (id: string): number {
   if (!/^\d+$/.test(id)) {
-    throw error(400, 'Invalid cartoon ID format');
+    throw error(400, 'Invalid cartoon ID format')
   }
 
-  const cartoonID = parseInt(id, 10);
-  
+  const cartoonID = parseInt(id, 10)
+
   if (cartoonID <= 0) {
-    throw error(400, 'Invalid cartoon ID');
+    throw error(400, 'Invalid cartoon ID')
   }
 
-  return cartoonID;
+  return cartoonID
 }
 
 // Transforms junction table data into clean arrays
-function transformCartoonData(tmpCartoon: any): Omit<TransformedCartoon, 'userListEntry' | 'isFavorited'> {
+function transformCartoonData (tmpCartoon: any): Omit<TransformedCartoon, 'userListEntry' | 'isFavorited'> {
   const cartoonTypes: CartoonType[] = tmpCartoon.jtCartoonsCartoonTypes?.map((type: any) => ({
     id: type.fkCartoonTypeId,
     name: type.cartoonType.name,
-    score: type.score,
-  })) ?? [];
+    score: type.score
+  })) ?? []
 
   const cartoonLanguages: CartoonLanguage[] = tmpCartoon.jtCartoonsLanguages?.map((lang: any) => ({
     id: lang.fkLanguageId,
     name: lang.language.name,
     iso639: lang.language.iso639,
-    score: lang.score,
-  })) ?? [];
+    score: lang.score
+  })) ?? []
 
   const cartoonCountries: CartoonCountry[] = tmpCartoon.jtCartoonsCountries?.map((country: any) => ({
     id: country.fkCountryId,
     name: country.country.name,
-    iso316613: country.country.iso316613,
-  })) ?? [];
+    iso316613: country.country.iso316613
+  })) ?? []
 
   const cartoonCompanies: CartoonCompany[] = tmpCartoon.jtCartoonsCompanies?.map((company: any) => ({
     role: company.role,
     credited: company.credited,
     id: company.fkCompanyId,
     name: company.company.name,
-    coverPic: company.company.coverPic,
-  })) ?? [];
+    coverPic: company.company.coverPic
+  })) ?? []
 
   const cartoonStaff: CartoonStaff[] = tmpCartoon.jtCartoonsStaff?.map((role: any) => ({
     role: role.role,
@@ -136,25 +156,44 @@ function transformCartoonData(tmpCartoon: any): Omit<TransformedCartoon, 'userLi
     staff: {
       id: role.fkStaffId,
       name: role.staff?.name ?? null,
-      coverPic: role.staff?.coverPic ?? null,
+      coverPic: role.staff?.coverPic ?? null
     },
     language: {
       id: role.fkLanguageId,
-      name: role.language?.name ?? null,
+      name: role.language?.name ?? null
+    }
+    // character: {
+    //   id: role.fkCharacterId,
+    //   name: role.character?.name ?? null,
+    //   coverPic: role.character?.coverPic ?? null,
+    // },
+  })) ?? []
+
+  const cartoonCharacters: CartoonCharacters[] = tmpCartoon.jtCartoonsCharacters?.map((role: any) => ({
+    role: role.role,
+    credited: role.credited,
+    staff: {
+      id: role.fkStaffId,
+      name: role.staff?.name ?? null,
+      coverPic: role.staff?.coverPic ?? null
+    },
+    language: {
+      id: role.fkLanguageId,
+      name: role.language?.name ?? null
     },
     character: {
       id: role.fkCharacterId,
       name: role.character?.name ?? null,
-      coverPic: role.character?.coverPic ?? null,
-    },
-  })) ?? [];
+      coverPic: role.character?.coverPic ?? null
+    }
+  })) ?? []
 
   const cartoonTags: CartoonTag[] = tmpCartoon.jtCartoonsTags?.map((tag: any) => ({
     id: tag.fkTagId,
     name: tag.tag.name,
     score: tag.score,
-    spoiler: tag.spoiler,
-  })) ?? [];
+    spoiler: tag.spoiler
+  })) ?? []
 
   return {
     id: tmpCartoon.id,
@@ -174,43 +213,44 @@ function transformCartoonData(tmpCartoon: any): Omit<TransformedCartoon, 'userLi
     languages: cartoonLanguages,
     countries: cartoonCountries,
     companies: cartoonCompanies,
+    characters: cartoonCharacters,
     staff: cartoonStaff,
     tags: cartoonTags,
     reviews: tmpCartoon.reviews ?? [],
-    stats: tmpCartoon.cartoonStats ?? [],
-  };
+    stats: tmpCartoon.cartoonStats ?? []
+  }
 }
 
-//Fetches user's list entry for the cartoon
-async function getUserListEntry(userId: number, cartoonId: number) {
+// Fetches user's list entry for the cartoon
+async function getUserListEntry (userId: number, cartoonId: number) {
   try {
     return await db.query.userLists.findFirst({
       where: and(
         eq(userLists.fkUserId, userId),
         eq(userLists.fkCartoonId, cartoonId)
       )
-    });
+    })
   } catch (err) {
-    console.error('Error fetching user list entry:', err);
-    return null;
+    console.error('Error fetching user list entry:', err)
+    return null
   }
 }
 
 // Main load function
 export const load: PageServerLoad = async ({ params, locals }) => {
-  const { id } = params;
-  
+  const { id } = params
+
   // Validate input
-  const cartoonID = validateCartoonId(id);
+  const cartoonID = validateCartoonId(id)
 
   try {
     // Fetch user list entry if user is authenticated
-    let userListEntry = null;
-    let isFavorited = false;
+    let userListEntry = null
+    let isFavorited = false
 
     if (locals.user?.id) {
-      userListEntry = await getUserListEntry(locals.user.id, cartoonID);
-      isFavorited = userListEntry?.favorite === 1;
+      userListEntry = await getUserListEntry(locals.user.id, cartoonID)
+      isFavorited = userListEntry?.favorite === 1
     }
 
     // Fetch cartoon data
@@ -224,7 +264,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         },
         jtCartoonsLanguages: {
           with: {
-            language: true,
+            language: true
           }
         },
         jtCartoonsCountries: {
@@ -240,57 +280,64 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         jtCartoonsStaff: {
           with: {
             staff: true,
+            // character: true,
+            language: true
+          }
+        },
+        jtCartoonsCharacters: {
+          with: {
+            staff: true,
             character: true,
             language: true
           }
         },
         jtCartoonsTags: {
           with: {
-            tag: true,
+            tag: true
           }
         },
         cartoonStats: {
           with: {
-            cartoon: true,
+            cartoon: true
           }
         },
         reviews: {
           with: {
-            user: true,
+            user: true
           }
         }
       }
-    });
+    })
 
-    if (!tmpCartoon) {
-      throw error(404, 'Cartoon not found');
+    if (tmpCartoon == null) {
+      throw error(404, 'Cartoon not found')
     }
 
     // Transform the data
-    const cartoonData = transformCartoonData(tmpCartoon);
+    const cartoonData = transformCartoonData(tmpCartoon)
 
     // Combine with user-specific data
     const cartoon: TransformedCartoon = {
       ...cartoonData,
       userListEntry,
-      isFavorited,
-    };
+      isFavorited
+    }
 
-    console.log('Loaded cartoon:', cartoon.name, `(ID: ${cartoon.id})`);
+    console.log('Loaded cartoon:', cartoon.name, `(ID: ${cartoon.id})`)
     console.log('User', locals.user)
-    console.log('User list entry:', userListEntry);
-    console.log('Is favorited:', isFavorited);
+    console.log('User list entry:', userListEntry)
+    console.log('Is favorited:', isFavorited)
 
     return {
-      cartoon,
-    };
+      cartoon
+    }
   } catch (err) {
     // Re-throw SvelteKit errors
     if (err && typeof err === 'object' && 'status' in err) {
-      throw err;
+      throw err
     }
-    
-    console.error('Error fetching cartoon:', err);
-    throw error(500, 'Failed to load cartoon');
+
+    console.error('Error fetching cartoon:', err)
+    throw error(500, 'Failed to load cartoon')
   }
-};
+}

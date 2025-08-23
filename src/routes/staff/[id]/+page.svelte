@@ -10,6 +10,7 @@
 
 	let activeTab = 'overview';
 
+    console.log(data.staffer)
 	const tabs = [
 		{ id: 'voice acting', label: 'Voice Credits', component: VoiceActingCredits},
 		{ id: 'credits', label: 'Credits', component: StaffCredits },
@@ -43,7 +44,7 @@
 					<!-- Cover Image - positioned to overlap banner and white area -->
 					<div class="flex-shrink-0 relative">
 						<img
-              				src={staffer.coverPic ? staffer.coverPic : '/nocover.jpg'}
+              src={staffer.coverPic ? staffer.coverPic : '/nocover.jpg'}
 							alt={staffer.name}
 							class="w-56 h-80 object-cover rounded-lg shadow-lg -mt-20 relative z-10"
 						/>
@@ -65,25 +66,25 @@
 
 							<!-- Tags/Badges -->
 							<div class="flex flex-wrap items-center gap-3">
-								{#if staffer.sex !== null}
-									<span class="flex items-center gap-1">
-										<b>Gender:</b>
-										{#if staffer.sex == false}
-											male
-										{:else if staffer.sex == true}
-											female
-										{/if}
-									</span>
-								{/if}
+								<!-- {#if staffer.sex !== null} -->
+								<!-- 	<span class="flex items-center gap-1"> -->
+								<!-- 		<b>Gender:</b> -->
+								<!-- 		{#if staffer.sex == false} -->
+								<!-- 			male -->
+								<!-- 		{:else if staffer.sex == true} -->
+								<!-- 			female -->
+								<!-- 		{/if} -->
+								<!-- 	</span> -->
+								<!-- {/if} -->
 
 								{#if staffer.birthday !== null}
 									<span class="flex items-center gap-1">
-										<b>Birthday:</b> {staffer.birthday.toDateString()}
+										<b>Birth:</b> {staffer.birthday.toDateString()}
 									</span>
 								{/if}
 								{#if staffer.deathday !== null}
 									<span class="flex items-center gap-1">
-										<b>Date of Death:</b> {staffer.deathday.toDateString()}
+										<b>Death:</b> {staffer.deathday.toDateString()}
 									</span>
 								{/if}
 

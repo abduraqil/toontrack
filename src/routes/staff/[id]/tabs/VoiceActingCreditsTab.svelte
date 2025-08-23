@@ -6,15 +6,15 @@
     */
 
     // Use the correct property name from your relations
-    let roles = staffer.roles.filter((x: { role: number; }) => x.role == 4)
-    $: roles
+    let voiceRoles = staffer.voiceRoles
+    $: voiceRoles
 </script>
 
 <div class="space-y-4">
     <div class="prose max-w-none">
-        {#if roles.length > 0}
+        {#if voiceRoles.length > 0}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-                {#each roles as role}
+                {#each voiceRoles as role}
                     <!-- <a href="/cartoons/{role.cartoon.id}"> -->
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex overflow-hidden h-24">
                             <div class="w-24 h-24">
@@ -27,11 +27,13 @@
                             <div class="flex-1 p-4 flex flex-col justify-center">
                                     <a href="/characters/{role.character.id}" class="font-semibold text-sm text-gray-900 mb-1 line-clamp-1">{role.character.name}</a>
                                     <a style="display: flex; justify-content: flex-end"  href="/cartoons/{role.cartoon.id}" class="font-semibold text-sm text-gray-900 mb-1 line-clamp-1">{role.cartoon.name}</a>
+                                {#if role.language.name != null}
                                 <div class="flex flex-wrap gap-1">
                                         <span class="inline-block bg-purple-100 text-gray-800 text-xs px-2 py-1 rounded-full">
                                             {role.language.name}
                                         </span>
                                 </div>
+                                {/if}
                             </div>
                             <div class="w-24 h-24">
                                 <img

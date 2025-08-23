@@ -20,7 +20,7 @@
     }
 
     // Use the correct property name from your relations
-    let staff = cartoon.staff.filter((x: { role: number; }) => x.role != 4)
+    let staff = cartoon.staff
     $: staff
 </script>
 
@@ -41,13 +41,11 @@
                                 </div>
                             </div>
                             <div class="w-24 h-24">
-                                {#if role.staff.coverPic}
                                 <img
                                     src={role.staff.coverPic ? role.staff.coverPic : '/nocover.jpg'}
                                     alt={role.staff.name}
                                     class="w-full h-full object-cover"
                                 />
-                                {/if}
                             </div>
                         </div>
                       {/if}

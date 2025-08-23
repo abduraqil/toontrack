@@ -1,106 +1,120 @@
-import type { PageServerLoad } from './$types';
-import { error } from '@sveltejs/kit';
-import { db } from '$lib/server/db';
-import { eq } from 'drizzle-orm';
-import { staff } from '$lib/server/db/schema';
-import '$lib/server/db/schema';
-/*TODO add in type gaurd for staffID */
+import type { PageServerLoad } from './$types'
+import { error } from '@sveltejs/kit'
+import { db } from '$lib/server/db'
+import { eq } from 'drizzle-orm'
+import { staff } from '$lib/server/db/schema'
+/* TODO add in type gaurd for staffID */
 
 export const load: PageServerLoad = async ({ params }) => {
-    const { id } = params;
+  const { id } = params
 
-    // Only allow numeric IDs
-    if (!/^\d+$/.test(id)) {
-        throw error(400, 'Invalid staff ID format');
-    }
+  // Only allow numeric IDs
+  if (!/^\d+$/.test(id)) {
+    throw error(400, 'Invalid staff ID format')
+  }
 
-    const staffID = parseInt(id, 10);
+  const staffID = parseInt(id, 10)
 
-    // Additional safety check
-    if (staffID <= 0) {
-        throw error(400, 'Invalid staff ID');
-    }
+  // Additional safety check
+  if (staffID <= 0) {
+    throw error(400, 'Invalid staff ID')
+  }
 
-    try {
-        const tmpStaffer = await db.query.staff.findFirst({
-            where: eq(staff.id, staffID),
-            with: {
-                jtCartoonsStaff: {
-                    with: {
-                        cartoon: true,
-                        character: true,
-                        language: true
-                    }
-                }
-            }
-        });
-    tmpStaffer?.jtCartoonsStaff.forEach(role => {
-     role: role.role
-     character: {
-         id: role.fkCharacterId
-         name: role.character?.name
-     }
-     language: {
-         id: role.fkLanguageId
-         name: role.language?.name
-     }
-     cartoon: {
-         id: role.cartoon?.id
-         name: role.cartoon?.name
-         start: role.cartoon?.airStart
-         end: role.cartoon?.airEnd
-     }
+  try {
+    const tmpStaffer = await db.query.staff.findFirst({
+      where: eq(staff.id, staffID),
+      with: {
+        jtCartoonsStaff: {
+          with: {
+            cartoon: true,
+            // character: true,
+            language: true
+          }
+        },
+        jtCartoonsCharacters: {
+          with: {
+            staff: true,
+            character: true,
+            language: true,
+            cartoon: true
+          }
+        }
+      }
     })
-    console.log(tmpStaffer?.jtCartoonsStaff[0].cartoon)
 
-        if (!tmpStaffer) {
-            throw error(404, 'staff not found');
-        }
-
-        let roles: any[] = []
-        tmpStaffer?.jtCartoonsStaff.forEach(role => {
-            roles = roles.concat(
-                {
-                    role: role.role,
-                    character: {
-                        id: role.fkCharacterId,
-                        name: role.character?.name,
-                        coverPic: role.character?.coverPic,
-                    },
-                    language: {
-                        id: role.fkLanguageId,
-                        name: role.language?.name,
-                    },
-                    cartoon: {
-                        id: role.cartoon?.id,
-                        name: role.cartoon?.name,
-                        start: role.cartoon?.airStart,
-                        end: role.cartoon?.airEnd,
-                        coverPic: role.cartoon?.coverPic,
-                    },
-                }
-            )
-        })
-
-        let staffer = {
-            id: tmpStaffer?.id,
-            name: tmpStaffer?.name,
-            description: tmpStaffer?.description,
-            coverPic: tmpStaffer?.coverPic,
-            sex: tmpStaffer?.sex,
-            birthday: tmpStaffer?.birthday,
-            deathday: tmpStaffer?.deathday,
-            links: tmpStaffer?.links,
-            roles: roles
-        }
-
-        console.log(staffer)
-
-        return {
-            staffer
-        };
-    } catch (err) {
-        console.error('Error fetching staff:', err);
-        throw error(500, 'Failed to load staff');
+    if (tmpStaffer == null) {
+      throw error(404, 'staff not found')
     }
-};
+
+    let roles: any[] = []
+    tmpStaffer?.jtCartoonsStaff.forEach(role => {
+      roles = roles.concat(
+        {
+          role: role.role,
+          // character: {
+          id: role.fkCharacterId,
+          // name: role.character?.name,
+          // coverPic: role.character?.coverPic,
+          // },
+          language: {
+            id: role.fkLanguageId,
+            name: role.language?.name
+          },
+          cartoon: {
+            id: role.cartoon?.id,
+            name: role.cartoon?.name,
+            start: role.cartoon?.airStart,
+            end: role.cartoon?.airEnd,
+            coverPic: role.cartoon?.coverPic
+          }
+        }
+      )
+    })
+
+    let voiceRoles: any[] = []
+    tmpStaffer?.jtCartoonsCharacters.forEach(voiceRole => {
+      voiceRoles = voiceRoles.concat(
+        {
+          character: {
+            id: voiceRole.fkCharacterId,
+            name: voiceRole.character?.name,
+            coverPic: voiceRole.character?.coverPic
+          },
+          language: {
+            id: voiceRole.fkLanguageId,
+            name: voiceRole.language?.name
+          },
+          cartoon: {
+            id: voiceRole.cartoon?.id,
+            name: voiceRole.cartoon?.name,
+            start: voiceRole.cartoon?.airStart,
+            end: voiceRole.cartoon?.airEnd,
+            coverPic: voiceRole.cartoon?.coverPic
+          }
+        }
+      )
+    })
+
+    const staffer = {
+      id: tmpStaffer?.id,
+      name: tmpStaffer?.name,
+      description: tmpStaffer?.description,
+      coverPic: tmpStaffer?.coverPic,
+      sex: tmpStaffer?.sex,
+      birthday: tmpStaffer?.birthday,
+      deathday: tmpStaffer?.deathday,
+      links: tmpStaffer?.links,
+      roles,
+      voiceRoles
+    }
+
+    console.log(staffer)
+
+    return {
+      staffer
+    }
+  } catch (err) {
+    console.error('Error fetching staff:', err)
+    throw error(500, 'Failed to load staff')
+  }
+}
