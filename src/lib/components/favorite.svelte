@@ -1,63 +1,102 @@
 <script lang="ts">
-  import {page} from "$app/stores";
-  import {createEventDispatcher} from "svelte";
+  import { page } from "$app/state";
+  
 
   // props
-  export let itemId: string | number;
-  export let itemType: 
-    "cartoon" | 
-    "character" | 
-    "staff" | 
-    "unknown" = "unknown";
-  export let isFavorite: boolean = false;
+  const {
+    itemId,
+    itemType = "unknown",
+    isFavorited = false,
+    onFavorite = () => {},
+  } = $props<{
+    itemId: string | Number;
+    itemType?: "cartoon" | "character" | "staff" | "unknown";
+    isFavorite?: boolean;
+    onFavorite?: (event: {
+      success: boolean;
+      isFavorited?: boolean;
+      error?: string;
+      itemId: string | number;
+      itemType: string;
+    }) => void;
+  }>();
 
-  const dispatch = createEventDispatcher();
+  let localFavorited = $state(isFavorited);
+  let isSubmitting = $state(false);
 
-  $: detectedType = itemType || detectType($page.params.routeId);
+  $effect(() => {
+    localFavorited = isFavorited;
+  });
 
-  function detectType(routeId: string | null): string {
-    if (!routeId) return "unknown";
-    if (routeId?.includes("cartoon")) return "cartoon";
-    if (routeId?.includes("characters")) return "character";
-    if (routeId?.includes("staff")) return "staff";
+  const detectedType = $derived(
+    itemType !== "unknown" ? itemType : detectType(page.url.pathname),
+  );
+
+  function detectType(pathname: string | null): string {
+    if (!pathname) return "unknown";
+    if (pathname.includes("/cartoon/")) return "cartoon";
+    if (pathname.includes("/character/")) return "character";
+    if (pathname.includes("/staff/")) return "staff";
+    
     return "unknown";
   }
 
   async function handleFavorite() {
-    const favoriteData = {
-      id: itemId,
-      type: detectedType,
-      action: isFavorite ? "remove" : "add"
-    };
+    if (isSubmitting) return; // Prevent multiple submissions
+
+    const previousState = localFavorited;
+    localFavorited = !localFavorited;
+    isSubmitting = true;
 
     try {
-      const response = await fetch('/api/user-lists/favorite', {
-        method: 'POST',
+      const response = await fetch("/api/favorites", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          cartoonId: itemId,
-          favorite: !isFavorite
-        })
+          itemId: itemId,
+          itemType: detectedType,
+          favorite: !isFavorited,
+        }),
       });
-      
+
       if (response.ok) {
-        isFavorite = !isFavorite;
-        // Dispatch event for parent component to handle any additional logic
-        dispatch('favorite', { ...favoriteData, success: true, isFavorite });
+        onFavorite({
+          success: true,
+          isFavorited: localFavorited,
+          itemId,
+          itemType: detectType,
+        })
       } else {
-        console.error('Failed to toggle favorite');
-        dispatch('favorite', { ...favoriteData, success: false, error: 'Failed to toggle favorite' });
+        // revert
+        localFavorited = previousState;
+        const errorData = await response.json();
+        onFavorite({
+          success: false,
+          error: errorData.error || 'Failed to toggle favorite',
+          itemId,
+          itemType: detectType
+        });
       }
     } catch (error) {
-      console.error('Failed to toggle favorite:', error);
-      dispatch('favorite', { ...favoriteData, success: false, error });
+      console.error("Failed to toggle favorite:", error);
+      localFavorited = previousState;
+      onFavorite({
+        success: false,
+        error: 'error',
+        itemId,
+        itemType: detectedType
+      });
+    } finally {
+      isSubmitting = false;
     }
-  }
+  };
 </script>
 
 <button
+  type="button"
+  onclick={handleFavorite}
   class="
         inline-flex items-center justify-center
         w-10 h-10
@@ -65,8 +104,10 @@
         text-gray-500 hover:text-red-500 hover:bg-red-50
         transition-all duration-200 ease-in-out
         focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
-        hover:scale-105"
-  aria-label="Favorite"
+        hover:scale-105
+        disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-105
+        {localFavorited ? 'text-red-500 bg-red-50' : ''}"
+        aria-label="{localFavorited ? 'Unfavorite' : 'Favorite'}"
 >
   <svg
     xmlns="http://www.w3.org/2000/svg"

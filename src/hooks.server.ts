@@ -23,5 +23,6 @@ export const handle: Handle = async ({event, resolve}) => {
 
     event.locals.session = session;
     event.locals.user = user;
+    console.log("User session validated:", user);
     return resolve(event);
 };

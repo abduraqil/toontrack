@@ -8,7 +8,6 @@
     import StatsTab from "./tabs/StatsTab.svelte";
 
     import type { PageData } from "./$types";
-    import { userLists } from "$lib/server/db/schema";
     export let data: PageData;
 
     $: cartoon = data.cartoon;
@@ -78,16 +77,24 @@
         }
     }
 
-    function handleFavoriteResult(event: { detail: { success: any; error: any; isFavorited: any; }; }) {
-        const { success, error, isFavorited } = event.detail;
+    function handleFavoriteResult(event: {
+        success: boolean;
+        isFavorited?: boolean;
+        error?: string;
+        itemId: string | number;
+        itemType: string;
+    }) {
+        const { success, error, isFavorited } = event;
         if (success) {
             // Update the local data
-            
-            cartoon.
-            // You could also show a toast notification here
+            cartoon.isFavorited = isFavorited ?? false;
+            // show notification here
+            console.log(
+                `Cartoon ${isFavorited ? "favorited" : "unfavorited"} successfully`
+            );
         } else {
-            // Handle error (show error message, etc.)
-            console.error('Favorite error:', error);
+            // Handle error
+            console.error("Favorite error:", error);
         }
     }
 </script>
@@ -144,11 +151,18 @@
                                 >
                                     {cartoon.name}
                                 </h1>
-                                <Favorite {cartoon} />
+                                <Favorite
+                                    itemId={Number(cartoon.id)}
+                                    itemType="cartoon"
+                                    isFavorite={cartoon.isFavorited}
+                                    onFavorite={handleFavoriteResult}
+                                />
                             </div>
 
                             <!-- Tags/Badges -->
-                            <div class="flex flex-wrap items-center gap-3 text-sm">
+                            <div
+                                class="flex flex-wrap items-center gap-3 text-sm"
+                            >
                                 <!-- {#if cartoon.of_type !== null}
                                     <span class="flex items-center gap-1">
                                         <svg
@@ -279,7 +293,7 @@
                     <dl class="space-y-3">
                         {#each [cartoon.types && cartoon.types.length > 0 ? { label: "Type", value: cartoon.types
                                           .map((ct) => ct.name)
-                                          .join(", ") } : null, cartoon.seasons !== null ? { label: "Seasons", value: cartoon.seasons } : null, cartoon.episodes !== null ? { label: "Episodes", value: cartoon.episodes } : null, cartoon.duration !== null ? { label: "Duration", value: `${cartoon.duration} min` } : null, cartoon.status !== null ? { label: "Status", value: formatStatus(cartoon.status) } : null, cartoon.ageRating !== null ? { label: "Age Rating", value: cartoon.ageRating } : null, cartoon.airStart !== null ? { label: "Start Date", value: cartoon.airStart.toLocaleDateString( undefined, { month: "short", day: "2-digit", year: "numeric" }, ) } : null, cartoon.airEnd !== null ? { label: "End Date", value: cartoon.airEnd.toLocaleDateString( undefined, { month: "short", day: "2-digit", year: "numeric" }, ) } : null, cartoon.countries && cartoon.countries.length > 0 ? { label: "Countries", value: cartoon.countries
+                                          .join(", ") } : null, cartoon.seasons !== null ? { label: "Seasons", value: cartoon.seasons } : null, cartoon.episodes !== null ? { label: "Episodes", value: cartoon.episodes } : null, cartoon.duration !== null ? { label: "Duration", value: `${cartoon.duration} min` } : null, cartoon.status !== null ? { label: "Status", value: formatStatus(Number(cartoon.status)) } : null, cartoon.ageRating !== null ? { label: "Age Rating", value: cartoon.ageRating } : null, cartoon.airStart !== null ? { label: "Start Date", value: cartoon.airStart.toLocaleDateString( undefined, { month: "short", day: "2-digit", year: "numeric" }, ) } : null, cartoon.airEnd !== null ? { label: "End Date", value: cartoon.airEnd.toLocaleDateString( undefined, { month: "short", day: "2-digit", year: "numeric" }, ) } : null, cartoon.countries && cartoon.countries.length > 0 ? { label: "Countries", value: cartoon.countries
                                           .map((c) => c.name)
                                           .join(", ") } : null].filter((detail) => detail !== null) as detail}
                             <div>

@@ -27,6 +27,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			)
 		})
 
+		console.log("API Recieved: ", {favorite, userId: locals.user.id })
 		if (currentEntry) {
 			await db.update(userLists)
 				.set({
