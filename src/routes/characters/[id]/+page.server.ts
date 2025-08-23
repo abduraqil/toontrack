@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({ params }) => {
         where: eq(characters.id, characterID),
         with: {
                 staff: true,
-                jtCartoonsStaff: {
+                jtCartoonsCharacters: {
                     with: {
                         cartoon: true,
                         staff: true,
@@ -44,9 +44,8 @@ export const load: PageServerLoad = async ({ params }) => {
     }
 
     let roles: any[] = []
-    tmpCharacter?.jtCartoonsStaff.forEach(role => {
+    tmpCharacter?.jtCartoonsCharacters.forEach(role => {
         roles = roles.concat({
-            role: role.role,
             staff: {
                 id: role.fkStaffId,
                 name: role.staff?.name,
@@ -66,6 +65,7 @@ export const load: PageServerLoad = async ({ params }) => {
         })
     })
 
+
     let character = {
         id: tmpCharacter.id,
         name: tmpCharacter.name,
@@ -78,7 +78,7 @@ export const load: PageServerLoad = async ({ params }) => {
         inception: tmpCharacter.inception,
         roles: roles,
     }
-    console.log(character)
+    console.log(character.roles)
 
         return {
             character

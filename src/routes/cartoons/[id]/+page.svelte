@@ -15,7 +15,7 @@
 
     const tabs = [
         { id: 'overview', label: 'Overview', component: OverviewTab },
-        { id: 'voice actors', label: 'Voice Actors', component: VoiceActorsTab},
+        { id: 'voice actors', label: 'Characters', component: VoiceActorsTab},
         { id: 'staff', label: 'Staff', component: StaffTab },
         { id: 'companies', label: 'Companies', component: CompaniesTab },
         { id: 'reviews', label: 'Reviews', component: ReviewTab}
@@ -99,14 +99,14 @@
 
                             <!-- Tags/Badges -->
                             <div class="flex flex-wrap items-center gap-3">
-                                {#if cartoon.of_type !== null}
-                                    <span class="flex items-center gap-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125Z" />
-                                    </svg>
-                                    {formatType(cartoon.of_type)}
-                                    </span>
-                                {/if}
+                                <!-- {#if cartoon.of_type !== null} -->
+                                <!--     <span class="flex items-center gap-1"> -->
+                                <!--     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"> -->
+                                <!--         <path stroke-linecap="round" stroke-linejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.125-3h17.25c.621 0 1.125-.504 1.125-1.125V4.875c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125Z" /> -->
+                                <!--     </svg> -->
+                                <!--     {formatType(cartoon.of_type)} -->
+                                <!--     </span> -->
+                                <!-- {/if} -->
                                 {#if cartoon.ageRating !== null}
                                     <span class="flex items-center gap-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">

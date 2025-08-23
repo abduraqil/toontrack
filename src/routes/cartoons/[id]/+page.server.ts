@@ -51,6 +51,13 @@ export const load: PageServerLoad = async ({ params }) => {
                 jtCartoonsStaff: {
                     with: {
                         staff: true, // not sure if this includes all cols from staff
+                        // character: true,
+                        language: true
+                    }
+                },
+                jtCartoonsCharacters: {
+                    with: {
+                        staff: true,
                         character: true,
                         language: true
                     }
@@ -130,6 +137,27 @@ export const load: PageServerLoad = async ({ params }) => {
                 id: role.fkLanguageId,
                 name: role.language?.name,
             },
+            // character: {
+            //     id: role.fkCharacterId,
+            //     name: role.character?.name,
+            //     coverPic: role.character?.coverPic,
+            // },
+        })
+    })
+
+    let cartoonCharacters : any[] = []
+    tmpCartoon?.jtCartoonsCharacters.forEach(role => {
+        cartoonCharacters = cartoonCharacters.concat({
+            credited: role.credited,
+            staff: {
+                id: role.fkStaffId,
+                name: role.staff?.name,
+                coverPic: role.staff?.coverPic,
+            },
+            language: {
+                id: role.fkLanguageId,
+                name: role.language?.name,
+            },
             character: {
                 id: role.fkCharacterId,
                 name: role.character?.name,
@@ -167,10 +195,11 @@ export const load: PageServerLoad = async ({ params }) => {
         countries: cartoonCountries,
         companies: cartoonCompanies,
         staff: cartoonStaff,
+        characters: cartoonCharacters,
         tags: cartoonTags,
     };
 
-    console.log( "cartoon", cartoon)
+    console.log( "cartoon", cartoon.staff)
     // console.log( "filter", cartoon.staff.filter(x => x.role == 4))
 
         return {

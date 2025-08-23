@@ -20,7 +20,7 @@
     }
 
     // Use the correct property name from your relations
-    let staff = cartoon.staff.filter((x: { role: number; }) => x.role != 4)
+    let staff = cartoon.staff
     $: staff
 </script>
 

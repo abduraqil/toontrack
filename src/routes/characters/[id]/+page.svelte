@@ -64,20 +64,20 @@
 							<!-- Tags/Badges -->
 							<!-- <div class="flex flex-wrap items-center gap-3"> -->
 							<div>
-								{#if character.sex!== null}
-									<span class="flex items-center gap-1">
-										<b>Gender:</b>
-										{#if character.sex == false}
-											male
-										{:else if character.sex == true}
-											female
-										{/if}
-									</span>
-								{/if}
+								<!-- {#if character.sex!== null} -->
+								<!-- 	<span class="flex items-center gap-1"> -->
+								<!-- 		<b>Gender:</b> -->
+								<!-- 		{#if character.sex == false} -->
+								<!-- 			male -->
+								<!-- 		{:else if character.sex == true} -->
+								<!-- 			female -->
+								<!-- 		{/if} -->
+								<!-- 	</span> -->
+								<!-- {/if} -->
 
 								{#if character.birthday!== null}
 									<span class="flex items-center gap-1">
-										<b>Birthday:</b> {character.birthday.toDateString()}
+										<b>Birth:</b> {character.birthday.toDateString()}
 									</span>
 								{/if}
 								{#if character.inception!== null}

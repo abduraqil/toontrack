@@ -28,30 +28,20 @@ export const load: PageServerLoad = async ({ params }) => {
                 jtCartoonsStaff: {
                     with: {
                         cartoon: true,
-                        character: true,
+                        // character: true,
                         language: true
                     }
-                }
+                },
+                jtCartoonsCharacters: {
+                    with: {
+                        staff: true,
+                        character: true,
+                        language: true,
+                        cartoon: true
+                    }
+                },
             }
         });
-    tmpStaffer?.jtCartoonsStaff.forEach(role => {
-     role: role.role
-     character: {
-         id: role.fkCharacterId
-         name: role.character?.name
-     }
-     language: {
-         id: role.fkLanguageId
-         name: role.language?.name
-     }
-     cartoon: {
-         id: role.cartoon?.id
-         name: role.cartoon?.name
-         start: role.cartoon?.airStart
-         end: role.cartoon?.airEnd
-     }
-    })
-    console.log(tmpStaffer?.jtCartoonsStaff[0].cartoon)
 
         if (!tmpStaffer) {
             throw error(404, 'staff not found');
@@ -62,11 +52,11 @@ export const load: PageServerLoad = async ({ params }) => {
             roles = roles.concat(
                 {
                     role: role.role,
-                    character: {
+                    // character: {
                         id: role.fkCharacterId,
-                        name: role.character?.name,
-                        coverPic: role.character?.coverPic,
-                    },
+                        // name: role.character?.name,
+                        // coverPic: role.character?.coverPic,
+                    // },
                     language: {
                         id: role.fkLanguageId,
                         name: role.language?.name,
@@ -82,6 +72,30 @@ export const load: PageServerLoad = async ({ params }) => {
             )
         })
 
+        let voiceRoles: any[] = []
+        tmpStaffer?.jtCartoonsCharacters.forEach(voiceRole => {
+            voiceRoles = voiceRoles.concat(
+                {
+                    character: {
+                        id: voiceRole.fkCharacterId,
+                        name: voiceRole.character?.name,
+                        coverPic: voiceRole.character?.coverPic,
+                    },
+                    language: {
+                        id: voiceRole.fkLanguageId,
+                        name: voiceRole.language?.name,
+                    },
+                    cartoon: {
+                        id: voiceRole.cartoon?.id,
+                        name: voiceRole.cartoon?.name,
+                        start: voiceRole.cartoon?.airStart,
+                        end: voiceRole.cartoon?.airEnd,
+                        coverPic: voiceRole.cartoon?.coverPic,
+                    },
+                }
+            )
+        })
+
         let staffer = {
             id: tmpStaffer?.id,
             name: tmpStaffer?.name,
@@ -91,7 +105,8 @@ export const load: PageServerLoad = async ({ params }) => {
             birthday: tmpStaffer?.birthday,
             deathday: tmpStaffer?.deathday,
             links: tmpStaffer?.links,
-            roles: roles
+            roles: roles,
+            voiceRoles: voiceRoles,
         }
 
         console.log(staffer)
