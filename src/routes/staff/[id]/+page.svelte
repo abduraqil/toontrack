@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Favorite from '../../../assets/components/favorite.svelte';
+	import Favorite from '$lib/components/favorite.svelte';
 	import StaffCredits from './tabs/StaffCreditsTab.svelte';
 	import VoiceActingCredits from './tabs/VoiceActingCreditsTab.svelte';
 
@@ -44,7 +44,7 @@
 					<!-- Cover Image - positioned to overlap banner and white area -->
 					<div class="flex-shrink-0 relative">
 						<img
-              src={staffer.coverPic ? staffer.coverPic : '/src/assets/nocover.jpg'}
+              src={staffer.coverPic ? staffer.coverPic : '/nocover.jpg'}
 							alt={staffer.name}
 							class="w-56 h-80 object-cover rounded-lg shadow-lg -mt-20 relative z-10"
 						/>

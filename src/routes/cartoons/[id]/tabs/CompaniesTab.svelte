@@ -40,7 +40,7 @@
                             </div>
                             <div class="w-24 h-24">
                                 <img
-                                    src={company.coverPic ? company.coverPic : '/src/assets/nocover.jpg'}
+                                    src={company.coverPic ? company.coverPic : '/nocover.jpg'}
                                     alt={company.name}
                                     class="w-full h-full object-cover"
                                 />

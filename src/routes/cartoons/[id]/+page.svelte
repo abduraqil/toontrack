@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Favorite from '../../../assets/components/favorite.svelte';
+    import Favorite from '$lib/components/favorite.svelte';
     import OverviewTab from './tabs/OverviewTab.svelte';
     import VoiceActorsTab from './tabs/VoiceActorsTab.svelte';
     import StaffTab from './tabs/StaffTab.svelte';
@@ -76,7 +76,7 @@
                     <div class="flex-shrink-0 relative">
                         <div class="w-56 h-80 flex items-center justify-center relative -mt-20 z-10 rounded-lg">
                             <img
-                                src={cartoon.coverPic ? cartoon.coverPic : '/src/assets/nocover.jpg'}
+                                src={cartoon.coverPic ? cartoon.coverPic : '/nocover.jpg'}
                                 alt={cartoon.name}
                                 class="object-contain rounded-lg shadow-lg"
                             />

@@ -40,7 +40,7 @@
                             </div>
                             <div class="w-24 h-24">
                                 <img
-                                    src={cartoon.coverPic ? cartoon.coverPic : '/src/assets/nocover.jpg'}
+                                    src={cartoon.coverPic ? cartoon.coverPic : '/nocover.jpg'}
                                     alt={cartoon.name}
                                     class="w-full h-full object-cover"
                                 />

@@ -19,7 +19,7 @@
                         <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex overflow-hidden h-24">
                             <div class="w-24 h-24">
                                 <img
-                                    src={role.character.coverPic ? role.character.coverPic : '/src/assets/nocover.jpg'}
+                                    src={role.character.coverPic ? role.character.coverPic : '/nocover.jpg'}
                                     alt={role.character.name}
                                     class="w-full h-full object-cover"
                                 />
@@ -41,7 +41,7 @@
                             {#if role.staff.id}
                             <div class="w-24 h-24">
                                 <img
-                                    src={role.staff.coverPic ? role.staff.coverPic : '/src/assets/nocover.jpg'}
+                                    src={role.staff.coverPic ? role.staff.coverPic : '/nocover.jpg'}
                                     alt={role.staff.name}
                                     class="w-full h-full object-cover"
                                 />

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Favorite from '../../../assets/components/favorite.svelte';
+	import Favorite from '$lib/components/favorite.svelte';
 	import Cartoons from './tabs/CartoonsTab.svelte';
 
 	import type { PageData } from './$types';
@@ -41,7 +41,7 @@
 					<!-- Cover Image - positioned to overlap banner and white area -->
 					<div class="flex-shrink-0 relative">
 						<img
-              src={company.coverPic ? company.coverPic : '/src/assets/nocover.jpg'}
+              src={company.coverPic ? company.coverPic : '/nocover.jpg'}
 							alt={company.name}
 							class="w-56 h-80 object-cover rounded-lg shadow-lg -mt-20 relative z-10"
 						/>
