@@ -34,6 +34,7 @@
 		"@types/jsonwebtoken": "^9.0.9",
 		"argon2": "^0.43.0",
 		"cookie": "^1.0.2",
+		"daisyui": "^5.0.52",
 		"dotenv": "^16.5.0",
 		"drizzle-orm": "^0.40.0",
 		"flexsearch": "^0.8.205",
