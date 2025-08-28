@@ -4,7 +4,7 @@ import { db } from '$lib/server/db'
 import { eq } from 'drizzle-orm'
 import { users } from '$lib/server/db/schema'
 import argon2 from 'argon2'
-import { SECRET } from '$lib/constants/auth'
+import { SECRET, SESSION_COOKIE_NAME } from '$lib/constants/auth'
 import {
   validateSessionToken,
   setSessionTokenCookie,
@@ -25,10 +25,13 @@ export interface ActionData {
   }
 }
 
-// export const load: PageServerLoad = async ({ url, params }) => {
-export const load: PageServerLoad = async () => {
-  // if session token exists then redirect to /home instead
+const POST_LOGIN_REDIRECT = '/home'
 
+export const load: PageServerLoad = async ({ cookies }) => {
+  if (cookies.get(SESSION_COOKIE_NAME)) {
+    console.log(`user is already logged in with cookie ${cookies.get(SESSION_COOKIE_NAME)}, redirecting...`)
+    throw redirect(303, POST_LOGIN_REDIRECT)
+  }
 }
 
 export const actions = {
@@ -59,7 +62,7 @@ export const actions = {
         })
       }
 
-      const isPasswordValid = await argon2.verify(user.pwd, password, { secret: SECRET })
+      const isPasswordValid = await argon2.verify(user.pwd, password, { secret: Buffer.from(SECRET) })
       if (!isPasswordValid) {
         console.log('Password verification failed')
         return fail(400, {
@@ -87,7 +90,8 @@ export const actions = {
         fields: { username }
       })
     }
-    throw redirect(303, '/home')
+
+    throw redirect(303, POST_LOGIN_REDIRECT)
   },
 
   logout: async (event: RequestEvent) => {

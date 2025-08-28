@@ -23,3 +23,6 @@ export const ERROR_MESSAGES = {
   USERNAME: `Username must be ${USERNAME.MIN_LENGTH}-${USERNAME.MAX_LENGTH} characters`
   // EMAIL: `Email must be ${EMAIL.MIN_LENGTH}-${EMAIL.MAX_LENGTH} characters`
 }
+
+export const SECRET = 'mysecret'
+export const SESSION_COOKIE_NAME = 'session'

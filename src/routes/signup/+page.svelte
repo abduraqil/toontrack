@@ -7,6 +7,10 @@
   export let form: ActionData | undefined;
 </script>
 
+<svelte:head>
+	<title>ToonTrack - Sign up</title>
+</svelte:head>
+
 <div class="min-h-screen bg-[#fafafa] flex items-center justify-center p-4">
   <main class="bg-white shadow-lg rounded-lg w-full max-w-md overflow-hidden">
       <h2 class="text-zinc-400 text-2xl font-semibold text-center mt-6">Sign up to Cartoon Chronicles</h2>

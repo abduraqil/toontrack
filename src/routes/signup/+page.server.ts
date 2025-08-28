@@ -1,10 +1,10 @@
 import { fail, redirect } from '@sveltejs/kit'
-import type { Actions } from './$types'
+import type { Actions, PageServerLoad } from './$types'
 import { db } from '$lib/server/db'
 import { eq } from 'drizzle-orm'
 import { users } from '$lib/server/db/schema'
 import argon2 from 'argon2'
-import { PASSWORD, USERNAME, ERROR_MESSAGES, SECRET } from '$lib/constants/auth'
+import { PASSWORD, USERNAME, ERROR_MESSAGES, SECRET, SESSION_COOKIE_NAME } from '$lib/constants/auth'
 
 /* TODO:
 JWT session cookie
@@ -15,6 +15,13 @@ export interface ActionData {
   message?: string
   errors?: Record<string, string>
   fields?: { username?: string }
+}
+
+export const load: PageServerLoad = async ({ cookies }) => {
+  if (cookies.get(SESSION_COOKIE_NAME)) {
+    console.log(`user is already logged in with cookie ${cookies.get(SESSION_COOKIE_NAME)}, redirecting...`)
+    throw redirect(303, '/login')
+  }
 }
 
 export const actions: Actions = {
@@ -81,7 +88,7 @@ export const actions: Actions = {
       memoryCost: 2 ** 18,
       timeCost: 12,
       hashLength: 149,
-      secret: SECRET
+      secret: Buffer.from(SECRET)
     })
 
     // create the user
