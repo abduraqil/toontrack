@@ -1,17 +1,17 @@
 <script lang="ts">
 	export let cartoon: any;
-	
+
 	import {writable} from 'svelte/store';
 	let isDropdownOpen = false;
 	let currentSort = 'Date';
 	let isAscending = false; // false = descending (newest first), true = ascending (oldest first)
-	
+
 	const sortOptions = [
 		{ label: 'Date', value: 'date' },
 		{ label: 'Score', value: 'score' },
 		{ label: 'Name', value: 'name' }
 	];
-	
+
 
 	let expanded = new Set<number>();
 	function toggleExpand(id: number) {
@@ -23,28 +23,27 @@
 		}
 		expanded = newSet;
 	}
-	
+
 	function toggleDropdown() {
 		isDropdownOpen = !isDropdownOpen;
 	}
-	
+
 	function selectSort(option: typeof sortOptions[0]) {
 		currentSort = option.label;
 		isDropdownOpen = false;
 	}
 
-	
 	function toggleSortOrder() {
 		isAscending = !isAscending;
 	}
-	
+
 	function handleClickOutside(event: MouseEvent) {
 		const dropdown = document.getElementById('sort-dropdown');
 		if (dropdown && !dropdown.contains(event.target as Node)) {
 			isDropdownOpen = false;
 		}
 	}
-	
+
 	// Close dropdown when clicking outside
 	if (typeof window !== 'undefined') {
 		document.addEventListener('click', handleClickOutside);
@@ -71,7 +70,8 @@
 
 	function addReview() {
 		// logic to add or edit review
-		
+    // DO THIS
+
 	}
 
 </script>
@@ -85,33 +85,33 @@
 					<!-- Sort By Dropdown -->
 					<div class="relative inline-block text-left" id="sort-dropdown">
 						<div>
-							<button 
-								id="sort-button" 
-								type="button" 
+							<button
+								id="sort-button"
+								type="button"
 								on:click={toggleDropdown}
-								aria-expanded={isDropdownOpen} 
-								aria-haspopup="true" 
+								aria-expanded={isDropdownOpen}
+								aria-haspopup="true"
 								aria-label="Sort reviews by"
-								class="inline-flex items-center justify-center gap-x-1.5 rounded-md bg-white 
+								class="inline-flex items-center justify-center gap-x-1.5 rounded-md bg-white
 								px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-purple-50"
 							>
 								{currentSort}
-								<svg 
-									xmlns="http://www.w3.org/2000/svg" 
-									fill="none" 
-									viewBox="0 0 24 24" 
-									stroke-width="1.5" 
-									stroke="currentColor" 
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
 									class="size-4 transition-transform duration-200 {isDropdownOpen ? 'rotate-180' : ''}"
 								>
 									<path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
 								</svg>
 							</button>
 						</div>
-						
+
 						{#if isDropdownOpen}
-							<div 
-								role="menu" 
+							<div
+								role="menu"
 								class="absolute left-0 z-10 mt-2 w-32 origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
 							>
 								<div role="none" class="py-1">
@@ -121,7 +121,7 @@
 											role="menuitem"
 											tabindex="-1"
 											on:click={() => selectSort(option)}
-											class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 
+											class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900
 											{currentSort === option.label ? 'bg-gray-50 text-gray-900' : ''}"
 										>
 											{option.label}
@@ -131,29 +131,29 @@
 							</div>
 						{/if}
 					</div>
-					
+
 					<!-- Sort Order Toggle Button -->
-					<button 
-						type="button" 
+					<button
+						type="button"
 						on:click={toggleSortOrder}
 						aria-label="Toggle sort order"
 						title="{isAscending ? 'Ascending' : 'Descending'} order"
-						class="inline-flex items-center justify-center rounded-md bg-white 
+						class="inline-flex items-center justify-center rounded-md bg-white
 						px-2 py-2 text-sm font-semibold text-gray-900  hover:bg-gray-50"
 					>
 						{#if isAscending}
 							<!-- Up Arrow (Ascending) -->
-							<svg 
-								xmlns="http://www.w3.org/2000/svg" fill="none" 
-								viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
+							<svg
+								xmlns="http://www.w3.org/2000/svg" fill="none"
+								viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
 								class="size-6 stroke-purple-600">
 								<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
 							</svg>
 						{:else}
 							<!-- Down Arrow (Descending) -->
-							<svg 
-								xmlns="http://www.w3.org/2000/svg" 
-								fill="none" viewBox="0 0 24 24" stroke-width="1.5" 
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none" viewBox="0 0 24 24" stroke-width="1.5"
 								stroke="currentColor" class="size-6 stroke-purple-600">
 								<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
 							</svg>
@@ -163,15 +163,15 @@
 				</div>
 				<!-- Add/Edit Review Button -->
 				<div class="flex ml-auto">
-					<button 
+					<button
 						type="button"
 						aria-label="Add or edit review"
-						class="inline-flex items-center justify-center rounded-md bg-white 
+						class="inline-flex items-center justify-center rounded-md bg-white
 						px-2 py-2 text-sm font-semibold text-gray-900  hover:bg-purple-50">
 						<svg
-							xmlns="http://www.w3.org/2000/svg" 
-							fill="none" 
-							viewBox="0 0 24 24" stroke-width="1.5" 
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24" stroke-width="1.5"
 							stroke="currentColor" class="size-6 stroke-purple-600">
 							<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
 						</svg>
@@ -179,7 +179,22 @@
 					</button>
 				</div>
 			</div>
-			
+
+      <!-- Review Box -->
+      <!-- DO THIS RIGHT HERE -->
+      <div id="review_box">
+                <div class="flex ml-auto">
+                    <input
+                            type="text"
+                            id="review-input"
+                            value={reviewInputStore}
+                            on:input={(e) => reviewInputStore.set(e.target.value)}
+                            class="block w-full px-4 py-3 text-sm font-medium text-gray-700 bg-white border
+rounded-md focus:outline-none focus:ring-gray-300 focus:ring focus:bg-gray-50"
+                    >
+                </div>
+      </div>
+
 			{#if cartoon.reviews}
 				{#each sortedReviews as review}
 					<div class="mb-8">
@@ -226,22 +241,22 @@
 				{/each}
 			{:else}
 				<p>No reviews available for this cartoon.</p>
-			{/if} 
+			{/if}
 		{:else}
 			<div class="flex items-center gap-2">
 				<div class="flex items-center gap-2 pb-3.5">
 				</div>
 				<!-- Add/Edit Review Button -->
 				<div class="flex ml-auto">
-					<button 
+					<button
 						type="button"
 						aria-label="Add or edit review"
-						class="inline-flex items-center justify-center rounded-md bg-white 
+						class="inline-flex items-center justify-center rounded-md bg-white
 						px-2 py-2 text-sm font-semibold text-gray-900  hover:bg-purple-50">
 						<svg
-							xmlns="http://www.w3.org/2000/svg" 
-							fill="none" 
-							viewBox="0 0 24 24" stroke-width="1.5" 
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24" stroke-width="1.5"
 							stroke="currentColor" class="size-6 stroke-purple-600">
 							<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
 						</svg>
