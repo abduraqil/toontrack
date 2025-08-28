@@ -4,7 +4,7 @@ import { db } from '$lib/server/db'
 import { eq } from 'drizzle-orm'
 import { users } from '$lib/server/db/schema'
 import argon2 from 'argon2'
-import { PASSWORD, USERNAME } from '$lib/constants/auth'
+import { PASSWORD, USERNAME, ERROR_MESSAGES, SECRET } from '$lib/constants/auth'
 
 /* TODO:
 JWT session cookie
@@ -25,10 +25,12 @@ export const actions: Actions = {
     // const email = formData.get('email')?.toString();
     const password = formData.get('password')?.toString()
     const password2 = formData.get('password2')?.toString()
-    console.log(username)
-    // console.log(email);
-    console.log(password)
-    console.log(password2)
+    console.log({
+      username,
+      // ,email
+      password,
+      password2
+    })
 
     // validate inputs
     if (!username || !password) {
@@ -39,7 +41,7 @@ export const actions: Actions = {
     if (username.length < USERNAME.MIN_LENGTH ||
             username.length > USERNAME.MAX_LENGTH) {
       return fail(400, {
-        error: `Username must be between ${USERNAME.MIN_LENGTH}-${USERNAME.MAX_LENGTH} characters`
+        error: ERROR_MESSAGES.USERNAME
       })
     }
 
@@ -47,7 +49,7 @@ export const actions: Actions = {
     if (password.length < PASSWORD.MIN_LENGTH ||
             password.length > PASSWORD.MAX_LENGTH) {
       return fail(400, {
-        error: `Password must be between ${PASSWORD.MIN_LENGTH}-${PASSWORD.MAX_LENGTH} characters`
+        error: ERROR_MESSAGES.PASSWORD
       })
     }
 
@@ -64,8 +66,8 @@ export const actions: Actions = {
       const existingUser = await db.query.users.findFirst({
         where: eq(users.name, username)
       })
-
-      if (existingUser !== null) {
+      console.log({ existingUser })
+      if (existingUser != null) {
         return fail(400, { message: 'Username already exists' })
       }
     } catch (error) {
@@ -79,7 +81,7 @@ export const actions: Actions = {
       memoryCost: 2 ** 18,
       timeCost: 12,
       hashLength: 149,
-      secret: Buffer.from('mysecret')
+      secret: SECRET
     })
 
     // create the user
@@ -98,10 +100,7 @@ export const actions: Actions = {
 
     // set the session cookie (will do this later with JWT)
 
-    // redirect to the login page
+    // redirect to the login page if successful
     throw redirect(303, '/login')
-
-    // return success response
-    return { sucess: true }
   }
 } satisfies Actions

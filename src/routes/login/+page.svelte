@@ -14,6 +14,8 @@
 		};
 	}
 
+  import { PASSWORD, USERNAME } from '$lib/constants/auth';
+
 	export let form: ActionData | undefined;
 </script>
 
@@ -31,6 +33,8 @@
 					id="username"
 					name="username"
 					placeholder="Username"
+          maxLength={USERNAME.MAX_LENGTH}
+          minLength={USERNAME.MIN_LENGTH}
 					required
 					class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm
 				 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:bg-white"
@@ -50,6 +54,8 @@
 					id="password"
 					name="password"
 					placeholder="Password"
+          maxLength={PASSWORD.MAX_LENGTH}
+          minLength={PASSWORD.MIN_LENGTH}
 					required
 					class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm
 				 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:bg-white"
