@@ -31,9 +31,9 @@
                 {#each staff as role}
                     <!-- <a href="/cartoons/{role.cartoon.id}"> -->
                       {#if role.role != 4}
-                        <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex overflow-hidden h-24">
+                        <div class="bg-base-100 border border-base-300 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex overflow-hidden h-24">
                             <div class="flex-1 p-4 flex flex-col justify-center">
-                                    <a href="/staff/{role.staff.id}" class="font-semibold text-lg text-gray-900 mb-1 line-clamp-1">{role.staff.name}</a>
+                                    <a href="/staff/{role.staff.id}" class="font-semibold text-lg text-base-cpntent mb-1 line-clamp-1">{role.staff.name}</a>
                                 <div class="flex flex-wrap gap-1">
                                         <span class="inline-block bg-purple-100 text-gray-800 text-xs px-2 py-1 rounded-full">
                                             {convertRole(role.role)}

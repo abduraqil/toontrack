@@ -81,7 +81,7 @@
 		{#if cartoon.reviews && cartoon.reviews.length > 0}
 			<div class="flex items-center gap-2">
 				<div class="flex items-center gap-2 pb-3.5">
-					<span class="text-sm font-medium text-gray-700">Sort by</span>
+					<span class="text-sm font-medium text-base-content">Sort by</span>
 					<!-- Sort By Dropdown -->
 					<div class="relative inline-block text-left" id="sort-dropdown">
 						<div>
@@ -93,7 +93,7 @@
 								aria-haspopup="true" 
 								aria-label="Sort reviews by"
 								class="inline-flex items-center justify-center gap-x-1.5 rounded-md bg-white 
-								px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-purple-50"
+								px-3 py-2 text-sm font-semibold text-base-content hover:bg-purple-50"
 							>
 								{currentSort}
 								<svg 
@@ -121,7 +121,7 @@
 											role="menuitem"
 											tabindex="-1"
 											on:click={() => selectSort(option)}
-											class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 
+											class="block w-full text-left px-4 py-2 text-sm text-base-content hover:bg-gray-100 hover:text-gray-900 
 											{currentSort === option.label ? 'bg-gray-50 text-gray-900' : ''}"
 										>
 											{option.label}
@@ -198,7 +198,7 @@
 								</div>
 								<span class="text-xs text-gray-400 uppercase tracking-wider">{new Date(review.created).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' })}</span>
 							</div>
-							<p class="text-gray-700 text-lg leading-relaxed">
+							<p class="text-base-content text-lg leading-relaxed">
 								{#if review.review.length > 300}
 									{#if expanded.has(review.id)}
 										{review.review}

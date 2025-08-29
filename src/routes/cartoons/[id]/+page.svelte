@@ -282,7 +282,7 @@
             <!-- Left Side-Bar -->
             <div class="lg:col-span-1 space-y-6">
                 <!-- Details -->
-                <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="bg-base-100 rounded-lg shadow-md p-6">
                     <h2 class="text-2xl font-semibold mb-4">Details</h2>
                     <dl class="space-y-3">
                         {#each [cartoon.types && cartoon.types.length > 0 ? { label: "Type", value: cartoon.types
@@ -291,17 +291,17 @@
                                           .map((c) => c.name)
                                           .join(", ") } : null].filter((detail) => detail !== null) as detail}
                             <div>
-                                <dt class="text-sm font-medium text-gray-700">
+                                <dt class="text-sm font-medium text-base-content">
                                     {detail.label}
                                 </dt>
-                                <dd class="mt-1 text-gray-900">
+                                <dd class="mt-1 text-base-content">
                                     {detail.value}
                                 </dd>
                             </div>
                         {/each}
                     </dl>
                 </div>
-                <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="bg-base-100 rounded-lg shadow-md p-6">
                     <h2 class="text-2xl font-semibold mb-4">Tags</h2>
                     <dl class="space-y-3">
                         <!-- {#each [cartoonTags && cartoonTags.length > 0 ? -->
@@ -313,7 +313,7 @@
                         <!-- {/each} -->
                         {#each cartoon.tags as tag}
                             <!-- TODO: clicking these takes you to the search page -->
-                            <dd class="mt-1 text-gray-900">{tag.name}</dd>
+                            <dd class="mt-1 text-base-content">{tag.name}</dd>
                         {/each}
                     </dl>
                 </div>
@@ -321,15 +321,15 @@
             <!-- Right Content Area -->
             <div class="lg:col-span-3 space-y-6">
                 <!-- Navigation Tabs -->
-                <div class="bg-white rounded-lg shadow-md">
+                <div class="bg-base-100 rounded-lg shadow-md">
                     <!-- Tab Navigation -->
                     <div class="flex justify-center border-b border-gray-200">
                         {#each tabs as tab}
                             <button
                                 class="px-6 py-3 text-sm font-medium border-b-2 transition-colors duration-200
                                     {activeTab === tab.id
-                                    ? 'border-secondary text-secondary bg-blue-50'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
+                                    ? 'border-secondary text-secondary bg-secondary/10'
+                                    : 'border-transparent text-base-content hover:text-secondary hover:border-secondary/50'}"
                                 type="button"
                                 on:click={() => setActiveTab(tab.id)}
                             >
@@ -339,7 +339,7 @@
                     </div>
                 </div>
                 <!-- Tab Content -->
-                <div class="bg-white rounded-lg shadow-md p-6 pt-6 mt-4">
+                <div class="bg-base-100 rounded-lg shadow-md p-6 pt-6 mt-4">
                     <svelte:component
                         this={currentTabData.component}
                         {cartoon}

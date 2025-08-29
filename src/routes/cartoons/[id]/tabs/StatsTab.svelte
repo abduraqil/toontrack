@@ -59,8 +59,8 @@ edited        | 2025-07-18 23:28:06.593796+00
 		</div>
 	{:else}
 		<!-- No Stats Available -->
-		<div class="bg-gray-50 rounded-lg p-8 text-center">
-			<div class="text-gray-400 mb-2">
+		<div class="bg-base-200 rounded-lg p-8 text-center">
+			<div class="text-base-content mb-2">
 				<div class="flex justify-center items-center mb-4">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +68,7 @@ edited        | 2025-07-18 23:28:06.593796+00
 						viewBox="0 0 24 24"
 						stroke-width="1.5"
 						stroke="currentColor"
-						class="w-16 h-16 text-gray-300"
+						class="w-16 h-16 text-base-content/20"
 					>
 						<path
 							stroke-linecap="round"
