@@ -16,14 +16,14 @@ advanced / hidden:
 	Advanced Tags:
 	  Minimum Percent
   */
-    import type { PageData, ActionData } from "./$types";
-    import { replaceState } from "$app/navigation";
+    import type { PageData, ActionData } from './$types'
+    import { replaceState } from '$app/navigation'
 
-    const CURRENTYEAR = new Date().getFullYear();
-    const MAXSEASONS = 100;
-    const MAXEPISODES = 1000;
-    const MAXDURATION = 300; // minutes
-    let { data, form } = $props();
+    const CURRENTYEAR = new Date().getFullYear()
+    const MAXSEASONS = 100
+    const MAXEPISODES = 1000
+    const MAXDURATION = 300 // minutes
+    let { data, form } = $props()
     // let { data, form }: { data: PageData, form: ActionData } = $props();
     // console.log(form, "form");
     // console.log(data, "data");
@@ -44,8 +44,8 @@ advanced / hidden:
         status,
         formatsOrOccupations: TYPES,
         allLangauges: LANGUAGES,
-    } = data;
-    let url = new URL(ur);
+    } = data
+    let url = new URL(ur)
 
     /* tmp */
     // let status = 0,
@@ -56,65 +56,65 @@ advanced / hidden:
         duration1 = 0,
         duration2 = 0,
         seasons1 = 0,
-        seasons2 = 0;
-    let answer = $state("");
+        seasons2 = 0
+    let answer = $state('')
     // let answer2 = $state(0);
 
-    let year1 = $state(year);
-    year1 = year == null ? 0 : year;
-    let year2 = $state(yearMax);
-    year2 = yearMax == null ? CURRENTYEAR : yearMax;
+    let year1 = $state(year)
+    year1 = year == null ? 0 : year
+    let year2 = $state(yearMax)
+    year2 = yearMax == null ? CURRENTYEAR : yearMax
 
-    let form_language = $state(language);
-    form_language = language == null ? 0 : language;
+    let form_language = $state(language)
+    form_language = language == null ? 0 : language
 
-    let form_type = $state(format);
-    form_type = format == null ? 0 : format;
+    let form_type = $state(format)
+    form_type = format == null ? 0 : format
 
-    let form_status = $state(status);
-    form_status = status == null ? 0 : status;
+    let form_status = $state(status)
+    form_status = status == null ? 0 : status
 
-    let arrow = $state(ascending);
-    let form_sort = $state();
-    form_sort = sort || null;
+    let arrow = $state(ascending)
+    let form_sort = $state()
+    form_sort = sort || null
 
     /*advanced*/
-    let form_episode1 = $state(episode1);
-    form_episode1 = episode1 == null ? 0 : episode1;
+    let form_episode1 = $state(episode1)
+    form_episode1 = episode1 == null ? 0 : episode1
 
-    let form_episode2 = $state(episode2);
-    form_episode2 = episode2 == null ? MAXEPISODES : episode2;
+    let form_episode2 = $state(episode2)
+    form_episode2 = episode2 == null ? MAXEPISODES : episode2
 
-    let form_duration1 = $state(duration1);
-    form_duration1 = duration1 == null ? 0 : duration1;
+    let form_duration1 = $state(duration1)
+    form_duration1 = duration1 == null ? 0 : duration1
 
-    let form_duration2 = $state(duration2);
-    form_duration2 = duration2 == null ? MAXDURATION : duration2;
+    let form_duration2 = $state(duration2)
+    form_duration2 = duration2 == null ? MAXDURATION : duration2
 
-    let form_seasons1 = $state(seasons1);
-    form_seasons1 = seasons1 == null ? 0 : seasons1;
+    let form_seasons1 = $state(seasons1)
+    form_seasons1 = seasons1 == null ? 0 : seasons1
 
-    let form_seasons2 = $state(seasons2);
-    form_seasons2 = seasons2 == null ? MAXSEASONS : seasons2;
+    let form_seasons2 = $state(seasons2)
+    form_seasons2 = seasons2 == null ? MAXSEASONS : seasons2
 
     let tmp_sortopts = [
-        { id: null, text: "Sort ▼" },
-        { id: "name", text: "Name" },
-    ];
-    if (slug == "cartoons")
-        tmp_sortopts.push({ id: "release", text: "Release" });
+        { id: null, text: 'Sort ▼' },
+        { id: 'name', text: 'Name' },
+    ]
+    if (slug == 'cartoons')
+        tmp_sortopts.push({ id: 'release', text: 'Release' })
     tmp_sortopts = tmp_sortopts.concat(
-        { id: "score", text: "Score" },
-        { id: "favorites", text: "Favorites" },
-    );
-    if (slug == "users" || slug == "cartoons") {
+        { id: 'score', text: 'Score' },
+        { id: 'favorites', text: 'Favorites' }
+    )
+    if (slug == 'users' || slug == 'cartoons') {
         tmp_sortopts.push({
-            id: "date_added",
-            text: slug == "users" ? "Joined" : "Added",
-        });
+            id: 'date_added',
+            text: slug == 'users' ? 'Joined' : 'Added',
+        })
     }
 
-    let sortOptions = $state(tmp_sortopts);
+    let sortOptions = $state(tmp_sortopts)
 
     let debugInfo = {
         // call count
@@ -122,85 +122,85 @@ advanced / hidden:
             updateURL: 0,
             generateLinks: 0,
         },
-    };
+    }
 
     /* updates url */
     async function updateURL(event: any) {
-        let val = event.target.value;
+        let val = event.target.value
 
         switch (event.target.name) {
-            case "name":
-                val = val.toString().trim().replace(/\s+/g, " ");
+            case 'name':
+                val = val.toString().trim().replace(/\s+/g, ' ')
                 // val.length <= 0
                 val.length <= 2 // TODO: this line should be uncommented
-                    ? url.searchParams.delete("name")
-                    : url.searchParams.set("name", val);
-                break;
-            case "sort":
+                    ? url.searchParams.delete('name')
+                    : url.searchParams.set('name', val)
+                break
+            case 'sort':
                 val
-                    ? url.searchParams.set("sort", val)
-                    : url.searchParams.delete("sort");
-                break;
-            case "ascending":
+                    ? url.searchParams.set('sort', val)
+                    : url.searchParams.delete('sort')
+                break
+            case 'ascending':
                 if (!ascending) {
-                    ascending = true;
-                    url.searchParams.delete("ascending");
+                    ascending = true
+                    url.searchParams.delete('ascending')
                     //arrow = "▲";
                 } else {
-                    ascending = false;
-                    url.searchParams.set("ascending", ascending.toString());
+                    ascending = false
+                    url.searchParams.set('ascending', ascending.toString())
                     //arrow = "▼";
                 }
-                break;
-            case "year1":
-                if (val == 0) url.searchParams.delete("year1");
-                else url.searchParams.set("year1", val);
-                break;
-            case "year2":
-                if (val == CURRENTYEAR) url.searchParams.delete("year2");
-                else url.searchParams.set("year2", val);
-                break;
-            case "language":
-                if (val == 0) url.searchParams.delete("language");
-                else url.searchParams.set("language", val);
-                break;
-            case "type":
-                if (val == 0) url.searchParams.delete("type");
-                else url.searchParams.set("type", val);
-                break;
-            case "status":
-                if (val == 0) url.searchParams.delete("status");
-                else url.searchParams.set("status", val);
-                break;
+                break
+            case 'year1':
+                if (val == 0) url.searchParams.delete('year1')
+                else url.searchParams.set('year1', val)
+                break
+            case 'year2':
+                if (val == CURRENTYEAR) url.searchParams.delete('year2')
+                else url.searchParams.set('year2', val)
+                break
+            case 'language':
+                if (val == 0) url.searchParams.delete('language')
+                else url.searchParams.set('language', val)
+                break
+            case 'type':
+                if (val == 0) url.searchParams.delete('type')
+                else url.searchParams.set('type', val)
+                break
+            case 'status':
+                if (val == 0) url.searchParams.delete('status')
+                else url.searchParams.set('status', val)
+                break
         }
         // TODO: this should update the following variables
         // console.log({ ascending, sort, year, yearMax, language, format, status,});
 
-        url.searchParams.delete("page");
-        if (count != 10) url.searchParams.set("count", count.toString());
+        url.searchParams.delete('page')
+        if (count != 10) url.searchParams.set('count', count.toString())
 
-        debugInfo.cc.updateURL++; // call count
+        debugInfo.cc.updateURL++ // call count
 
-        replaceState(url, data);
+        replaceState(url, data)
         // goto(url, { replaceState: true });
         // throw invalidate(url)
-        console.log(event.target.name, val);
+        console.log(event.target.name, val)
     }
 
     /* returns the link that takes to the page indicated by i */
     function pageLinks(i: number) {
-        let tmp = url.searchParams.get("page");
-        url.searchParams.set("page", i.toString());
-        let link = url.searchParams.toString();
-        if (tmp != null) url.searchParams.set("page", tmp);
-        return link;
+        let tmp = url.searchParams.get('page')
+        url.searchParams.set('page', i.toString())
+        let link = url.searchParams.toString()
+        if (tmp != null) url.searchParams.set('page', tmp)
+        return link
     }
 
     /* Generate page links for page navigation bar id="page_nav_bar" */
     function generateLinks() {
-        let links: string[][] = [];
-        let prev = 0;
-        if (currentPage > 1) links.push(["Back", pageLinks(currentPage - 1)]);
+        let links: string[][] = []
+        let prev = 0
+        if (currentPage > 1) links.push(['Back', pageLinks(currentPage - 1)])
 
         for (let i = 1; i <= data.totalPages; i++) {
             if (
@@ -208,20 +208,20 @@ advanced / hidden:
                 i > data.totalPages - 7 || // Limit to 7 links at the end
                 (i <= currentPage + 3 && i >= currentPage - 3) // 3 links at each side of current page
             ) {
-                if (i > prev + 1) links.push(["...", ""]); // place elipses where it skips
+                if (i > prev + 1) links.push(['...', '']) // place elipses where it skips
 
                 if (i == currentPage)
-                    links.push([i.toString(), ""]); // avoid creating a link for the current page
-                else links.push([i.toString(), pageLinks(i)]);
+                    links.push([i.toString(), '']) // avoid creating a link for the current page
+                else links.push([i.toString(), pageLinks(i)])
 
-                prev = i;
-                debugInfo.cc.generateLinks++;
+                prev = i
+                debugInfo.cc.generateLinks++
             }
         }
         if (currentPage < pages)
-            links.push(["Next", pageLinks(currentPage + 1)]);
+            links.push(['Next', pageLinks(currentPage + 1)])
 
-        return links;
+        return links
     }
 </script>
 
@@ -251,12 +251,12 @@ advanced / hidden:
                     placeholder="Search {slug}"
                     oninput={updateURL}
                     class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:bg-white"
-                    value={name || ""}
+                    value={name || ''}
                 />
                 <!-- TAGS & GENRES: Select Mulitple -->
                 <!-- END TAGS -->
                 <!-- YEARS -->
-                {#if slug == "cartoons"}
+                {#if slug == 'cartoons'}
                     <div id="years">
                         Year released
                         <div id="years_boxes">
@@ -295,7 +295,7 @@ advanced / hidden:
                 {/if}
                 <!-- END YEARS -->
                 <!-- LANGUAGE -->
-                {#if slug == "cartoons" || slug == "staff"}
+                {#if slug == 'cartoons' || slug == 'staff'}
                     <div id="language">
                         Language
                         <div id="language_select">
@@ -318,9 +318,9 @@ advanced / hidden:
                 {/if}
                 <!-- END LANGUAGE-->
                 <!-- TYPE -->
-                {#if slug != "characters" && slug != "users"}
+                {#if slug != 'characters' && slug != 'users'}
                     <div id="type">
-                        {slug == "staff" ? "Occupation" : "Type"}
+                        {slug == 'staff' ? 'Occupation' : 'Type'}
                         <div id="type_select">
                             <select
                                 name="type"
@@ -341,7 +341,7 @@ advanced / hidden:
                 {/if}
                 <!-- END TYPE-->
                 <!-- STATUS -->
-                {#if slug === "cartoons"}
+                {#if slug === 'cartoons'}
                     <div id="status">
                         Status
                         <div id="status_select">
@@ -370,7 +370,7 @@ advanced / hidden:
                         id="sort"
                         bind:value={form_sort}
                         onchange={() => {
-                            answer = "";
+                            answer = ''
                         }}
                         oninput={updateURL}
                     >
@@ -392,7 +392,7 @@ advanced / hidden:
                             class="hidden peer"
                             onclick={updateURL}
                         />
-                        {arrow ? "▲" : "▼"}
+                        {arrow ? '▲' : '▼'}
                     </label>
                 </div>
                 <!-- END SORT -->
@@ -493,13 +493,12 @@ advanced / hidden:
                             <a
                                 href="/{slug}/{q.id}"
                                 data-sveltekit-reload
-
                                 class="font-semibold text-sm text-gray-900 mb-1 line-clamp-1"
                             >
                                 <img
                                     src={q.coverPic
                                         ? q.coverPic
-                                        : "/nocover.jpg"}
+                                        : '/nocover.jpg'}
                                     alt={q.name}
                                     class="w-56 h-80 object-cover rounded-lg shadow-lg"
                                 />
@@ -510,7 +509,7 @@ advanced / hidden:
                 </div>
             {:else}
                 <!-- No Results -->
-                {#if url.searchParams.get("name") != undefined && form?.success == true}
+                {#if url.searchParams.get('name') != undefined && form?.success == true}
                     <div class="bg-gray-50 rounded-lg p-8 text-center">
                         <div class="text-gray-400 mb-2">
                             <svg
@@ -539,7 +538,7 @@ advanced / hidden:
             {#if pages > 1}
                 <!-- PAGE BUTTONS -->
                 {#each generateLinks() as link}
-                    {#if link[1] != ""}
+                    {#if link[1] != ''}
                         <a
                             type="submit"
                             data-sveltekit-replacestate

@@ -1,28 +1,28 @@
 <script lang="ts">
-    import Favorite from "$lib/components/favorite.svelte";
-    import StaffCredits from "./tabs/StaffCreditsTab.svelte";
+    import Favorite from '$lib/components/favorite.svelte'
+    import StaffCredits from './tabs/StaffCreditsTab.svelte'
 
-    import type { PageData } from "./$types";
-    export let data: PageData;
+    import type { PageData } from './$types'
+    export let data: PageData
 
-    $: character = data.character;
+    $: character = data.character
 
-    let activeTab = "overview";
+    let activeTab = 'overview'
 
-    const tabs = [{ id: "credits", label: "Credits", component: StaffCredits }];
+    const tabs = [{ id: 'credits', label: 'Credits', component: StaffCredits }]
 
     function setActiveTab(tab: string) {
-        activeTab = tab;
+        activeTab = tab
     }
 
-    $: currentTabData = tabs.find((tab) => tab.id === activeTab) || tabs[0];
+    $: currentTabData = tabs.find((tab) => tab.id === activeTab) || tabs[0]
 </script>
 
 <svelte:head>
     <title>{character.name} - character Database</title>
     <meta
         name="description"
-        content={character.description || "No description available."}
+        content={character.description || 'No description available.'}
     />
 </svelte:head>
 
@@ -45,7 +45,7 @@
                         <img
                             src={character.coverPic
                                 ? character.coverPic
-                                : "/nocover.jpg"}
+                                : '/nocover.jpg'}
                             alt={character.name}
                             class="w-56 h-80 object-cover rounded-lg shadow-lg -mt-20 relative z-10"
                         />
