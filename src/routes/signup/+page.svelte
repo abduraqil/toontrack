@@ -1,10 +1,15 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import type { ActionData } from "./$types";
+  import type {ActionData} from "./$types";
+
   import { PASSWORD, USERNAME } from '$lib/constants/auth';
 
   export let form: ActionData | undefined;
 </script>
+
+<svelte:head>
+	<title>ToonTrack - Sign up</title>
+</svelte:head>
 
 <div class="min-h-screen bg-base-200 flex items-center justify-center p-4">
   <main class="card w-full max-w-md shadow-xl bg-base-100">
@@ -17,8 +22,8 @@
           id="username"
           name="username"
           placeholder="Username"
-          maxLength="64"
-          minLength="1"
+          maxLength={USERNAME.MAX_LENGTH}
+          minLength={USERNAME.MIN_LENGTH}
           required
           class="input input-bordered w-full"
         />
@@ -29,8 +34,8 @@
           id="password"
           name="password"
           placeholder="Password"
-          maxLength="999"
-          minLength="10"
+          maxLength={PASSWORD.MAX_LENGTH}
+          minLength={PASSWORD.MIN_LENGTH}
           required
           class="input input-bordered w-full"
         />
@@ -41,8 +46,8 @@
           id="password2"
           name="password2"
           placeholder="Confirm Password"
-          maxLength="999"
-          minLength="10"
+          maxLength={PASSWORD.MAX_LENGTH}
+          minLength={PASSWORD.MIN_LENGTH}
           required
           class="input input-bordered w-full"
         />

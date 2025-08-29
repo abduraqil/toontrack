@@ -6,6 +6,11 @@ import { cartoons, userLists } from '$lib/server/db/schema'
 import '$lib/server/db/relations'
 import test from 'node:test'
 
+/*
+* TODO:
+* Remove useless columns from query
+*/
+
 // Type definitions for better type safety
 interface TransformedCartoon {
   id: number

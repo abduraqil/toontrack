@@ -4,7 +4,7 @@ import { db } from '$lib/server/db'
 import { eq } from 'drizzle-orm'
 import { users } from '$lib/server/db/schema'
 import argon2 from 'argon2'
-
+import { SECRET, SESSION_COOKIE_NAME } from '$lib/constants/auth'
 import {
   validateSessionToken,
   setSessionTokenCookie,
@@ -25,6 +25,15 @@ export interface ActionData {
   }
 }
 
+const POST_LOGIN_REDIRECT = '/home'
+
+export const load: PageServerLoad = async ({ cookies }) => {
+  if (cookies.get(SESSION_COOKIE_NAME)) {
+    console.log(`user is already logged in with cookie ${cookies.get(SESSION_COOKIE_NAME)}, redirecting...`)
+    throw redirect(303, POST_LOGIN_REDIRECT)
+  }
+}
+
 export const actions = {
   login: async (event: RequestEvent) => {
     const formData = await event.request.formData()
@@ -40,32 +49,30 @@ export const actions = {
 
     try {
       console.log('Login attempt:', { username, password })
-      const user = await db.select()
+      const user = (await db.select()
         .from(users)
         .where(eq(users.name, username))
-        .limit(1)
-      console.log('User query result:', user)
-
-      // console.log('Database instance:', typeof db, db);
-      // console.log('Users table:', typeof users, users);
-      // console.log('Username:', username);
-      console.log('line 53')
+        .limit(1))[0]
 
       if (!user) {
+        console.log(`User query failed to find user: ${username}`)
         return fail(400, {
           errors: { username: 'Invalid username' },
           fields: { username }
         })
       }
 
-      const isPasswordValid = await argon2.verify(user[0].pwd, password,
-        {
-          secret: Buffer.from('mysecret')
+      const isPasswordValid = await argon2.verify(user.pwd, password, { secret: Buffer.from(SECRET) })
+      if (!isPasswordValid) {
+        console.log('Password verification failed')
+        return fail(400, {
+          errors: { password: 'Invalid password' },
+          fields: { username }
         })
-      console.log('Password verification result:', isPasswordValid)
+      }
 
       const token = generateSessionToken()
-      const { expiresAt } = await createSession(token, user[0].id)
+      const { expiresAt } = await createSession(token, user.id)
 
       // Convert expiresAt to Date if it's a string
       const expiresDate = typeof expiresAt === 'string' ? new Date(expiresAt) : expiresAt
@@ -73,11 +80,9 @@ export const actions = {
       // Pass full event to cookie functions
       setSessionTokenCookie(event, token, expiresDate)
 
-      console.log('Session creation result:', { token, expiresAt })
-      console.log('User from DB:', user)
-
-      console.log('Login successful:', user)
-      throw redirect(303, '/home')
+      console.log('Session creation result:', { token, expiresAt },
+      `Login successful for: ${username}`,
+      `Password verification passed: ${isPasswordValid}`)
     } catch (error) {
       console.error('Login error:', error)
       return fail(500, {
@@ -85,6 +90,8 @@ export const actions = {
         fields: { username }
       })
     }
+
+    throw redirect(303, POST_LOGIN_REDIRECT)
   },
 
   logout: async (event: RequestEvent) => {
