@@ -103,18 +103,18 @@
     />
 </svelte:head>
 
-<div class="min-h-screen bg-gray-100">
+<div class="min-h-screen bg-base-200">
     <!-- Banner Section -->
     <div class="relative">
         <!-- Banner Background -->
         <div
-            class="h-35 bg-gradient-to-r from-blue-900 to-purple-900 relative overflow-hidden"
+            class="h-35 bg-gradient-to-r from-primary to-secondary relative overflow-hidden"
         >
             <!-- Optional: Add banner image here -->
         </div>
 
         <!-- White Content Area -->
-        <div class="bg-white relative">
+        <div class="bg-base-100 relative">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="flex flex-col lg:flex-row gap-8">
                     <!-- Cover Image - positioned to overlap banner and white area -->
@@ -141,7 +141,7 @@
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
                                 <h1
-                                    class="text-4xl font-bold text-gray-900 leading-tight"
+                                    class="text-4xl font-bold text-base-content leading-tight"
                                 >
                                     {cartoon.name}
                                 </h1>
@@ -328,7 +328,7 @@
                             <button
                                 class="px-6 py-3 text-sm font-medium border-b-2 transition-colors duration-200
                                     {activeTab === tab.id
-                                    ? 'border-purple-600 text-purple-700 bg-blue-50'
+                                    ? 'border-secondary text-secondary bg-blue-50'
                                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}"
                                 type="button"
                                 on:click={() => setActiveTab(tab.id)}

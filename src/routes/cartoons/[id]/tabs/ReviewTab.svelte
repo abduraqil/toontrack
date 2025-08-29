@@ -167,7 +167,7 @@
 						type="button"
 						aria-label="Add or edit review"
 						class="inline-flex items-center justify-center rounded-md bg-white 
-						px-2 py-2 text-sm font-semibold text-gray-900  hover:bg-purple-50">
+						px-2 py-2 text-sm font-semibold text-neutral-content  hover:bg-purple-50">
 						<svg
 							xmlns="http://www.w3.org/2000/svg" 
 							fill="none" 
@@ -237,7 +237,7 @@
 						type="button"
 						aria-label="Add or edit review"
 						class="inline-flex items-center justify-center rounded-md bg-white 
-						px-2 py-2 text-sm font-semibold text-gray-900  hover:bg-purple-50">
+						px-2 py-2 text-sm font-semibold text-neutral-content  hover:bg-purple-50">
 						<svg
 							xmlns="http://www.w3.org/2000/svg" 
 							fill="none" 
