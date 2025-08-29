@@ -197,7 +197,7 @@ async function resolveQuery (
 
 function parseURL (url: URL) {
   const name = url.searchParams.get('name')
-  if (name === '' || name === undefined || name === null) { url.searchParams.delete('name') }
+  // if (name === '' || name === undefined || name === null) { url.searchParams.delete('name') }
 
   let tmp
 
@@ -207,9 +207,9 @@ function parseURL (url: URL) {
   tmp = parseInt(url.searchParams.get('page')!)
   const currentPage: number = tmp >= 1 ? tmp : 1
 
-  if (currentPage === 1 || currentPage === undefined || currentPage === null) { url.searchParams.delete('page') }
+  // if (currentPage === 1 || currentPage === undefined || currentPage === null) { url.searchParams.delete('page') }
 
-  if (numResults === 10 || numResults === undefined || numResults === null) { url.searchParams.delete('count') }
+  // if (numResults === 10 || numResults === undefined || numResults === null) { url.searchParams.delete('count') }
 
   tmp = (url.searchParams.get('sort')!)
   const sort = tmp
