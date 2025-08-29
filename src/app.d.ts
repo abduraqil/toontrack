@@ -5,17 +5,17 @@ import type { User } from '$lib/server/user'
 import type { Session } from '$lib/server/session'
 
 declare global {
-  namespace App {
-    // interface Error {}
-    // interface Locals {}
-    // interface PageData {}
-    // interface PageState {}
-    // interface Platform {}
-    interface Locals {
-      user: User | null
-      session: Session | null
+    namespace App {
+        // interface Error {}
+        // interface Locals {}
+        // interface PageData {}
+        // interface PageState {}
+        // interface Platform {}
+        interface Locals {
+            user: User | null
+            session: Session | null
+        }
     }
-  }
 }
 
 export {}

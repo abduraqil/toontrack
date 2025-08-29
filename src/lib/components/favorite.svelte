@@ -1,64 +1,64 @@
 <script lang="ts">
-    import { page } from "$app/state";
+    import { page } from '$app/state'
 
     // props
     const {
         itemId,
-        itemType = "unknown",
+        itemType = 'unknown',
         isFavorited = false,
         onFavorite = () => {},
     } = $props<{
-        itemId: string | Number;
-        itemType?: "cartoon" | "character" | "staff" | "unknown";
-        isFavorite?: boolean;
+        itemId: string | Number
+        itemType?: 'cartoon' | 'character' | 'staff' | 'unknown'
+        isFavorite?: boolean
         onFavorite?: (event: {
-            success: boolean;
-            isFavorited?: boolean;
-            error?: string;
-            itemId: string | number;
-            itemType: string;
-        }) => void;
-    }>();
+            success: boolean
+            isFavorited?: boolean
+            error?: string
+            itemId: string | number
+            itemType: string
+        }) => void
+    }>()
 
-    let localFavorited = $state(isFavorited);
-    let isSubmitting = $state(false);
+    let localFavorited = $state(isFavorited)
+    let isSubmitting = $state(false)
 
     $effect(() => {
-        localFavorited = isFavorited;
-    });
+        localFavorited = isFavorited
+    })
 
     const detectedType = $derived(
-        itemType !== "unknown" ? itemType : detectType(page.url.pathname),
-    );
+        itemType !== 'unknown' ? itemType : detectType(page.url.pathname)
+    )
 
     function detectType(pathname: string | null): string {
-        if (!pathname) return "unknown";
-        if (pathname.includes("/cartoon/")) return "cartoon";
-        if (pathname.includes("/character/")) return "character";
-        if (pathname.includes("/staff/")) return "staff";
+        if (!pathname) return 'unknown'
+        if (pathname.includes('/cartoon/')) return 'cartoon'
+        if (pathname.includes('/character/')) return 'character'
+        if (pathname.includes('/staff/')) return 'staff'
 
-        return "unknown";
+        return 'unknown'
     }
 
     async function handleFavorite() {
-        if (isSubmitting) return; // Prevent multiple submissions
+        if (isSubmitting) return // Prevent multiple submissions
 
-        const previousState = localFavorited;
-        localFavorited = !localFavorited;
-        isSubmitting = true;
+        const previousState = localFavorited
+        localFavorited = !localFavorited
+        isSubmitting = true
 
         try {
-            const response = await fetch("/api/favorites", {
-                method: "POST",
+            const response = await fetch('/api/favorites', {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json",
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     itemId: itemId,
                     itemType: detectedType,
                     favorite: !isFavorited,
                 }),
-            });
+            })
 
             if (response.ok) {
                 onFavorite({
@@ -66,29 +66,29 @@
                     isFavorited: localFavorited,
                     itemId,
                     itemType: detectType,
-                });
+                })
             } else {
                 // revert
-                localFavorited = previousState;
-                const errorData = await response.json();
+                localFavorited = previousState
+                const errorData = await response.json()
                 onFavorite({
                     success: false,
-                    error: errorData.error || "Failed to toggle favorite",
+                    error: errorData.error || 'Failed to toggle favorite',
                     itemId,
                     itemType: detectType,
-                });
+                })
             }
         } catch (error) {
-            console.error("Failed to toggle favorite:", error);
-            localFavorited = previousState;
+            console.error('Failed to toggle favorite:', error)
+            localFavorited = previousState
             onFavorite({
                 success: false,
-                error: "error",
+                error: 'error',
                 itemId,
                 itemType: detectedType,
-            });
+            })
         } finally {
-            isSubmitting = false;
+            isSubmitting = false
         }
     }
 </script>
@@ -106,7 +106,7 @@
         hover:scale-105
         disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-105
         {localFavorited ? 'text-red-500 bg-red-50' : ''}"
-    aria-label={localFavorited ? "Unfavorite" : "Favorite"}
+    aria-label={localFavorited ? 'Unfavorite' : 'Favorite'}
 >
     <svg
         xmlns="http://www.w3.org/2000/svg"

@@ -1,53 +1,53 @@
 <script lang="ts">
-    import { slide } from "svelte/transition";
-    import { redirect } from "@sveltejs/kit";
-    import { writable } from "svelte/store";
-    import { marked } from "marked";
-    import DOMPurify from "dompurify";
-    import { SESSION_COOKIE_NAME } from "$lib/constants/auth";
+    import { slide } from 'svelte/transition'
+    import { redirect } from '@sveltejs/kit'
+    import { writable } from 'svelte/store'
+    import { marked } from 'marked'
+    import DOMPurify from 'dompurify'
+    import { SESSION_COOKIE_NAME } from '$lib/constants/auth'
 
-    let { cartoon, user } = $props();
-    let isDropdownOpen = $state(false);
-    let currentSort = $state("Date");
-    let isAscending = $state(false); // false = descending (newest first), true = ascending (oldest first)
-    let reviewBoxVisible = $state(true);
-    let reviewBoxContents = $state("");
-    let reviewBoxLength = $derived(reviewBoxContents.length);
+    let { cartoon, user } = $props()
+    let isDropdownOpen = $state(false)
+    let currentSort = $state('Date')
+    let isAscending = $state(false) // false = descending (newest first), true = ascending (oldest first)
+    let reviewBoxVisible = $state(true)
+    let reviewBoxContents = $state('')
+    let reviewBoxLength = $derived(reviewBoxContents.length)
 
     const sortOptions = [
-        { label: "Date", value: "date" },
-        { label: "Score", value: "score" },
-        { label: "Name", value: "name" },
-    ];
+        { label: 'Date', value: 'date' },
+        { label: 'Score', value: 'score' },
+        { label: 'Name', value: 'name' },
+    ]
 
-    let expanded = $state(new Set<number>());
+    let expanded = $state(new Set<number>())
     function toggleExpand(id: number) {
-        const newSet = new Set(expanded);
+        const newSet = new Set(expanded)
         if (newSet.has(id)) {
-            newSet.delete(id);
+            newSet.delete(id)
         } else {
-            newSet.add(id);
+            newSet.add(id)
         }
-        expanded = newSet;
+        expanded = newSet
     }
 
     function toggleDropdown() {
-        isDropdownOpen = !isDropdownOpen;
+        isDropdownOpen = !isDropdownOpen
     }
 
     function selectSort(option: (typeof sortOptions)[0]) {
-        currentSort = option.label;
-        isDropdownOpen = false;
+        currentSort = option.label
+        isDropdownOpen = false
     }
 
     function toggleSortOrder() {
-        isAscending = !isAscending;
+        isAscending = !isAscending
     }
 
     function handleClickOutside(event: MouseEvent) {
-        const dropdown = document.getElementById("sort-dropdown");
+        const dropdown = document.getElementById('sort-dropdown')
         if (dropdown && !dropdown.contains(event.target as Node)) {
-            isDropdownOpen = false;
+            isDropdownOpen = false
         }
     }
 
@@ -56,40 +56,40 @@
         //        if (logged in) {
         //            throw redirect(303, '/login');
         //        }
-        reviewBoxVisible = !reviewBoxVisible;
-        console.log("BUTTON PRESSED");
+        reviewBoxVisible = !reviewBoxVisible
+        console.log('BUTTON PRESSED')
     }
 
     // Close dropdown when clicking outside
-    if (typeof window !== "undefined") {
-        document.addEventListener("click", handleClickOutside);
+    if (typeof window !== 'undefined') {
+        document.addEventListener('click', handleClickOutside)
     }
 
-    let sortedReviews = $state();
+    let sortedReviews = $state()
     function sortReviews() {
         sortedReviews = [...cartoon.reviews].sort((a, b) => {
-            if (currentSort === "Date") {
-                const aDate = new Date(a.created).getTime();
-                const bDate = new Date(b.created).getTime();
-                return isAscending ? aDate - bDate : bDate - aDate;
+            if (currentSort === 'Date') {
+                const aDate = new Date(a.created).getTime()
+                const bDate = new Date(b.created).getTime()
+                return isAscending ? aDate - bDate : bDate - aDate
             }
-            if (currentSort === "Score") {
-                return isAscending ? a.score - b.score : b.score - a.score;
+            if (currentSort === 'Score') {
+                return isAscending ? a.score - b.score : b.score - a.score
             }
-            if (currentSort === "Name") {
-                const aName = a.user.name.toLowerCase();
-                const bName = b.user.name.toLowerCase();
-                if (aName < bName) return isAscending ? -1 : 1;
-                if (aName > bName) return isAscending ? 1 : -1;
-                return 0;
+            if (currentSort === 'Name') {
+                const aName = a.user.name.toLowerCase()
+                const bName = b.user.name.toLowerCase()
+                if (aName < bName) return isAscending ? -1 : 1
+                if (aName > bName) return isAscending ? 1 : -1
+                return 0
             }
-            return 0;
-        });
+            return 0
+        })
     }
 
     $effect(() => {
-        sortReviews();
-    });
+        sortReviews()
+    })
 </script>
 
 {#snippet addReviewButton()}
@@ -308,11 +308,11 @@
                                 <span
                                     class="text-xs text-gray-400 uppercase tracking-wider"
                                     >{new Date(
-                                        review.created,
+                                        review.created
                                     ).toLocaleDateString(undefined, {
-                                        month: "short",
-                                        day: "2-digit",
-                                        year: "numeric",
+                                        month: 'short',
+                                        day: '2-digit',
+                                        year: 'numeric',
                                     })}</span
                                 >
                             </div>
@@ -320,7 +320,7 @@
                                 {#if review.review.length > 300}
                                     {#if expanded.has(review.id)}
                                         {@html DOMPurify.sanitize(
-                                            marked(review.review),
+                                            marked(review.review)
                                         )}
 
                                         <button
@@ -332,7 +332,7 @@
                                         </button>
                                     {:else}
                                         {@html DOMPurify.sanitize(
-                                            marked(review.review.slice(0, 300)),
+                                            marked(review.review.slice(0, 300))
                                         )}...
                                         <button
                                             class="ml-2 text-purple-600 underline text-sm cursor-pointer"
@@ -344,7 +344,7 @@
                                     {/if}
                                 {:else}
                                     {@html DOMPurify.sanitize(
-                                        marked(review.review),
+                                        marked(review.review)
                                     )}
                                 {/if}
                             </p>

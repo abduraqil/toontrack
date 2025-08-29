@@ -1,96 +1,96 @@
 <script lang="ts">
-    import Favorite from "$lib/components/favorite.svelte";
-    import OverviewTab from "./tabs/OverviewTab.svelte";
-    import VoiceActorsTab from "./tabs/VoiceActorsTab.svelte";
-    import StaffTab from "./tabs/StaffTab.svelte";
-    import CompaniesTab from "./tabs/CompaniesTab.svelte";
-    import ReviewTab from "./tabs/ReviewTab.svelte";
-    import StatsTab from "./tabs/StatsTab.svelte";
+    import Favorite from '$lib/components/favorite.svelte'
+    import OverviewTab from './tabs/OverviewTab.svelte'
+    import VoiceActorsTab from './tabs/VoiceActorsTab.svelte'
+    import StaffTab from './tabs/StaffTab.svelte'
+    import CompaniesTab from './tabs/CompaniesTab.svelte'
+    import ReviewTab from './tabs/ReviewTab.svelte'
+    import StatsTab from './tabs/StatsTab.svelte'
 
-    import type { PageData } from "./$types";
-    export let data: PageData;
+    import type { PageData } from './$types'
+    export let data: PageData
 
-    $: cartoon = data.cartoon;
+    $: cartoon = data.cartoon
 
-    let activeTab = "overview";
+    let activeTab = 'overview'
 
     const tabs = [
-        { id: "overview", label: "Overview", component: OverviewTab },
-        { id: "voice actors", label: "Characters", component: VoiceActorsTab, },
-        { id: "staff", label: "Staff", component: StaffTab },
-        { id: "companies", label: "Companies", component: CompaniesTab },
-        { id: "reviews", label: "Reviews", component: ReviewTab },
-        { id: "stats", label: "Stats", component: StatsTab },
-    ];
+        { id: 'overview', label: 'Overview', component: OverviewTab },
+        { id: 'voice actors', label: 'Characters', component: VoiceActorsTab },
+        { id: 'staff', label: 'Staff', component: StaffTab },
+        { id: 'companies', label: 'Companies', component: CompaniesTab },
+        { id: 'reviews', label: 'Reviews', component: ReviewTab },
+        { id: 'stats', label: 'Stats', component: StatsTab },
+    ]
 
     function setActiveTab(tab: string) {
-        activeTab = tab;
+        activeTab = tab
     }
 
-    $: currentTabData = tabs.find((tab) => tab.id === activeTab) || tabs[0];
+    $: currentTabData = tabs.find((tab) => tab.id === activeTab) || tabs[0]
 
     function formatStatus(status: number | null) {
         switch (status) {
             case 0:
-                return "Unknown";
+                return 'Unknown'
             case 1:
-                return "Planned";
+                return 'Planned'
             case 2:
-                return "Ongoing";
+                return 'Ongoing'
             case 3:
-                return "Completed";
+                return 'Completed'
             case 4:
-                return "Hiatus";
+                return 'Hiatus'
             case 5:
-                return "Cancelled";
+                return 'Cancelled'
             case 6:
-                return "Unreleased";
+                return 'Unreleased'
             default:
-                return "Unknown";
+                return 'Unknown'
         }
     }
 
     function formatType(type: number | null) {
         switch (type) {
             case 0:
-                return "Unknown";
+                return 'Unknown'
             case 1:
-                return "Other";
+                return 'Other'
             case 2:
-                return "Series";
+                return 'Series'
             case 3:
-                return "Miniseries";
+                return 'Miniseries'
             case 4:
-                return "Movie";
+                return 'Movie'
             case 5:
-                return "Short";
+                return 'Short'
             case 6:
-                return "Anthology";
+                return 'Anthology'
             case 7:
-                return "Special";
+                return 'Special'
             default:
-                return "Unknown";
+                return 'Unknown'
         }
     }
 
     function handleFavoriteResult(event: {
-        success: boolean;
-        isFavorited?: boolean;
-        error?: string;
-        itemId: string | number;
-        itemType: string;
+        success: boolean
+        isFavorited?: boolean
+        error?: string
+        itemId: string | number
+        itemType: string
     }) {
-        const { success, error, isFavorited } = event;
+        const { success, error, isFavorited } = event
         if (success) {
             // Update the local data
-            cartoon.isFavorited = isFavorited ?? false;
+            cartoon.isFavorited = isFavorited ?? false
             // show notification here
             console.log(
-                `Cartoon ${isFavorited ? "favorited" : "unfavorited"} successfully`
-            );
+                `Cartoon ${isFavorited ? 'favorited' : 'unfavorited'} successfully`
+            )
         } else {
             // Handle error
-            console.error("Favorite error:", error);
+            console.error('Favorite error:', error)
         }
     }
 </script>
@@ -99,7 +99,7 @@
     <title>{cartoon.name} - Cartoon Database</title>
     <meta
         name="description"
-        content={cartoon.description || "No description available."}
+        content={cartoon.description || 'No description available.'}
     />
 </svelte:head>
 
@@ -123,7 +123,9 @@
                             class="w-70 h-80 flex items-center justify-center relative -mt-20 z-10 rounded-lg"
                         >
                             <img
-                                src={cartoon.coverPic ? cartoon.coverPic : "/nocover.jpg"}
+                                src={cartoon.coverPic
+                                    ? cartoon.coverPic
+                                    : '/nocover.jpg'}
                                 alt={cartoon.name}
                                 class="object-contain rounded-lg shadow-lg"
                             />
@@ -285,13 +287,15 @@
                 <div class="bg-base-100 rounded-lg shadow-md p-6">
                     <h2 class="text-2xl font-semibold mb-4">Details</h2>
                     <dl class="space-y-3">
-                        {#each [cartoon.types && cartoon.types.length > 0 ? { label: "Type", value: cartoon.types
+                        {#each [cartoon.types && cartoon.types.length > 0 ? { label: 'Type', value: cartoon.types
                                           .map((ct) => ct.name)
-                                          .join(", ") } : null, cartoon.seasons !== null ? { label: "Seasons", value: cartoon.seasons } : null, cartoon.episodes !== null ? { label: "Episodes", value: cartoon.episodes } : null, cartoon.duration !== null ? { label: "Duration", value: `${cartoon.duration} min` } : null, cartoon.status !== null ? { label: "Status", value: formatStatus(Number(cartoon.status)) } : null, cartoon.ageRating !== null ? { label: "Age Rating", value: cartoon.ageRating } : null, cartoon.airStart !== null ? { label: "Start Date", value: cartoon.airStart.toLocaleDateString( undefined, { month: "short", day: "2-digit", year: "numeric" }, ) } : null, cartoon.airEnd !== null ? { label: "End Date", value: cartoon.airEnd.toLocaleDateString( undefined, { month: "short", day: "2-digit", year: "numeric" }, ) } : null, cartoon.countries && cartoon.countries.length > 0 ? { label: "Countries", value: cartoon.countries
+                                          .join(', ') } : null, cartoon.seasons !== null ? { label: 'Seasons', value: cartoon.seasons } : null, cartoon.episodes !== null ? { label: 'Episodes', value: cartoon.episodes } : null, cartoon.duration !== null ? { label: 'Duration', value: `${cartoon.duration} min` } : null, cartoon.status !== null ? { label: 'Status', value: formatStatus(Number(cartoon.status)) } : null, cartoon.ageRating !== null ? { label: 'Age Rating', value: cartoon.ageRating } : null, cartoon.airStart !== null ? { label: 'Start Date', value: cartoon.airStart.toLocaleDateString( undefined, { month: 'short', day: '2-digit', year: 'numeric' } ) } : null, cartoon.airEnd !== null ? { label: 'End Date', value: cartoon.airEnd.toLocaleDateString( undefined, { month: 'short', day: '2-digit', year: 'numeric' } ) } : null, cartoon.countries && cartoon.countries.length > 0 ? { label: 'Countries', value: cartoon.countries
                                           .map((c) => c.name)
-                                          .join(", ") } : null].filter((detail) => detail !== null) as detail}
+                                          .join(', ') } : null].filter((detail) => detail !== null) as detail}
                             <div>
-                                <dt class="text-sm font-medium text-base-content">
+                                <dt
+                                    class="text-sm font-medium text-base-content"
+                                >
                                     {detail.label}
                                 </dt>
                                 <dd class="mt-1 text-base-content">

@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let cartoon: any;
+    export let cartoon: any
 
     /* TODO
     Update href link to link to company profile page
@@ -8,27 +8,27 @@
     function convertCompany(role: number | null) {
         switch (role) {
             case 0:
-                return "Unknown";
+                return 'Unknown'
             case 1:
-                return "Producer";
+                return 'Producer'
             case 2:
-                return "Licensor";
+                return 'Licensor'
             case 3:
-                return "Studio";
+                return 'Studio'
             case 4:
-                return "Distributor";
+                return 'Distributor'
             case 5:
-                return "Original Broadcaster";
+                return 'Original Broadcaster'
             case 6:
-                return "Broadcaster";
+                return 'Broadcaster'
             default:
-                return "Other";
+                return 'Other'
         }
     }
 
     // Use the correct property name from your relations
-    let companies = cartoon.companies;
-    $: companies;
+    let companies = cartoon.companies
+    $: companies
 </script>
 
 <div class="space-y-4">
@@ -67,7 +67,7 @@
                             <img
                                 src={company.coverPic
                                     ? company.coverPic
-                                    : "/nocover.jpg"}
+                                    : '/nocover.jpg'}
                                 alt={company.name}
                                 class="max-w-full max-h-full object-contain"
                             />
