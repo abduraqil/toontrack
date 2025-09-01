@@ -1,5 +1,7 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
+    import { PASSWORD, USERNAME } from '$lib/constants/auth'
+    import { page } from '$app/state'
 
     // Define the ActionData interface correctly here for use in this component
     interface ActionData {
@@ -11,12 +13,13 @@
         }
         fields?: {
             username?: string
+            reference?: string
         }
     }
 
-    import { PASSWORD, USERNAME } from '$lib/constants/auth'
-
     export let form: ActionData | undefined
+    let reference = page.url.searchParams.get('reference')
+    $: reference
 </script>
 
 <svelte:head>
@@ -30,6 +33,13 @@
         </h2>
 
         <form method="POST" action="?/login" use:enhance class="p-6 space-y-6">
+            <input
+                type="text"
+                id="reference"
+                name="reference"
+                value={reference}
+                hidden
+            />
             <!-- Username -->
             <div>
                 <input

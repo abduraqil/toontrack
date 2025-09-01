@@ -1,10 +1,19 @@
-import type { PageServerLoad } from './$types'
-import { error } from '@sveltejs/kit'
+import type { Actions, RequestEvent, PageServerLoad } from './$types'
+import { error, redirect } from '@sveltejs/kit'
 import { db } from '$lib/server/db'
 import { and, eq } from 'drizzle-orm'
-import { cartoons, userLists } from '$lib/server/db/schema'
+import {
+    cartoons,
+    sessions,
+    userLists,
+    users,
+    reviews,
+} from '$lib/server/db/schema'
 import '$lib/server/db/relations'
-import test from 'node:test'
+import { fail } from '@sveltejs/kit'
+import { goto } from '$app/navigation'
+import { SESSION_COOKIE_NAME } from '$lib/constants/auth'
+import { validateSessionToken } from '$lib/server/auth/session'
 
 /*
  * TODO:
@@ -33,10 +42,22 @@ interface TransformedCartoon {
     staff: CartoonStaff[]
     characters: CartoonCharacters[]
     tags: CartoonTag[]
-    reviews: any[]
+    // reviews: any[]
+    reviews: Review[]
     stats: any[]
     userListEntry: any | null
     isFavorited: boolean
+}
+
+interface Review {
+    id: number
+    review: string
+    score: number | null
+    created: Date
+    user: {
+        id: number
+        name: string
+    }
 }
 
 interface CartoonType {
@@ -109,6 +130,13 @@ interface CartoonTag {
     name: string
     score: number | null
     spoiler: boolean | null
+}
+
+interface User {
+    id?: number
+    name?: string
+    token?: string
+    sessionId?: number
 }
 
 // Validate cartoon ID parameter
@@ -209,6 +237,18 @@ function transformCartoonData(
             spoiler: tag.spoiler,
         })) ?? []
 
+    const reviews: Review[] =
+        tmpCartoon.reviews?.map((review: any) => ({
+            id: review.id,
+            review: review.review,
+            score: review.score,
+            created: review.created,
+            user: {
+                id: review.user.id,
+                name: review.user.name,
+            },
+        })) ?? []
+
     return {
         id: tmpCartoon.id,
         name: tmpCartoon.name,
@@ -230,7 +270,8 @@ function transformCartoonData(
         characters: cartoonCharacters,
         staff: cartoonStaff,
         tags: cartoonTags,
-        reviews: tmpCartoon.reviews ?? [],
+        // reviews: tmpCartoon.reviews ?? [],
+        reviews: reviews,
         stats: tmpCartoon.cartoonStats ?? [],
     }
 }
@@ -251,10 +292,10 @@ async function getUserListEntry(userId: number, cartoonId: number) {
 }
 
 // Main load function
-export const load: PageServerLoad = async ({ params, locals }) => {
+export const load: PageServerLoad = async ({ params, locals, cookies }) => {
     const { id } = params
 
-    // Validate input
+    // Validate inputform
     const cartoonID = validateCartoonId(id)
 
     try {
@@ -337,13 +378,54 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             isFavorited,
         }
 
+        // const user: User = {
+        //     id: locals.user?.id,
+        //     name: locals.user?.name,
+        //     token: locals.session?.token,
+        //     sessionId: locals.session?.id,
+        // }
+
+        let session = cookies.get(SESSION_COOKIE_NAME)
+
+        console.log('User Cookies', session)
         console.log('Loaded cartoon:', cartoon.name, `(ID: ${cartoon.id})`)
-        console.log('User', locals.user)
+        console.log('cartoonid', id)
         console.log('User list entry:', userListEntry)
         console.log('Is favorited:', isFavorited)
 
+        let userReview
+
+        if (session) {
+            let { session: s } = await validateSessionToken(session)
+            if (s?.id) {
+                let x = (
+                    await db
+                        .select()
+                        .from(reviews)
+                        .where(
+                            and(
+                                eq(reviews.fkUserId, s?.fkUserId),
+                                eq(reviews.fkCartoonId, cartoonID)
+                            )
+                        )
+                        .limit(1)
+                )[0]
+                console.log('raw review query', x)
+                userReview = {
+                    id: x?.id, // this will be used to remove the logged in user's review from the rest of the reviews
+                    review: x?.review,
+                    score: x?.score,
+                    created: x?.edited,
+                }
+            }
+        }
+
+        console.log('Existing User Review:', userReview)
+
         return {
             cartoon,
+            session,
+            userReview,
         }
     } catch (err) {
         // Re-throw SvelteKit errors
@@ -355,3 +437,143 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         throw error(500, 'Failed to load cartoon')
     }
 }
+
+export interface ActionData {
+    message?: string
+    errors?: {
+        general?: string
+        review?: string
+        score?: string
+    }
+    fields?: {
+        review?: string
+        score?: string
+        fkCartoonId?: number
+        token?: string //unhashed
+    }
+}
+export const actions = {
+    postReview: async ({ request }) => {
+        const formData = await request.formData()
+        const review = formData.get('review')?.toString()
+        const score = parseInt(formData.get('score')?.toString()!)
+        let token = formData.get('token')?.toString()
+        const fkCartoonId = parseInt(formData.get('fkCartoonId')?.toString()!)
+        console.log('Review post attempt:', {
+            review,
+            score,
+            fkCartoonId,
+            token,
+        })
+        if (!score || !review) {
+            console.log('fail')
+            return fail(400, {
+                errors: { review: 'review and score required' },
+                fields: { review, score },
+            })
+        }
+        if (!fkCartoonId) {
+            console.log('fail')
+            return fail(400, {
+                errors: { review: 'invalid cartoon id' },
+                fields: { review, score },
+            })
+        }
+        if (typeof score !== 'number' && score >= 0 && score <= 10) {
+            console.log('fail')
+            return fail(400, {
+                errors: { score: 'score must be a number between 0 and 10' },
+                fields: { review, score },
+            })
+        }
+        if (review.length < 1000 || review.length > 5000) {
+            // if (review.length < 10 || review.length > 5000) {// TODO: this line is for testing only
+            console.log('fail')
+            return fail(400, {
+                errors: {
+                    review: 'review must be between 1000 & 5000 characters',
+                },
+                fields: { review, score },
+            })
+        }
+
+        try {
+            console.log('Review post attempt:', { token, score, review })
+
+            const cartoon = (
+                await db
+                    .select()
+                    .from(cartoons)
+                    .where(eq(cartoons.id, fkCartoonId))
+                    .limit(1)
+            )[0]
+
+            if (!cartoon) {
+                console.log(`Unable to find cartoon: ${fkCartoonId}`)
+                return fail(400, {
+                    errors: { general: 'Invalid cartoon' },
+                    fields: { fkCartoonId },
+                })
+            }
+
+            if (!token) {
+                console.log(`Unable to find user token: ${token}`)
+                return fail(400, {
+                    errors: { general: 'Invalid user, are you signed in?' },
+                })
+            }
+
+            // validate session
+            let { session } = await validateSessionToken(token)
+
+            if (!session?.fkUserId || !session) {
+                console.log(`Unable to find user id: ${session?.fkUserId}`)
+                return fail(400, {
+                    errors: { general: 'Invalid user, are you signed in?' },
+                })
+            }
+
+            const reviewExists = await db
+                .select()
+                .from(reviews)
+                .where(
+                    and(
+                        eq(reviews.fkUserId, session?.fkUserId),
+                        eq(reviews.fkCartoonId, fkCartoonId)
+                    )
+                )
+                .limit(1)
+
+            if (reviewExists.length > 0) {
+                console.log(
+                    `Attempted double reviewing of cartoonid: ${fkCartoonId}`
+                )
+                return fail(400, {
+                    errors: { general: 'you have already posted a review' },
+                })
+            }
+
+            console.log(`Attempting to post with`, { session, token })
+
+            // insert review if user passes authentication
+            await db.insert(reviews).values({
+                review: review,
+                score: score,
+                fkUserId: session.fkUserId,
+                fkCartoonId: fkCartoonId,
+            })
+
+            console.log(`New review posted by uid ${session.fkUserId}`, {
+                score,
+                review,
+            })
+        } catch (error) {
+            console.error('Review post error:', error)
+            return fail(500, {
+                errors: { general: 'Error. Please try again.' },
+                fields: { review, score },
+            })
+        }
+        redirect(303, '/cartoons/'.concat(fkCartoonId.toString()))
+    },
+} satisfies Actions

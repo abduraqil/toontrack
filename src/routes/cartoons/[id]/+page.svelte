@@ -7,10 +7,12 @@
     import ReviewTab from './tabs/ReviewTab.svelte'
     import StatsTab from './tabs/StatsTab.svelte'
 
-    import type { PageData } from './$types'
+    import type { ActionData, PageData } from './$types'
     export let data: PageData
 
     $: cartoon = data.cartoon
+    $: session = data.session
+    $: userReview = data.userReview
 
     let activeTab = 'overview'
 
@@ -93,6 +95,9 @@
             console.error('Favorite error:', error)
         }
     }
+
+    export let form: ActionData | undefined
+    console.log({ form })
 </script>
 
 <svelte:head>
@@ -347,6 +352,9 @@
                     <svelte:component
                         this={currentTabData.component}
                         {cartoon}
+                        {session}
+                        {userReview}
+                        {form}
                     />
                 </div>
             </div>

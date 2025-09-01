@@ -22,6 +22,7 @@ export interface ActionData {
     }
     fields?: {
         username?: string
+        returnAddr?: string
     }
 }
 
@@ -41,6 +42,7 @@ export const actions = {
         const formData = await event.request.formData()
         const username = formData.get('username')?.toString()
         const password = formData.get('password')?.toString()
+        let reference = formData.get('reference')?.toString()
 
         if (!username || !password) {
             return fail(400, {
@@ -102,12 +104,16 @@ export const actions = {
             })
         }
 
-        throw redirect(303, POST_LOGIN_REDIRECT)
+        if (!reference || reference === null || reference == '') {
+            reference == POST_LOGIN_REDIRECT
+        }
+        console.log('going to', reference)
+        // throw redirect(303, POST_LOGIN_REDIRECT)
+        throw redirect(303, reference!)
     },
 
     logout: async (event: RequestEvent) => {
-        // Pass full event instead of destructuring
         deleteSessionTokenCookie(event)
-        throw redirect(303, '/login')
+        // throw redirect(303, '/login')
     },
 } satisfies Actions

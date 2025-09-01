@@ -8,6 +8,7 @@ import {
 import { sha256 } from '@oslojs/crypto/sha2'
 import type { Session, User } from '$lib/server/db/schema' // Import from your schema file
 import type { RequestEvent } from '@sveltejs/kit'
+import { SESSION_COOKIE_NAME } from '$lib/constants/auth'
 
 export function generateSessionToken(): string {
     const bytes = new Uint8Array(20)
@@ -17,7 +18,7 @@ export function generateSessionToken(): string {
 }
 
 export async function createSession(
-    token: string,
+    token: string, // this is saved as the SESSION_COOKIE_NAME cookie value
     userID: number
 ): Promise<Session> {
     const sessionToken = encodeHexLowerCase(
@@ -96,7 +97,7 @@ export function setSessionTokenCookie(
     token: string,
     expiresAt: Date
 ): void {
-    event.cookies.set('session', token, {
+    event.cookies.set(SESSION_COOKIE_NAME, token, {
         httpOnly: true,
         sameSite: 'lax',
         expires: expiresAt,
@@ -104,13 +105,29 @@ export function setSessionTokenCookie(
     })
 }
 
-export function deleteSessionTokenCookie(event: RequestEvent): void {
-    event.cookies.set('session', '', {
+export async function deleteSessionTokenCookie(
+    event: RequestEvent
+): Promise<void> {
+    let token = event.cookies.get(SESSION_COOKIE_NAME)?.toString()
+    console.log('deleteSessionTokenCookie', { token })
+    event.cookies.set(SESSION_COOKIE_NAME, '', {
         httpOnly: true,
         sameSite: 'lax',
         maxAge: 0,
         path: '/',
     })
+    // if the token exists delete it from the database
+    if (token && token != '') {
+        console.log('deleting token')
+        await db
+            .delete(sessions)
+            .where(
+                eq(
+                    sessions.token,
+                    encodeHexLowerCase(sha256(new TextEncoder().encode(token)))
+                )
+            )
+    }
 }
 
 export type SessionValidationResult =
