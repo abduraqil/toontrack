@@ -95,7 +95,7 @@
                 {/if}
 
                 <!-- toggle -->
-                <label class="swap swap-rotate text-base-content p-1 rounded">
+                <label class="swap swap-rotate text-base-content p-1 rounded cursor-pointer {theme === 'dark' ? 'swap-active' : ''}">
                     <!-- Light icon -->
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
