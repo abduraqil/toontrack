@@ -2,14 +2,10 @@
 
 ToonTrack is a modern web application for tracking cartoons, managing favorites, writing reviews, and exploring detailed information about animated series.
 
----
-
 ## Development Status
 
 > **This project is currently in active development.**\
 > Features, UI, and APIs are subject to change. Contributions and feedback are welcome!
-
----
 
 ## Features
 
@@ -19,7 +15,6 @@ ToonTrack is a modern web application for tracking cartoons, managing favorites,
 - **Reviews & Ratings**: Write, edit, and delete reviews with a full CRUD system
 - **Detailed Information**: View staff, companies, characters, stats, and more
 
----
 
 ### Acknowledgements
 
@@ -27,3 +22,5 @@ ToonTrack is a modern web application for tracking cartoons, managing favorites,
 - [Tailwind CSS](https://tailwindcss.com/)
 - [daisyUI](https://daisyui.com/)
 - [Drizzle ORM](https://orm.drizzle.team/)
+- [Marked](https://marked.js.org/)
+- [DOMPurify](https://github.com/cure53/DOMPurify)
