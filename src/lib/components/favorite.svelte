@@ -99,8 +99,8 @@
     class="
         inline-flex items-center justify-center
         w-10 h-10
-        bg-white border border-gray-300 rounded
-        text-gray-500 hover:text-red-500 hover:bg-red-50
+        bg-base-100 border border-base-400 rounded
+        text-base-content hover:text-red-500 hover:bg-red-50
         transition-all duration-200 ease-in-out
         focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
         hover:scale-105
