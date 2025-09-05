@@ -244,7 +244,7 @@ advanced / hidden:
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4"
                 id="search_input"
             >
-                <input
+                <!-- <input
                     type="text"
                     id="name"
                     name="name"
@@ -252,7 +252,33 @@ advanced / hidden:
                     oninput={updateURL}
                     class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:bg-white"
                     value={name || ''}
-                />
+                /> -->
+                <label class="input">
+                    <svg
+                        class="h-[1em] opacity-50"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                    >
+                        <g
+                            stroke-linejoin="round"
+                            stroke-linecap="round"
+                            stroke-width="2.5"
+                            fill="none"
+                            stroke="currentColor"
+                        >
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </g>
+                    </svg>
+                    <input
+                        type="search"
+                        class="grow"
+                        name="name"
+                        placeholder="Search {slug}"
+                        bind:value={name}
+                        oninput={updateURL}
+                    />
+                </label>
                 <!-- TAGS & GENRES: Select Mulitple -->
                 <!-- END TAGS -->
                 <!-- YEARS -->
