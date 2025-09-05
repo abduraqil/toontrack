@@ -524,7 +524,7 @@ advanced / hidden:
                                         ? q.coverPic
                                         : '/nocover.jpg'}
                                     alt={q.name}
-                                    class="w-full h-72 object-contain rounded-lg ring-2 ring-transparent hover:ring-primary/50 transition-all duration-300"
+                                    class="w-full h-72 object-contain rounded-lg transition-all duration-300"
                                 />
                             </figure>
                             <div
