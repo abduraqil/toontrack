@@ -230,7 +230,7 @@ advanced / hidden:
 </svelte:head>
 
 <svelte:body />
-<div class="min-h-screen bg-gray-100 relative">
+<div class="min-h-screen bg-base-200 relative">
     <form
         data-sveltekit-keepfocus
         data-sveltekit-replacestate
@@ -333,7 +333,7 @@ advanced / hidden:
                             >
                                 <!-- TODO: select multiple options from languages -->
                                 <option value={0}> any ▼ </option>
-                                {#each LANGUAGES as o}
+                                {#each LANGUAGES ?? [] as o}
                                     <option value={o.id}>
                                         {o.name}
                                     </option>
@@ -515,21 +515,29 @@ advanced / hidden:
                     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4"
                 >
                     {#each query as q}
-                        <div id="result_obj">
-                            <a
-                                href="/{slug}/{q.id}"
-                                data-sveltekit-reload
-                                class="font-semibold text-sm text-gray-900 mb-1 line-clamp-1"
-                            >
+                        <div
+                            class="card w-56 bg-base-100 shadow-lg hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-primary/30"
+                        >
+                            <figure class="px-4 pt-4">
                                 <img
                                     src={q.coverPic
                                         ? q.coverPic
                                         : '/nocover.jpg'}
                                     alt={q.name}
-                                    class="w-56 h-80 object-cover rounded-lg shadow-lg"
+                                    class="w-full h-72 object-contain rounded-lg ring-2 ring-transparent hover:ring-primary/50 transition-all duration-300"
                                 />
-                                <p>{q.name}</p>
-                            </a>
+                            </figure>
+                            <div
+                                class="card-body p-4 bg-gradient-to-t from-primary/5 to-transparent"
+                            >
+                                <a
+                                    href="/{slug}/{q.id}"
+                                    data-sveltekit-reload
+                                    class="card-title text-sm text-center hover:text-primary transition-colors block font-semibold text-base-content hover:bg-primary/10 rounded-lg py-2 px-3"
+                                >
+                                    {q.name}
+                                </a>
+                            </div>
                         </div>
                     {/each}
                 </div>
