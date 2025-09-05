@@ -223,6 +223,11 @@ advanced / hidden:
 
         return links
     }
+
+    function trunacateText(text: string, maxLength: number = 20): string {
+        if (text.length <= maxLength) return text
+        return text.substring(0, maxLength) + '...'
+    }
 </script>
 
 <svelte:head>
@@ -241,7 +246,7 @@ advanced / hidden:
         <!-- SEARCH BAR -->
         <div id="query_elements" class="mb-6">
             <div
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4"
+                class="flex flex-wrap gap-4 items-end mb-4"
                 id="search_input"
             >
                 <!-- <input
@@ -283,7 +288,7 @@ advanced / hidden:
                 <!-- END TAGS -->
                 <!-- YEARS -->
                 {#if slug == 'cartoons'}
-                    <div id="years">
+                    <div class="dropdown" id="years">
                         Year released
                         <div id="years_boxes">
                             <select
@@ -293,14 +298,14 @@ advanced / hidden:
                                 onchange={updateURL}
                             >
                                 <!-- TODO THIS SHOULD NOT SHOW THE DEFAUALT DROPDOWN ARROW -->
-                                <option value={0}> min ▼ </option>
+                                <option value={0}>Min</option>
                                 {#each { length: CURRENTYEAR - 1908 }, o}
                                     <option value={o + 1908}>
                                         {o + 1908}
                                     </option>
                                 {/each}
                             </select>
-                            -
+                            to
                             <select
                                 name="year2"
                                 id="years"
@@ -308,7 +313,7 @@ advanced / hidden:
                                 onchange={updateURL}
                             >
                                 <option selected value={CURRENTYEAR}>
-                                    max ▼
+                                    Max
                                 </option>
                                 {#each { length: CURRENTYEAR - 1908 }, o}
                                     <option value={CURRENTYEAR - o}>
@@ -322,20 +327,21 @@ advanced / hidden:
                 <!-- END YEARS -->
                 <!-- LANGUAGE -->
                 {#if slug == 'cartoons' || slug == 'staff'}
-                    <div id="language">
+                    <div class="dropdown" id="language">
                         Language
                         <div id="language_select">
                             <select
                                 name="language"
+                                class="max-w-40"
                                 id="language"
                                 bind:value={form_language}
                                 onchange={updateURL}
                             >
                                 <!-- TODO: select multiple options from languages -->
-                                <option value={0}> any ▼ </option>
+                                <option value={0}>Any</option>
                                 {#each LANGUAGES ?? [] as o}
                                     <option value={o.id}>
-                                        {o.name}
+                                        {trunacateText(o.name, 20)}
                                     </option>
                                 {/each}
                             </select>
@@ -345,17 +351,18 @@ advanced / hidden:
                 <!-- END LANGUAGE-->
                 <!-- TYPE -->
                 {#if slug != 'characters' && slug != 'users'}
-                    <div id="type">
+                    <div class="dropdown" id="type">
                         {slug == 'staff' ? 'Occupation' : 'Type'}
                         <div id="type_select">
                             <select
                                 name="type"
+                                class="max-w-40"
                                 id="type"
                                 bind:value={form_type}
                                 onchange={updateURL}
                             >
                                 <!-- TODO: select multiple options from countries -->
-                                <option value={0}> any ▼ </option>
+                                <option value={0}>Any</option>
                                 {#each TYPES! as o}
                                     <option value={o.id}>
                                         {o.name}
@@ -368,7 +375,7 @@ advanced / hidden:
                 <!-- END TYPE-->
                 <!-- STATUS -->
                 {#if slug === 'cartoons'}
-                    <div id="status">
+                    <div class="dropdown" id="status">
                         Status
                         <div id="status_select">
                             <select
@@ -377,7 +384,7 @@ advanced / hidden:
                                 bind:value={form_status}
                                 onchange={updateURL}
                             >
-                                <option value={0}> any ▼ </option>
+                                <option value={0}>Any</option>
                                 <option value={1}>Planned</option>
                                 <option value={2}>In Progress</option>
                                 <option value={3}>Completed</option>
@@ -390,7 +397,7 @@ advanced / hidden:
                 {/if}
                 <!-- END STATUS-->
                 <!-- SORT -->
-                <div id="sorting">
+                <div class="dropdown" id="sorting">
                     <select
                         name="sort"
                         id="sort"
