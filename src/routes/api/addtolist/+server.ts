@@ -2,26 +2,28 @@ import { error, json, } from '@sveltejs/kit'
 import type { RequestHandler } from '@sveltejs/kit'
 import { db } from '$lib/server/db'
 import { userCartoonHistory } from '$lib/server/db/schema'
-// import { eq, and } from 'drizzle-orm'
-// import { SESSION_COOKIE_NAME } from '$lib/constants/auth'
-// import { validateSessionToken } from '$lib/server/auth/session'
+import { and, eq } from 'drizzle-orm'
 
 interface uCHEntry {
     fkUserId: number
     fkCartoonId: number
     status: number
     score?: number
-    startDate?: Date
-    finishDate?: Date
+    startDate?: string
+    finishDate?: string
     rewatches?: number
     episodesWatched?: number
     notes?: string
     favorite?: number
 }
 
-export const POST: RequestHandler = async ({ request, cookies, locals }) => {
+interface uCHDelete {
+    fkUserId: number
+    fkCartoonId: number
+}
+
+export const POST: RequestHandler = async ({ request, locals }) => {
     const { itemId, t, s, sc, sD, fD, r, e, n, f } = await request.json()
-    // const session = cookies.get(SESSION_COOKIE_NAME);
 
     // validate user
     if (!locals?.session) {
@@ -31,7 +33,7 @@ export const POST: RequestHandler = async ({ request, cookies, locals }) => {
 
     const session = locals.session
     console.log('server received list', {
-        user: session.id,
+        session: session.id,
         itemId,
         t,
         s,
@@ -45,7 +47,7 @@ export const POST: RequestHandler = async ({ request, cookies, locals }) => {
     })
 
     // validate input
-    if (isNaN(itemId) || !t || !s || !session.id || s < 0 || s > 5) {
+    if (isNaN(itemId) || !t || s == undefined || !session.id || s < 0 || s > 5) {
         console.log('incomplete request')
         error(400, 'Incomplete request')
     }
@@ -55,18 +57,15 @@ export const POST: RequestHandler = async ({ request, cookies, locals }) => {
         fkCartoonId: itemId,
         status: s,
         score: sc,
-        startDate: new Date(sD),
-        finishDate: new Date(fD),
+        startDate: sD,
+        finishDate: fD,
         rewatches: r,
         episodesWatched: e,
         notes: n,
         // favorite: (f) ? f : null,
     }
-    // console.log(typeof(fD))
-    console.log({ entry })
 
     // modify db
-    // TODO: this should be an update if it already exists
     const { fkUserId, fkCartoonId, ...rest } = entry
     await db
         .insert(userCartoonHistory)
@@ -80,6 +79,34 @@ export const POST: RequestHandler = async ({ request, cookies, locals }) => {
                 ...rest,
             },
         })
+
+    return json('ok')
+}
+
+export const DELETE: RequestHandler = async ({ locals, url }) => {
+    // validate user
+    if (!locals?.session) {
+        console.log('unauthorized')
+        error(401, 'unauthorized')
+    }
+
+    const e: uCHDelete = {
+        fkUserId: locals.session.fkUserId,
+        fkCartoonId: parseInt(url.searchParams.get("itemId")!),
+    }
+    console.log('server received delete request', e)
+
+    // validate input
+    if (isNaN(e.fkCartoonId) || !e.fkUserId) {
+        console.log('incomplete request')
+        error(400, 'Incomplete request')
+    }
+
+    // modify db
+    await db
+        .delete(userCartoonHistory)
+        .where(and(eq(userCartoonHistory.fkUserId, e.fkUserId), eq(userCartoonHistory.fkCartoonId, e.fkCartoonId)))
+    console.log('delete request successful')
 
     return json('ok')
 }

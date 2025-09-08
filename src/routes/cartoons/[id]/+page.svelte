@@ -156,7 +156,8 @@
                                 <Addtolist
                                     itemId={Number(cartoon.id)}
                                     itemType="cartoon"
-                                    cartoon={cartoon}
+                                    maxEpisodes={cartoon.episodes || undefined}
+                                    userListEntry={cartoon.userListEntry}
                                 />
                                 <Favorite
                                     itemId={Number(cartoon.id)}

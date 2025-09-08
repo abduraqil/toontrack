@@ -9,12 +9,14 @@
         itemType = 'unknown',
         isFavorited = false,
         onFavorite = () => {},
-        cartoon,
+        maxEpisodes,
+        userListEntry,
     } = $props<{
         itemId: string | number
         itemType?: 'cartoon' | 'character' | 'staff' | 'unknown'
         isFavorite?: boolean
-        cartoon: any
+        maxEpisodes?: number
+        userListEntry?: any
         onFavorite?: (event: {
             success: boolean
             isFavorited?: boolean
@@ -38,67 +40,51 @@
         if (pathname.includes('/cartoon/')) return 'cartoon'
         if (pathname.includes('/character/')) return 'character'
         if (pathname.includes('/staff/')) return 'staff'
-
         return 'unknown'
     }
 
-    // async function selectStatus(option: { k: string; v: number }) {
-    //     status = option
-    async function selectStatus() {
+    async function postEntry(
+        option?: { k: string; v: number },
+        deleteEntry?: boolean
+    ) {
         isDropdownOpen = false
-        // TODO: use api to update status
+        listEditorVisible = false
 
-        const response = await fetch('/api/addtolist', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-            },
-            body: JSON.stringify({
-                itemId: itemId,
-                t: detectedType,
-                s: status.v,
-            }),
-        })
-
-        console.log('got status', response.status)
-        if (response.status == 401) {
-            goto(
-                '/login?reference='.concat(
-                    encodeURIComponent(page.url.pathname)
-                )
-            )
-            console.log('redirection')
+        if (option) {
+            status = option
         }
-    }
-
-    async function postList() {
         // if (isSubmitting) return // Prevent multiple submissions
 
-        //const previousState = localFavorited
-        //localFavorited = !localFavorited
         isSubmitting = true
 
-        const response = await fetch('/api/addtolist', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-            },
-            body: JSON.stringify({
-                itemId: itemId,
-                t: detectedType,
-                s: 2,
-                // s: status.v, TODO: this should be modified to work here too
-                sc: score,
-                sD: new Date(startDate),
-                fD: new Date(finishDate),
-                r: rewatches,
-                e: episodesWatched,
-                n: notes,
-                // f: favorite: ,
-            }),
-        })
+        let response
+
+        if (deleteEntry == true) {
+            response = await fetch('/api/addtolist?itemId='.concat(itemId), {
+                method: 'DELETE',
+            })
+            status = { k: 'Add to list', v: -1 }
+        } else {
+            response = await fetch('/api/addtolist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+                body: JSON.stringify({
+                    itemId: itemId,
+                    t: detectedType,
+                    s: statusv, // all values cause issues
+                    sc: score,
+                    sD: startDate,
+                    fD: finishDate,
+                    r: rewatches,
+                    e: episodesWatched,
+                    n: notes,
+                    // f: favorite,
+                }),
+            })
+        }
 
         console.log('got status', response.status)
         if (response.status == 401) {
@@ -110,7 +96,6 @@
             console.log('redirection')
         }
     }
-    let isDropdownOpen = $state(false)
 
     /*
 status:
@@ -132,66 +117,60 @@ status:
 
     let status = $state({ k: 'Add to list', v: -1 })
 
-    if (cartoon.userListEntry) {
+    if (userListEntry) {
         status = statusOptions.filter((e) => {
-            if (e.v === cartoon.userListEntry.status) return e
+            if (e.v === userListEntry.status) return e
         })[0]
     }
 
     function toggleDropdown() {
         isDropdownOpen = !isDropdownOpen
     }
+    let isDropdownOpen = $state(false)
 
     // list variables
-    let score = $derived(
-        cartoon.userListEntry?.score ? cartoon.userListEntry.score : 0
-    )
+    let statusk = $derived(status.k)
+    let statusv = $derived(status.v)
+    let score = $derived(userListEntry?.score ? userListEntry.score : 0)
     let startDate = $derived(
-        cartoon.userListEntry?.startDate
-            ? new Date(cartoon.userListEntry.startDate)
-            : ''
+        userListEntry?.startDate ? userListEntry.startDate : null
     )
     let finishDate = $derived(
-        cartoon.userListEntry?.finishDate
-            ? new Date(cartoon.userListEntry.finishDate)
-            : ''
+        userListEntry?.finishDate ? userListEntry.finishDate : null
     )
     let rewatches = $derived(
-        cartoon.userListEntry?.rewatches ? cartoon.userListEntry.rewatches : 0
+        userListEntry?.rewatches ? userListEntry.rewatches : 0
     )
     let episodesWatched = $derived(
-        cartoon.userListEntry?.episodesWatched
-            ? cartoon.userListEntry.episodesWatched
-            : 0
+        userListEntry?.episodesWatched ? userListEntry.episodesWatched : 0
     )
-    let notes = $derived(
-        cartoon.userListEntry?.notes ? cartoon.userListEntry.notes : ''
-    )
+    let notes = $derived(userListEntry?.notes ? userListEntry.notes : null)
 
     // list editor menu
     let listEditorVisible = $state(false)
-    let noteBoxLength = $derived(notes.length)
+    let noteBoxLength = $derived(notes?.length || 0)
     const MINNOTELEN = 0
     const MAXNOTELEN = 100
     function toggleListEditor() {
         if (isDropdownOpen) isDropdownOpen = !isDropdownOpen
         listEditorVisible = !listEditorVisible
     }
-    console.log({
-        sd: cartoon.userListEntry?.startDate,
-        fd: cartoon.userListEntry?.finishDate,
-    })
-    $effect(() => {
-        console.log({
-            score,
-            dt: typeof startDate,
-            startDate,
-            finishDate,
-            rewatches,
-            episodesWatched,
-            notes,
-        })
-    })
+    // $effect(() => {
+    //     console.log(
+    //         JSON.stringify({
+    //             itemId: itemId,
+    //             t: detectedType,
+    //             s: statusv,
+    //             sc: score,
+    //             sD: startDate,
+    //             fD: finishDate,
+    //             r: rewatches,
+    //             e: episodesWatched,
+    //             n: notes,
+    //             // f: favorite: ,
+    //         })
+    //     )
+    // })
 </script>
 
 <div id="sort-dropdown" class="relative">
@@ -230,42 +209,55 @@ status:
                 />
             </svg>
         </button>
-    {/if}
-
-    {#if isDropdownOpen && !listEditorVisible}
-        <div
-            role="menu"
-            class="absolute left-0 z-10 mt-2 w-32 origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-        >
-            <div role="none" class="py-1">
-                {#each statusOptions as option, index}
+        {#if isDropdownOpen}
+            <div
+                role="menu"
+                class="absolute left-0 z-10 mt-2 w-32 origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            >
+                <div role="none" class="py-1">
+                    {#each statusOptions as option, index}
+                        <button
+                            id="menu-item-{index}"
+                            role="menuitem"
+                            tabindex="-1"
+                            onclick={() => postEntry(option)}
+                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900
+                                            {status.k === option.k
+                                ? 'bg-gray-50 text-gray-900'
+                                : ''}"
+                        >
+                            {option.k}
+                        </button>
+                    {/each}
                     <button
-                        id="menu-item-{index}"
+                        id="menu-item-seperator"
                         role="menuitem"
                         tabindex="-1"
-                        onclick={() => selectStatus()}
-                        class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900
-                                            {status.k === option.k
-                            ? 'bg-gray-50 text-gray-900'
-                            : ''}"
+                        class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 bg-gray-50"
                     >
-                        {option.k}
+                        --------------
                     </button>
-                {/each}
+                    <button
+                        id="menu-item-delete"
+                        role="menuitem"
+                        tabindex="-1"
+                        onclick={() => {
+                            postEntry(undefined, true)
+                        }}
+                        class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 bg-gray-50"
+                    >
+                        Delete
+                    </button>
+                </div>
             </div>
-        </div>
+        {/if}
     {/if}
 </div>
 
 {#if listEditorVisible}
-    <!-- <form -->
-    <!--     method="POST" -->
-    <!--     action="" -->
-    <!--     id="review_box" -->
-    <!--     transition:slide -->
-    <!--     class="text-sm font-medium text-gray-700 bg-white border rounded-md focus:outline-none focus:ring-gray-300 focus:ring focus:bg-gray-50 border-purple-500 shadow-sm mb-8 p-0.5" -->
-    <!-- > -->
     <div
+        id="list_editor"
+        transition:slide
         class="text-sm font-medium text-gray-700 bg-white border rounded-md focus:outline-none focus:ring-gray-300 focus:ring focus:bg-gray-50 border-purple-500 shadow-sm mb-8 p-0.5"
     >
         <label for="status">Status</label>
@@ -273,7 +265,14 @@ status:
             <select
                 id="status"
                 name="status"
+                required
                 onclick={toggleDropdown}
+                onchange={() => {
+                    status = statusOptions.filter((e) => {
+                        if (e.v === statusv) return e
+                    })[0]
+                }}
+                bind:value={statusv}
                 aria-expanded={isDropdownOpen}
                 aria-haspopup="true"
                 aria-label="Show watching status"
@@ -294,7 +293,7 @@ status:
                 bind:value={score}
             />
         </div>
-        {#if cartoon.episodes}
+        {#if maxEpisodes}
             <label for="episodes_watched">Episodes watched</label>
             <div class="container relative py-5 flex items-center">
                 <input
@@ -302,13 +301,13 @@ status:
                     id="episodes_watched"
                     name="episodes_watched"
                     min="0"
-                    max={cartoon.episodes}
+                    max={maxEpisodes}
                     bind:value={episodesWatched}
                     onchange={() => {
                         episodesWatched =
-                            episodesWatched <= cartoon.episodes
+                            episodesWatched <= maxEpisodes
                                 ? episodesWatched
-                                : cartoon.episodes
+                                : maxEpisodes
                     }}
                 />
             </div>
@@ -363,12 +362,11 @@ status:
                 {noteBoxLength}/{MAXNOTELEN}
                 <button
                     class="absolute bottom-0 right-0 rounded-md bg-purple-50 text-sm font-semibold text-gray-900 hover:bg-purple-100 p-2 px-4"
-                    onclick={postList}
+                    onclick={() => postEntry()}
                 >
                     Post
                 </button>
             </div>
         </div>
-        <!-- </form> -->
     </div>
 {/if}

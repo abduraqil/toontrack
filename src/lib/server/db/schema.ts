@@ -692,10 +692,10 @@ export const userCartoonHistory = pgTable(
         status: smallint().notNull(),
         score: smallint(),
         startDate: timestamp('start_date', {
-            mode: 'date',
+            mode: 'string',
         }),
         finishDate: timestamp('finish_date', {
-            mode: 'date',
+            mode: 'string',
         }),
         rewatches: smallint(),
         episodesWatched: smallint('episodes_watched'),
