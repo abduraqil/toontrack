@@ -45,6 +45,7 @@
         "argon2": "^0.43.0",
         "cookie": "^1.0.2",
         "daisyui": "^5.0.52",
+        "depcheck": "^1.4.7",
         "dompurify": "^3.2.6",
         "dotenv": "^16.5.0",
         "drizzle-orm": "^0.40.0",
