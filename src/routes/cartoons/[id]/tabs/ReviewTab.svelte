@@ -98,6 +98,7 @@
         reviewBoxVisible = !reviewBoxVisible
 
         // put user token in place. this is not placed in by default because it might be a security issue?
+        // TODO: this is really stupid and does not need to be here
         if (reviewBoxVisible) formToken = session
         else formToken = ''
     }
@@ -190,7 +191,7 @@
                 <textarea
                     id="review-input-box"
                     name="review"
-                    placeholder="Write your review here, markdown is supported. 1000 character minimum."
+                    placeholder="Write your review here, markdown is supported. {MINREVIEWLEN} character minimum."
                     minlength={MINREVIEWLEN}
                     maxlength={MAXREVIEWLEN}
                     rows="5"
@@ -200,9 +201,9 @@
                 ></textarea>
                 <div class="text-grey-700">
                     {#if reviewBoxLength > MINREVIEWLEN - 1}
-                        {reviewBoxLength}/5000
+                        {reviewBoxLength}/{MAXREVIEWLEN}
                     {:else}
-                        {1000 - reviewBoxLength} more character(s)...
+                        {MINREVIEWLEN - reviewBoxLength} more character(s)...
                     {/if}
                 </div>
                 {#if form?.errors?.review}
@@ -214,6 +215,7 @@
             <label for="score">Score</label>
             <div class="container relative py-5 flex items-center">
                 <input
+                    required
                     type="number"
                     id="quantity"
                     name="score"

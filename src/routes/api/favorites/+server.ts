@@ -1,10 +1,11 @@
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from '@sveltejs/kit'
 import { db } from '$lib/server/db'
-import { userLists } from '$lib/server/db/schema'
+import { userCartoonHistory } from '$lib/server/db/schema'
 import { eq, and } from 'drizzle-orm'
 
 export const POST: RequestHandler = async ({ request, locals }) => {
+    // take session id if it exists then user is logged in
     if (!locals.user) {
         return json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -19,21 +20,21 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     const userId = locals.user.id
 
     try {
-        const currentEntry = await db.query.userLists.findFirst({
+        const currentEntry = await db.query.userCartoonHistory.findFirst({
             where: and(
-                eq(userLists.fkUserId, userId),
-                eq(userLists.fkCartoonId, cartoonId)
+                eq(userCartoonHistory.fkUserId, userId),
+                eq(userCartoonHistory.fkCartoonId, cartoonId)
             ),
         })
 
         console.log('API Recieved: ', { favorite, userId: locals.user.id })
         if (currentEntry != null) {
-            await db.update(userLists).set({
+            await db.update(userCartoonHistory).set({
                 favorite: favorite ? 1 : 0,
                 edited: new Date(),
             })
         } else {
-            await db.insert(userLists).values({
+            await db.insert(userCartoonHistory).values({
                 fkUserId: userId,
                 fkCartoonId: cartoonId,
                 status: 0,

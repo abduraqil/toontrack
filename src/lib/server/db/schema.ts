@@ -620,8 +620,64 @@ export const sessions = pgTable(
     ]
 )
 
-export const userLists = pgTable(
-    'user_lists',
+export const collections = pgTable(
+    'collections',
+    {
+        id: integer().primaryKey().generatedAlwaysAsIdentity({
+            name: 'collections_id_seq',
+            startWith: 1,
+            increment: 1,
+            minValue: 1,
+            maxValue: 2147483647,
+            cache: 1,
+        }),
+        name: varchar().notNull(),
+        fkUserId: integer('fk_user_id').notNull(),
+        private: boolean(),
+        created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+        edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+    },
+    (table) => [
+        foreignKey({
+            columns: [table.fkUserId],
+            foreignColumns: [users.id],
+            name: 'collections_fk_user_id_fkey',
+        }),
+        unique('collections_name_fk_user_id_key').on(
+            table.name,
+            table.fkUserId
+        ),
+    ]
+)
+
+export const jtCollectionsUsers = pgTable(
+    'jt_collections_users',
+    {
+        fkCollectionId: integer('fk_collection_id').notNull(),
+        fkCartoonId: integer('fk_cartoon_id').notNull(),
+        created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+        edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+    },
+    (table) => [
+        foreignKey({
+            columns: [table.fkCollectionId],
+            foreignColumns: [collections.id],
+            name: 'jt_collections_users_fk_collection_id_fkey',
+        }),
+        foreignKey({
+            columns: [table.fkCartoonId],
+            foreignColumns: [cartoons.id],
+            name: 'jt_collections_users_fk_cartoon_id_fkey',
+        }),
+        unique('jt_collections_users_fk_collection_id_fk_cartoon_id_key').on(
+            table.fkCollectionId,
+            table.fkCartoonId
+        ),
+    ]
+)
+
+export const userCartoonHistory = pgTable(
+    'user_cartoon_history',
     {
         id: integer().primaryKey().generatedAlwaysAsIdentity({
             name: 'user_lists_id_seq',
@@ -636,11 +692,9 @@ export const userLists = pgTable(
         status: smallint().notNull(),
         score: smallint(),
         startDate: timestamp('start_date', {
-            withTimezone: true,
             mode: 'date',
         }),
         finishDate: timestamp('finish_date', {
-            withTimezone: true,
             mode: 'date',
         }),
         rewatches: smallint(),
@@ -667,6 +721,12 @@ export const userLists = pgTable(
         ),
     ]
 )
+
+// TODO: delete after testing is done
+export const test = pgTable('test', {
+    val1: varchar(),
+    val2: integer(),
+})
 
 export const occupations = pgTable('occupations', {
     id: integer().primaryKey().notNull(),

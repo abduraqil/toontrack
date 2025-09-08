@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Addtolist from '$lib/components/addtolist.svelte'
     import Favorite from '$lib/components/favorite.svelte'
     import OverviewTab from './tabs/OverviewTab.svelte'
     import VoiceActorsTab from './tabs/VoiceActorsTab.svelte'
@@ -152,6 +153,11 @@
                                 >
                                     {cartoon.name}
                                 </h1>
+                                <Addtolist
+                                    itemId={Number(cartoon.id)}
+                                    itemType="cartoon"
+                                    cartoon={cartoon}
+                                />
                                 <Favorite
                                     itemId={Number(cartoon.id)}
                                     itemType="cartoon"

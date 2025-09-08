@@ -42,7 +42,7 @@ export const actions = {
         const formData = await event.request.formData()
         const username = formData.get('username')?.toString()
         const password = formData.get('password')?.toString()
-        let reference = formData.get('reference')?.toString()
+        const reference = formData.get('reference')?.toString()
 
         if (!username || !password) {
             return fail(400, {
@@ -79,9 +79,11 @@ export const actions = {
                     fields: { username },
                 })
             }
+            console.log(63)
 
             const token = generateSessionToken()
             const { expiresAt } = await createSession(token, user.id)
+            console.log(2)
 
             // Convert expiresAt to Date if it's a string
             const expiresDate =

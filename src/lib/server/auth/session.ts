@@ -108,7 +108,7 @@ export function setSessionTokenCookie(
 export async function deleteSessionTokenCookie(
     event: RequestEvent
 ): Promise<void> {
-    let token = event.cookies.get(SESSION_COOKIE_NAME)?.toString()
+    const token = event.cookies.get(SESSION_COOKIE_NAME)?.toString()
     console.log('deleteSessionTokenCookie', { token })
     event.cookies.set(SESSION_COOKIE_NAME, '', {
         httpOnly: true,

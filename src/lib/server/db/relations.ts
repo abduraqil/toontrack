@@ -29,7 +29,7 @@ import {
     sessions,
     profileComments,
     staffStats,
-    userLists,
+    userCartoonHistory,
 } from './schema'
 
 export const jtCartoonsCharactersRelations = relations(
@@ -72,7 +72,7 @@ export const cartoonsRelations = relations(cartoons, ({ many }) => ({
     reviews: many(reviews),
     cartoonStats: many(cartoonStats),
     staffStats: many(staffStats),
-    userLists: many(userLists),
+    userCartoonHistory: many(userCartoonHistory),
 }))
 
 export const staffRelations = relations(staff, ({ many }) => ({
@@ -301,7 +301,7 @@ export const usersRelations = relations(users, ({ many }) => ({
     profileComments_fkUserId: many(profileComments, {
         relationName: 'profileComments_fkUserId_users_id',
     }),
-    userLists: many(userLists),
+    userCartoonHistory: many(userCartoonHistory),
 }))
 
 export const cartoonStatsRelations = relations(cartoonStats, ({ one }) => ({
@@ -354,13 +354,16 @@ export const staffStatsRelations = relations(staffStats, ({ one }) => ({
     }),
 }))
 
-export const userListsRelations = relations(userLists, ({ one }) => ({
-    cartoon: one(cartoons, {
-        fields: [userLists.fkCartoonId],
-        references: [cartoons.id],
-    }),
-    user: one(users, {
-        fields: [userLists.fkUserId],
-        references: [users.id],
-    }),
-}))
+export const userCartoonHistoryRelations = relations(
+    userCartoonHistory,
+    ({ one }) => ({
+        cartoon: one(cartoons, {
+            fields: [userCartoonHistory.fkCartoonId],
+            references: [cartoons.id],
+        }),
+        user: one(users, {
+            fields: [userCartoonHistory.fkUserId],
+            references: [users.id],
+        }),
+    })
+)

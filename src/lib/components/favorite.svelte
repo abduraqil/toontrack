@@ -8,7 +8,7 @@
         isFavorited = false,
         onFavorite = () => {},
     } = $props<{
-        itemId: string | Number
+        itemId: string | number
         itemType?: 'cartoon' | 'character' | 'staff' | 'unknown'
         isFavorite?: boolean
         onFavorite?: (event: {

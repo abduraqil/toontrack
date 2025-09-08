@@ -5,7 +5,7 @@ import { and, eq } from 'drizzle-orm'
 import {
     cartoons,
     sessions,
-    userLists,
+    userCartoonHistory,
     users,
     reviews,
 } from '$lib/server/db/schema'
@@ -279,10 +279,10 @@ function transformCartoonData(
 // Fetches user's list entry for the cartoon
 async function getUserListEntry(userId: number, cartoonId: number) {
     try {
-        return await db.query.userLists.findFirst({
+        return await db.query.userCartoonHistory.findFirst({
             where: and(
-                eq(userLists.fkUserId, userId),
-                eq(userLists.fkCartoonId, cartoonId)
+                eq(userCartoonHistory.fkUserId, userId),
+                eq(userCartoonHistory.fkCartoonId, cartoonId)
             ),
         })
     } catch (err) {
@@ -385,7 +385,7 @@ export const load: PageServerLoad = async ({ params, locals, cookies }) => {
         //     sessionId: locals.session?.id,
         // }
 
-        let session = cookies.get(SESSION_COOKIE_NAME)
+        const session = cookies.get(SESSION_COOKIE_NAME)
 
         console.log('User Cookies', session)
         console.log('Loaded cartoon:', cartoon.name, `(ID: ${cartoon.id})`)
@@ -396,9 +396,9 @@ export const load: PageServerLoad = async ({ params, locals, cookies }) => {
         let userReview
 
         if (session) {
-            let { session: s } = await validateSessionToken(session)
+            const { session: s } = await validateSessionToken(session)
             if (s?.id) {
-                let x = (
+                const x = (
                     await db
                         .select()
                         .from(reviews)
@@ -457,7 +457,7 @@ export const actions = {
         const formData = await request.formData()
         const review = formData.get('review')?.toString()
         const score = parseInt(formData.get('score')?.toString()!)
-        let token = formData.get('token')?.toString()
+        const token = formData.get('token')?.toString()
         const fkCartoonId = parseInt(formData.get('fkCartoonId')?.toString()!)
         console.log('Review post attempt:', {
             review,
@@ -524,7 +524,7 @@ export const actions = {
             }
 
             // validate session
-            let { session } = await validateSessionToken(token)
+            const { session } = await validateSessionToken(token)
 
             if (!session?.fkUserId || !session) {
                 console.log(`Unable to find user id: ${session?.fkUserId}`)
