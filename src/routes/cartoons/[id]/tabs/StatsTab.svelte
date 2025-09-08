@@ -78,7 +78,7 @@ edited        | 2025-07-18 23:28:06.593796+00
                     </svg>
                 </div>
             </div>
-            <p class="text-gray-600 text-lg">No stats available.</p>
+            <p class="text-base-content text-lg">No stats available.</p>
         </div>
     {/if}
 </div>

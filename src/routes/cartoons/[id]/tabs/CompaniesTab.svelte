@@ -38,12 +38,12 @@
                 {#each companies as company}
                     <!-- <a href="/cartoons/{company.cartoon.id}"> -->
                     <div
-                        class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex overflow-hidden h-24"
+                        class="bg-base-100 border border-base-300 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex overflow-hidden h-24"
                     >
                         <div class="flex-1 p-4 flex flex-col justify-center">
                             <a
                                 href="/companies/{company.id}"
-                                class="font-semibold text-lg text-gray-900 mb-1 line-clamp-1"
+                                class="font-semibold text-lg text-base-content mb-1 line-clamp-1"
                                 >{company.name}</a
                             >
                             <div class="flex flex-wrap gap-1">
@@ -77,8 +77,8 @@
                 {/each}
             </div>
         {:else}
-            <div class="bg-gray-50 rounded-lg p-8 text-center">
-                <div class="text-gray-400 mb-2">
+            <div class="bbg-base-200 rounded-lg p-8 text-center">
+                <div class="text-base-content mb-2">
                     <svg
                         class="mx-auto h-12 w-12"
                         fill="none"
@@ -93,7 +93,7 @@
                         />
                     </svg>
                 </div>
-                <p class="text-gray-600 text-lg">
+                <p class="text-base-content text-lg">
                     No company information available.
                 </p>
             </div>

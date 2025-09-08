@@ -223,6 +223,11 @@ advanced / hidden:
 
         return links
     }
+
+    function trunacateText(text: string, maxLength: number = 20): string {
+        if (text.length <= maxLength) return text
+        return text.substring(0, maxLength) + '...'
+    }
 </script>
 
 <svelte:head>
@@ -230,7 +235,7 @@ advanced / hidden:
 </svelte:head>
 
 <svelte:body />
-<div class="min-h-screen bg-gray-100 relative">
+<div class="min-h-screen bg-base-200 relative">
     <form
         data-sveltekit-keepfocus
         data-sveltekit-replacestate
@@ -239,12 +244,12 @@ advanced / hidden:
         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
     >
         <!-- SEARCH BAR -->
-        <div id="query_elements">
+        <div id="query_elements" class="mb-6">
             <div
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4"
+                class="flex flex-wrap gap-4 items-end mb-4"
                 id="search_input"
             >
-                <input
+                <!-- <input
                     type="text"
                     id="name"
                     name="name"
@@ -252,12 +257,38 @@ advanced / hidden:
                     oninput={updateURL}
                     class="mt-1 block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:bg-white"
                     value={name || ''}
-                />
+                /> -->
+                <label class="input">
+                    <svg
+                        class="h-[1em] opacity-50"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                    >
+                        <g
+                            stroke-linejoin="round"
+                            stroke-linecap="round"
+                            stroke-width="2.5"
+                            fill="none"
+                            stroke="currentColor"
+                        >
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </g>
+                    </svg>
+                    <input
+                        type="search"
+                        class="grow"
+                        name="name"
+                        placeholder="Search {slug}"
+                        bind:value={name}
+                        oninput={updateURL}
+                    />
+                </label>
                 <!-- TAGS & GENRES: Select Mulitple -->
                 <!-- END TAGS -->
                 <!-- YEARS -->
                 {#if slug == 'cartoons'}
-                    <div id="years">
+                    <div class="dropdown" id="years">
                         Year released
                         <div id="years_boxes">
                             <select
@@ -267,14 +298,14 @@ advanced / hidden:
                                 onchange={updateURL}
                             >
                                 <!-- TODO THIS SHOULD NOT SHOW THE DEFAUALT DROPDOWN ARROW -->
-                                <option value={0}> min ▼ </option>
+                                <option value={0}>Min</option>
                                 {#each { length: CURRENTYEAR - 1908 }, o}
                                     <option value={o + 1908}>
                                         {o + 1908}
                                     </option>
                                 {/each}
                             </select>
-                            -
+                            to
                             <select
                                 name="year2"
                                 id="years"
@@ -282,7 +313,7 @@ advanced / hidden:
                                 onchange={updateURL}
                             >
                                 <option selected value={CURRENTYEAR}>
-                                    max ▼
+                                    Max
                                 </option>
                                 {#each { length: CURRENTYEAR - 1908 }, o}
                                     <option value={CURRENTYEAR - o}>
@@ -296,20 +327,21 @@ advanced / hidden:
                 <!-- END YEARS -->
                 <!-- LANGUAGE -->
                 {#if slug == 'cartoons' || slug == 'staff'}
-                    <div id="language">
+                    <div class="dropdown" id="language">
                         Language
                         <div id="language_select">
                             <select
                                 name="language"
+                                class="max-w-40"
                                 id="language"
                                 bind:value={form_language}
                                 onchange={updateURL}
                             >
                                 <!-- TODO: select multiple options from languages -->
-                                <option value={0}> any ▼ </option>
-                                {#each LANGUAGES as o}
+                                <option value={0}>Any</option>
+                                {#each LANGUAGES ?? [] as o}
                                     <option value={o.id}>
-                                        {o.name}
+                                        {trunacateText(o.name, 20)}
                                     </option>
                                 {/each}
                             </select>
@@ -319,17 +351,18 @@ advanced / hidden:
                 <!-- END LANGUAGE-->
                 <!-- TYPE -->
                 {#if slug != 'characters' && slug != 'users'}
-                    <div id="type">
+                    <div class="dropdown" id="type">
                         {slug == 'staff' ? 'Occupation' : 'Type'}
                         <div id="type_select">
                             <select
                                 name="type"
+                                class="max-w-40"
                                 id="type"
                                 bind:value={form_type}
                                 onchange={updateURL}
                             >
                                 <!-- TODO: select multiple options from countries -->
-                                <option value={0}> any ▼ </option>
+                                <option value={0}>Any</option>
                                 {#each TYPES! as o}
                                     <option value={o.id}>
                                         {o.name}
@@ -342,7 +375,7 @@ advanced / hidden:
                 <!-- END TYPE-->
                 <!-- STATUS -->
                 {#if slug === 'cartoons'}
-                    <div id="status">
+                    <div class="dropdown" id="status">
                         Status
                         <div id="status_select">
                             <select
@@ -351,7 +384,7 @@ advanced / hidden:
                                 bind:value={form_status}
                                 onchange={updateURL}
                             >
-                                <option value={0}> any ▼ </option>
+                                <option value={0}>Any</option>
                                 <option value={1}>Planned</option>
                                 <option value={2}>In Progress</option>
                                 <option value={3}>Completed</option>
@@ -364,7 +397,7 @@ advanced / hidden:
                 {/if}
                 <!-- END STATUS-->
                 <!-- SORT -->
-                <div id="sorting">
+                <div class="dropdown" id="sorting">
                     <select
                         name="sort"
                         id="sort"
@@ -489,21 +522,29 @@ advanced / hidden:
                     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4"
                 >
                     {#each query as q}
-                        <div id="result_obj">
-                            <a
-                                href="/{slug}/{q.id}"
-                                data-sveltekit-reload
-                                class="font-semibold text-sm text-gray-900 mb-1 line-clamp-1"
-                            >
+                        <div
+                            class="card w-56 bg-base-100 shadow-lg hover:shadow-xl hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-1 border border-transparent hover:border-primary/30"
+                        >
+                            <figure class="px-4 pt-4">
                                 <img
                                     src={q.coverPic
                                         ? q.coverPic
                                         : '/nocover.jpg'}
                                     alt={q.name}
-                                    class="w-56 h-80 object-cover rounded-lg shadow-lg"
+                                    class="w-full h-72 object-contain rounded-lg transition-all duration-300"
                                 />
-                                <p>{q.name}</p>
-                            </a>
+                            </figure>
+                            <div
+                                class="card-body p-4 bg-gradient-to-t from-primary/5 to-transparent"
+                            >
+                                <a
+                                    href="/{slug}/{q.id}"
+                                    data-sveltekit-reload
+                                    class="card-title text-sm text-center hover:text-primary transition-colors block font-semibold text-base-content hover:bg-primary/10 rounded-lg py-2 px-3"
+                                >
+                                    {q.name}
+                                </a>
+                            </div>
                         </div>
                     {/each}
                 </div>

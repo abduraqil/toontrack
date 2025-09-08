@@ -48,7 +48,7 @@
                             >
                                 <a
                                     href="/staff/{role.staff.id}"
-                                    class="font-semibold text-lg text-base-cpntent mb-1 line-clamp-1"
+                                    class="font-semibold text-lg text-base-content mb-1 line-clamp-1"
                                     >{role.staff.name}</a
                                 >
                                 <div class="flex flex-wrap gap-1">
@@ -74,8 +74,8 @@
                 {/each}
             </div>
         {:else}
-            <div class="bg-gray-50 rounded-lg p-8 text-center">
-                <div class="text-gray-400 mb-2">
+            <div class="bg-base-200 rounded-lg p-8 text-center">
+                <div class="text-base-content mb-2">
                     <svg
                         class="mx-auto h-12 w-12"
                         fill="none"
@@ -90,7 +90,7 @@
                         />
                     </svg>
                 </div>
-                <p class="text-gray-600 text-lg">
+                <p class="text-base-content text-lg">
                     No staff information available.
                 </p>
             </div>
