@@ -28,7 +28,6 @@
 
     // Use the correct property name from your relations
     let companies = cartoon.companies
-    $: companies
 </script>
 
 <div class="space-y-4">

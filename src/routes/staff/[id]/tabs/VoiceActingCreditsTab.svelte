@@ -7,7 +7,6 @@
 
     // Use the correct property name from your relations
     let voiceRoles = staffer.voiceRoles
-    $: voiceRoles
 </script>
 
 <div class="space-y-4">

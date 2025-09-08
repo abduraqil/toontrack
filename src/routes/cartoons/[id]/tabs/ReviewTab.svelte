@@ -3,7 +3,6 @@
     import { marked } from 'marked'
     import DOMPurify from 'dompurify'
     import { goto } from '$app/navigation'
-    import { enhance } from '$app/forms'
     import { page } from '$app/state'
 
     interface ActionData {

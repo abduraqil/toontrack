@@ -27,7 +27,9 @@
 </svelte:head>
 
 <div class="min-h-screen bg-base-200 flex items-center justify-center p-4">
-    <main class="bg-base-300 white shadow-lg rounded-lg w-full max-w-md overflow-hidden">
+    <main
+        class="bg-base-300 white shadow-lg rounded-lg w-full max-w-md overflow-hidden"
+    >
         <h2 class="text-base-content text-2xl font-semibold text-center mt-6">
             Log in to Cartoon Chronicles
         </h2>

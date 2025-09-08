@@ -2,7 +2,6 @@
     import '../app.css'
     import { enhance } from '$app/forms'
     import { page } from '$app/state'
-    import Search from '$lib/components/search.svelte'
     let { children } = $props()
 
     const user = $derived(page.data.user)
@@ -161,21 +160,37 @@ TODO
             <footer class="footer sm:footer-horizontal p-10">
                 <nav>
                     <h6 class="footer-title">Search</h6>
-                    <a href ="/search/cartoons" class="link link-hover">Cartoons</a>
-                    <a href ="/search/staff" class="link link-hover">Staff</a>
-                    <a href ="/search/companies" class="link link-hover">Companies</a>
-                    <a href ="/search/characters" class="link link-hover">Characters</a>
+                    <a href="/search/cartoons" class="link link-hover"
+                        >Cartoons</a
+                    >
+                    <a href="/search/staff" class="link link-hover">Staff</a>
+                    <a href="/search/companies" class="link link-hover"
+                        >Companies</a
+                    >
+                    <a href="/search/characters" class="link link-hover"
+                        >Characters</a
+                    >
                 </nav>
                 <nav>
                     <h6 class="footer-title">Company</h6>
-                    <a href ="/search/cartoons" class="link link-hover">About Us</a>
-                    <a href ="/search/cartoons" class="link link-hover">Contact</a>
+                    <a href="/search/cartoons" class="link link-hover"
+                        >About Us</a
+                    >
+                    <a href="/search/cartoons" class="link link-hover"
+                        >Contact</a
+                    >
                 </nav>
                 <nav>
                     <h6 class="footer-title">Legal</h6>
-                    <a href ="/search/cartoons" class="link link-hover">Terms of Use</a>
-                    <a href ="/search/cartoons" class="link link-hover">Privacy Policy</a>
-                    <a href ="/search/cartoons" class="link link-hover">Cookie Policy</a>
+                    <a href="/search/cartoons" class="link link-hover"
+                        >Terms of Use</a
+                    >
+                    <a href="/search/cartoons" class="link link-hover"
+                        >Privacy Policy</a
+                    >
+                    <a href="/search/cartoons" class="link link-hover"
+                        >Cookie Policy</a
+                    >
                 </nav>
             </footer>
             <div
@@ -185,7 +200,8 @@ TODO
             >
                 <aside>
                     <p>
-                        Presentation of any work on this site is not an endorsement of its content
+                        Presentation of any work on this site is not an
+                        endorsement of its content
                     </p>
                     <p>
                         Copyright © {new Date().getFullYear()} - All right reserved

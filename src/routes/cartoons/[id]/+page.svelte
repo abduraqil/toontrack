@@ -53,28 +53,28 @@
         }
     }
 
-    function formatType(type: number | null) {
-        switch (type) {
-            case 0:
-                return 'Unknown'
-            case 1:
-                return 'Other'
-            case 2:
-                return 'Series'
-            case 3:
-                return 'Miniseries'
-            case 4:
-                return 'Movie'
-            case 5:
-                return 'Short'
-            case 6:
-                return 'Anthology'
-            case 7:
-                return 'Special'
-            default:
-                return 'Unknown'
-        }
-    }
+    // function formatType(type: number | null) {
+    //     switch (type) {
+    //         case 0:
+    //             return 'Unknown'
+    //         case 1:
+    //             return 'Other'
+    //         case 2:
+    //             return 'Series'
+    //         case 3:
+    //             return 'Miniseries'
+    //         case 4:
+    //             return 'Movie'
+    //         case 5:
+    //             return 'Short'
+    //         case 6:
+    //             return 'Anthology'
+    //         case 7:
+    //             return 'Special'
+    //         default:
+    //             return 'Unknown'
+    //     }
+    // }
 
     function handleFavoriteResult(event: {
         success: boolean

@@ -15,7 +15,6 @@ ToonTrack is a modern web application for tracking cartoons, managing favorites,
 - **Reviews & Ratings**: Write, edit, and delete reviews with a full CRUD system
 - **Detailed Information**: View staff, companies, characters, stats, and more
 
-
 ### Acknowledgements
 
 - [SvelteKit](https://kit.svelte.dev/)

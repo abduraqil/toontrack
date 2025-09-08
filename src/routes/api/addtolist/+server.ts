@@ -1,4 +1,4 @@
-import { error, json, } from '@sveltejs/kit'
+import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from '@sveltejs/kit'
 import { db } from '$lib/server/db'
 import { userCartoonHistory } from '$lib/server/db/schema'
@@ -47,7 +47,14 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     })
 
     // validate input
-    if (isNaN(itemId) || !t || s == undefined || !session.id || s < 0 || s > 5) {
+    if (
+        isNaN(itemId) ||
+        !t ||
+        s == undefined ||
+        !session.id ||
+        s < 0 ||
+        s > 5
+    ) {
         console.log('incomplete request')
         error(400, 'Incomplete request')
     }
@@ -62,10 +69,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         rewatches: r,
         episodesWatched: e,
         notes: n,
-        // favorite: (f) ? f : null,
     }
 
     // modify db
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { fkUserId, fkCartoonId, ...rest } = entry
     await db
         .insert(userCartoonHistory)
@@ -92,7 +99,7 @@ export const DELETE: RequestHandler = async ({ locals, url }) => {
 
     const e: uCHDelete = {
         fkUserId: locals.session.fkUserId,
-        fkCartoonId: parseInt(url.searchParams.get("itemId")!),
+        fkCartoonId: parseInt(url.searchParams.get('itemId')!),
     }
     console.log('server received delete request', e)
 
@@ -105,7 +112,12 @@ export const DELETE: RequestHandler = async ({ locals, url }) => {
     // modify db
     await db
         .delete(userCartoonHistory)
-        .where(and(eq(userCartoonHistory.fkUserId, e.fkUserId), eq(userCartoonHistory.fkCartoonId, e.fkCartoonId)))
+        .where(
+            and(
+                eq(userCartoonHistory.fkUserId, e.fkUserId),
+                eq(userCartoonHistory.fkCartoonId, e.fkCartoonId)
+            )
+        )
     console.log('delete request successful')
 
     return json('ok')

@@ -1,0 +1,82 @@
+{
+    "src/lib/components/addtolist.svelte": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 1
+        }
+    },
+    "src/routes/cartoons/[id]/+page.server.ts": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 12
+        }
+    },
+    "src/routes/cartoons/[id]/tabs/CompaniesTab.svelte": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 1
+        }
+    },
+    "src/routes/cartoons/[id]/tabs/OverviewTab.svelte": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 1
+        }
+    },
+    "src/routes/cartoons/[id]/tabs/StaffTab.svelte": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 1
+        }
+    },
+    "src/routes/cartoons/[id]/tabs/StatsTab.svelte": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 1
+        }
+    },
+    "src/routes/cartoons/[id]/tabs/VoiceActorsTab.svelte": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 1
+        }
+    },
+    "src/routes/characters/[id]/+page.server.ts": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 1
+        }
+    },
+    "src/routes/characters/[id]/tabs/StaffCreditsTab.svelte": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 1
+        }
+    },
+    "src/routes/companies/[id]/+page.server.ts": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 3
+        }
+    },
+    "src/routes/companies/[id]/tabs/CartoonsTab.svelte": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 1
+        }
+    },
+    "src/routes/search/[slug]/+page.svelte": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 1
+        }
+    },
+    "src/routes/staff/[id]/+page.server.ts": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 2
+        }
+    },
+    "src/routes/staff/[id]/tabs/OverviewTab.svelte": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 1
+        }
+    },
+    "src/routes/staff/[id]/tabs/StaffCreditsTab.svelte": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 1
+        }
+    },
+    "src/routes/staff/[id]/tabs/VoiceActingCreditsTab.svelte": {
+        "@typescript-eslint/no-explicit-any": {
+            "count": 1
+        }
+    }
+}

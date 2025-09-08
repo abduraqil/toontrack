@@ -1,8 +1,5 @@
-// src/routes/api/cartoons/+server.ts
 import { json } from '@sveltejs/kit'
 import type { RequestEvent } from '@sveltejs/kit'
-import { db } from '$lib/server/db'
-// import { cartoon } from '$lib/server/db/schema';
 
 export function GET(event: RequestEvent) {
     // Authentication check

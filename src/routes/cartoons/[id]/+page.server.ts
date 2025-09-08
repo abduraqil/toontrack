@@ -1,17 +1,10 @@
-import type { Actions, RequestEvent, PageServerLoad } from './$types'
+import type { Actions, PageServerLoad } from './$types'
 import { error, redirect } from '@sveltejs/kit'
 import { db } from '$lib/server/db'
 import { and, eq } from 'drizzle-orm'
-import {
-    cartoons,
-    sessions,
-    userCartoonHistory,
-    users,
-    reviews,
-} from '$lib/server/db/schema'
+import { cartoons, userCartoonHistory, reviews } from '$lib/server/db/schema'
 import '$lib/server/db/relations'
 import { fail } from '@sveltejs/kit'
-import { goto } from '$app/navigation'
 import { SESSION_COOKIE_NAME } from '$lib/constants/auth'
 import { validateSessionToken } from '$lib/server/auth/session'
 
@@ -130,13 +123,6 @@ interface CartoonTag {
     name: string
     score: number | null
     spoiler: boolean | null
-}
-
-interface User {
-    id?: number
-    name?: string
-    token?: string
-    sessionId?: number
 }
 
 // Validate cartoon ID parameter

@@ -7,31 +7,14 @@
     const {
         itemId,
         itemType = 'unknown',
-        isFavorited = false,
-        onFavorite = () => {},
         maxEpisodes,
         userListEntry,
     } = $props<{
         itemId: string | number
         itemType?: 'cartoon' | 'character' | 'staff' | 'unknown'
-        isFavorite?: boolean
         maxEpisodes?: number
         userListEntry?: any
-        onFavorite?: (event: {
-            success: boolean
-            isFavorited?: boolean
-            error?: string
-            itemId: string | number
-            itemType: string
-        }) => void
     }>()
-
-    let localFavorited = $state(isFavorited)
-    let isSubmitting = $state(false)
-
-    $effect(() => {
-        localFavorited = isFavorited
-    })
 
     const detectedType =
         itemType !== 'unknown' ? itemType : detectType(page.url.pathname)
@@ -53,9 +36,6 @@
         if (option) {
             status = option
         }
-        // if (isSubmitting) return // Prevent multiple submissions
-
-        isSubmitting = true
 
         let response
 
@@ -74,14 +54,13 @@
                 body: JSON.stringify({
                     itemId: itemId,
                     t: detectedType,
-                    s: statusv, // all values cause issues
+                    s: statusv,
                     sc: score,
                     sD: startDate,
                     fD: finishDate,
                     r: rewatches,
                     e: episodesWatched,
                     n: notes,
-                    // f: favorite,
                 }),
             })
         }
@@ -129,7 +108,6 @@ status:
     let isDropdownOpen = $state(false)
 
     // list variables
-    let statusk = $derived(status.k)
     let statusv = $derived(status.v)
     let score = $derived(userListEntry?.score ? userListEntry.score : 0)
     let startDate = $derived(
@@ -177,7 +155,7 @@ status:
     <button
         type="button"
         onclick={toggleListEditor}
-        aria-label={localFavorited ? 'Unfavorite' : 'Favorite'}
+        aria-label="open list editor"
         class="relative btn btn-primary hover:btn-info inline-block text-left hover:accent-blue-100 text-sm font-semibold"
     >
         {status.k}

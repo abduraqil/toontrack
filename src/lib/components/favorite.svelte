@@ -20,12 +20,8 @@
         }) => void
     }>()
 
-    let localFavorited = $state(isFavorited)
+    let localFavorited = $derived(isFavorited)
     let isSubmitting = $state(false)
-
-    $effect(() => {
-        localFavorited = isFavorited
-    })
 
     const detectedType = $derived(
         itemType !== 'unknown' ? itemType : detectType(page.url.pathname)
