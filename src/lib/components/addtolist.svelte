@@ -4,27 +4,12 @@
     import { slide } from 'svelte/transition'
 
     // props
-    const {
-        itemId,
-        itemType = 'unknown',
-        maxEpisodes,
-        userListEntry,
-    } = $props<{
+    const { itemId, maxEpisodes, userListEntry } = $props<{
         itemId: string | number
-        itemType?: 'cartoon' | 'character' | 'staff' | 'unknown'
         maxEpisodes?: number
-        userListEntry?: any
+        entry?: any
+        userListEntry: any
     }>()
-
-    const detectedType =
-        itemType !== 'unknown' ? itemType : detectType(page.url.pathname)
-    function detectType(pathname: string | null): string {
-        if (!pathname) return 'unknown'
-        if (pathname.includes('/cartoon/')) return 'cartoon'
-        if (pathname.includes('/character/')) return 'character'
-        if (pathname.includes('/staff/')) return 'staff'
-        return 'unknown'
-    }
 
     async function postEntry(
         option?: { k: string; v: number },
@@ -53,7 +38,6 @@
                 },
                 body: JSON.stringify({
                     itemId: itemId,
-                    t: detectedType,
                     s: statusv,
                     sc: score,
                     sD: startDate,
@@ -63,6 +47,7 @@
                     n: notes,
                 }),
             })
+            status = { k: 'Watching', v: 0 } // there is probably a better way than this
         }
 
         console.log('got status', response.status)

@@ -7,6 +7,7 @@ import {
     smallint,
     boolean,
     unique,
+    date,
 } from 'drizzle-orm/pg-core'
 import type { InferSelectModel } from 'drizzle-orm'
 
@@ -691,16 +692,15 @@ export const userCartoonHistory = pgTable(
         fkCartoonId: integer('fk_cartoon_id').notNull(),
         status: smallint().notNull(),
         score: smallint(),
-        startDate: timestamp('start_date', {
+        startDate: date('start_date', {
             mode: 'string',
         }),
-        finishDate: timestamp('finish_date', {
+        finishDate: date('finish_date', {
             mode: 'string',
         }),
         rewatches: smallint(),
         episodesWatched: smallint('episodes_watched'),
         notes: varchar(),
-        favorite: smallint(),
         created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
         edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
     },
@@ -722,11 +722,89 @@ export const userCartoonHistory = pgTable(
     ]
 )
 
-// TODO: delete after testing is done
-export const test = pgTable('test', {
-    val1: varchar(),
-    val2: integer(),
-})
+export const userCartoonFavorites = pgTable("user_cartoon_favorites", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "user_cartoon_favorites_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+    fkUserId: integer("fk_user_id").notNull(),
+    fkCartoonId: integer("fk_cartoon_id").notNull(),
+    favorite: smallint().notNull(),
+    created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+    edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+    foreignKey({
+        columns: [table.fkUserId],
+        foreignColumns: [users.id],
+        name: "user_cartoon_favorites_fk_user_id_fkey"
+    }),
+    foreignKey({
+        columns: [table.fkCartoonId],
+        foreignColumns: [cartoons.id],
+        name: "user_cartoon_favorites_fk_cartoon_id_fkey"
+    }),
+    unique("user_cartoon_favorites_fk_cartoon_id_fk_user_id_key").on(table.fkUserId, table.fkCartoonId),
+]);
+
+export const userStaffFavorites = pgTable("user_staff_favorites", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "user_staff_favorites_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+    fkUserId: integer("fk_user_id").notNull(),
+    fkStaffId: integer("fk_staff_id").notNull(),
+    favorite: smallint().notNull(),
+    created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+    edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+    foreignKey({
+        columns: [table.fkUserId],
+        foreignColumns: [users.id],
+        name: "user_staff_favorites_fk_user_id_fkey"
+    }),
+    foreignKey({
+        columns: [table.fkStaffId],
+        foreignColumns: [staff.id],
+        name: "user_staff_favorites_fk_staff_id_fkey"
+    }),
+    unique("user_staff_favorites_fk_staff_id_fk_user_id_key").on(table.fkUserId, table.fkStaffId),
+]);
+
+export const userCharacterFavorites = pgTable("user_character_favorites", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "user_character_favorites_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+    fkUserId: integer("fk_user_id").notNull(),
+    fkCharacterId: integer("fk_character_id").notNull(),
+    favorite: smallint().notNull(),
+    created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+    edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+    foreignKey({
+        columns: [table.fkUserId],
+        foreignColumns: [users.id],
+        name: "user_character_favorites_fk_user_id_fkey"
+    }),
+    foreignKey({
+        columns: [table.fkCharacterId],
+        foreignColumns: [characters.id],
+        name: "user_character_favorites_fk_character_id_fkey"
+    }),
+    unique("user_character_favorites_fk_character_id_fk_user_id_key").on(table.fkUserId, table.fkCharacterId),
+]);
+
+export const userCompanyFavorites = pgTable("user_company_favorites", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "user_company_favorites_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+    fkUserId: integer("fk_user_id").notNull(),
+    fkCompanyId: integer("fk_company_id").notNull(),
+    favorite: smallint().notNull(),
+    created: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+    edited: timestamp({ withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+    foreignKey({
+        columns: [table.fkUserId],
+        foreignColumns: [users.id],
+        name: "user_company_favorites_fk_user_id_fkey"
+    }),
+    foreignKey({
+        columns: [table.fkCompanyId],
+        foreignColumns: [companies.id],
+        name: "user_company_favorites_fk_company_id_fkey"
+    }),
+    unique("user_company_favorites_fk_company_id_fk_user_id_key").on(table.fkUserId, table.fkCompanyId),
+]);
 
 export const occupations = pgTable('occupations', {
     id: integer().primaryKey().notNull(),

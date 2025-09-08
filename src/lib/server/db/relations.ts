@@ -28,8 +28,11 @@ import {
     follows,
     sessions,
     profileComments,
+    collections,
+    userCartoonFavorites,
     staffStats,
     userCartoonHistory,
+    jtCollectionsUsers,
 } from './schema'
 
 export const jtCartoonsCharactersRelations = relations(
@@ -73,6 +76,8 @@ export const cartoonsRelations = relations(cartoons, ({ many }) => ({
     cartoonStats: many(cartoonStats),
     staffStats: many(staffStats),
     userCartoonHistory: many(userCartoonHistory),
+    jtCollectionsUsers: many(jtCollectionsUsers),
+    userCartoonFavorites: many(userCartoonFavorites),
 }))
 
 export const staffRelations = relations(staff, ({ many }) => ({
@@ -302,6 +307,8 @@ export const usersRelations = relations(users, ({ many }) => ({
         relationName: 'profileComments_fkUserId_users_id',
     }),
     userCartoonHistory: many(userCartoonHistory),
+    collections: many(collections),
+    userCartoonFavorites: many(userCartoonFavorites),
 }))
 
 export const cartoonStatsRelations = relations(cartoonStats, ({ one }) => ({

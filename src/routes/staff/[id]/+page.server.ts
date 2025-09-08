@@ -1,11 +1,26 @@
 import type { PageServerLoad } from './$types'
 import { error } from '@sveltejs/kit'
 import { db } from '$lib/server/db'
-import { eq } from 'drizzle-orm'
-import { staff } from '$lib/server/db/schema'
+import { eq, and } from 'drizzle-orm'
+import { staff, userStaffFavorites } from '$lib/server/db/schema'
 /* TODO add in type gaurd for staffID */
 
-export const load: PageServerLoad = async ({ params }) => {
+// Fetches user's favorites entry for the staffer
+async function getUserFavoriteEntry(userId: number, staffId: number) {
+    try {
+        return await db.query.userStaffFavorites.findFirst({
+            where: and(
+                eq(userStaffFavorites.fkUserId, userId),
+                eq(userStaffFavorites.fkStaffId, staffId)
+            ),
+        })
+    } catch (err) {
+        console.error('Error fetching user favorites entry:', err)
+        return null
+    }
+}
+
+export const load: PageServerLoad = async ({ params, locals }) => {
     const { id } = params
 
     // Only allow numeric IDs
@@ -21,6 +36,13 @@ export const load: PageServerLoad = async ({ params }) => {
     }
 
     try {
+        // Fetch user list entry if user is authenticated
+        let userFavoriteEntry = null
+
+        if (locals.user?.id) {
+            userFavoriteEntry = await getUserFavoriteEntry(locals.user.id, staffID)
+        }
+
         const tmpStaffer = await db.query.staff.findFirst({
             where: eq(staff.id, staffID),
             with: {
@@ -102,6 +124,7 @@ export const load: PageServerLoad = async ({ params }) => {
             links: tmpStaffer?.links,
             roles,
             voiceRoles,
+            userFavoriteEntry,
         }
 
         console.log(staffer)

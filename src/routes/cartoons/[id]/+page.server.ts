@@ -2,7 +2,7 @@ import type { Actions, PageServerLoad } from './$types'
 import { error, redirect } from '@sveltejs/kit'
 import { db } from '$lib/server/db'
 import { and, eq } from 'drizzle-orm'
-import { cartoons, userCartoonHistory, reviews } from '$lib/server/db/schema'
+import { cartoons, userCartoonHistory, reviews, userCartoonFavorites } from '$lib/server/db/schema'
 import '$lib/server/db/relations'
 import { fail } from '@sveltejs/kit'
 import { SESSION_COOKIE_NAME } from '$lib/constants/auth'
@@ -39,7 +39,7 @@ interface TransformedCartoon {
     reviews: Review[]
     stats: any[]
     userListEntry: any | null
-    isFavorited: boolean
+    userFavoriteEntry: any | null
 }
 
 interface Review {
@@ -277,6 +277,21 @@ async function getUserListEntry(userId: number, cartoonId: number) {
     }
 }
 
+// Fetches user's favorites entry for the cartoon
+async function getUserFavoriteEntry(userId: number, cartoonId: number) {
+    try {
+        return await db.query.userCartoonFavorites.findFirst({
+            where: and(
+                eq(userCartoonFavorites.fkUserId, userId),
+                eq(userCartoonFavorites.fkCartoonId, cartoonId)
+            ),
+        })
+    } catch (err) {
+        console.error('Error fetching user favorites entry:', err)
+        return null
+    }
+}
+
 // Main load function
 export const load: PageServerLoad = async ({ params, locals, cookies }) => {
     const { id } = params
@@ -287,11 +302,11 @@ export const load: PageServerLoad = async ({ params, locals, cookies }) => {
     try {
         // Fetch user list entry if user is authenticated
         let userListEntry = null
-        let isFavorited = false
+        let userFavoriteEntry = null
 
         if (locals.user?.id) {
             userListEntry = await getUserListEntry(locals.user.id, cartoonID)
-            isFavorited = userListEntry?.favorite === 1
+            userFavoriteEntry = await getUserFavoriteEntry(locals.user.id, cartoonID)
         }
 
         // Fetch cartoon data
@@ -361,7 +376,7 @@ export const load: PageServerLoad = async ({ params, locals, cookies }) => {
         const cartoon: TransformedCartoon = {
             ...cartoonData,
             userListEntry,
-            isFavorited,
+            userFavoriteEntry,
         }
 
         // const user: User = {
@@ -377,7 +392,7 @@ export const load: PageServerLoad = async ({ params, locals, cookies }) => {
         console.log('Loaded cartoon:', cartoon.name, `(ID: ${cartoon.id})`)
         console.log('cartoonid', id)
         console.log('User list entry:', userListEntry)
-        console.log('Is favorited:', isFavorited)
+        console.log('User favorite entry:', userFavoriteEntry)
 
         let userReview
 

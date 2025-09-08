@@ -5,22 +5,25 @@
     const {
         itemId,
         itemType = 'unknown',
-        isFavorited = false,
         onFavorite = () => {},
+        userFavoriteEntry,
     } = $props<{
         itemId: string | number
-        itemType?: 'cartoon' | 'character' | 'staff' | 'unknown'
-        isFavorite?: boolean
+        itemType?: 'cartoons' | 'characters' | 'staff' | 'companies' | 'unknown'
+        userFavoriteEntry?: any
         onFavorite?: (event: {
             success: boolean
-            isFavorited?: boolean
             error?: string
             itemId: string | number
             itemType: string
+            userFavoriteEntry: any
         }) => void
     }>()
+    console.log(userFavoriteEntry)
 
-    let localFavorited = $derived(isFavorited)
+    let localFavorited = $derived(
+        userFavoriteEntry?.favorite >= 0 ? true : false
+    )
     let isSubmitting = $state(false)
 
     const detectedType = $derived(
@@ -29,10 +32,11 @@
 
     function detectType(pathname: string | null): string {
         if (!pathname) return 'unknown'
-        if (pathname.includes('/cartoon/')) return 'cartoon'
-        if (pathname.includes('/character/')) return 'character'
+        if (pathname.includes('/cartoons/')) return 'cartoons'
+        if (pathname.includes('/characters/')) return 'characters'
         if (pathname.includes('/staff/')) return 'staff'
-
+        if (pathname.includes('/companies/')) return 'companies'
+        // if (pathname.includes('/users/')) return 'users'
         return 'unknown'
     }
 
@@ -43,18 +47,32 @@
         localFavorited = !localFavorited
         isSubmitting = true
 
+        let response
         try {
-            const response = await fetch('/api/favorites', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    itemId: itemId,
-                    itemType: detectedType,
-                    favorite: !isFavorited,
-                }),
-            })
+            if (localFavorited == false) {
+                response = await fetch(
+                    '/api/favorites?itemId='.concat(
+                        itemId,
+                        '&itemType=',
+                        itemType
+                    ),
+                    {
+                        method: 'DELETE',
+                    }
+                )
+            } else {
+                response = await fetch('/api/favorites', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        itemId: itemId,
+                        itemType: detectedType,
+                        favorite: 0,
+                    }),
+                })
+            }
 
             if (response.ok) {
                 onFavorite({

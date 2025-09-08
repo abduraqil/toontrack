@@ -59,7 +59,11 @@
                             <!--TODO: Add action buttons like add to watched, dropped, etc -->
 
                             <!-- Favorite Button -->
-                            <Favorite></Favorite>
+                            <Favorite
+                                itemId={Number(company.id)}
+                                itemType="companies"
+                                userFavoriteEntry={company.userFavoriteEntry}
+                            />
                         </div>
                     </div>
 

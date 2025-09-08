@@ -62,7 +62,11 @@
                                     {character.name}
                                 </h1>
                                 <!-- Action Buttons -->
-                                <Favorite />
+                                <Favorite
+                                    itemId={Number(character.id)}
+                                    itemType="characters"
+                                    userFavoriteEntry={character.userFavoriteEntry}
+                                />
                             </div>
 
                             <!-- Tags/Badges -->

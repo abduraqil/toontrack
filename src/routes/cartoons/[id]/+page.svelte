@@ -76,26 +76,27 @@
     //     }
     // }
 
-    function handleFavoriteResult(event: {
-        success: boolean
-        isFavorited?: boolean
-        error?: string
-        itemId: string | number
-        itemType: string
-    }) {
-        const { success, error, isFavorited } = event
-        if (success) {
-            // Update the local data
-            cartoon.isFavorited = isFavorited ?? false
-            // show notification here
-            console.log(
-                `Cartoon ${isFavorited ? 'favorited' : 'unfavorited'} successfully`
-            )
-        } else {
-            // Handle error
-            console.error('Favorite error:', error)
-        }
-    }
+    // TODO: this may need to be redone
+    //    function handleFavoriteResult(event: {
+    //        success: boolean
+    //        isFavorited?: boolean
+    //        error?: string
+    //        itemId: string | number
+    //        itemType: string
+    //    }) {
+    //        const { success, error, isFavorited } = event
+    //        if (success) {
+    //            // Update the local data
+    //            cartoon.isFavorited = isFavorited ?? false
+    //            // show notification here
+    //            console.log(
+    //                `Cartoon ${isFavorited ? 'favorited' : 'unfavorited'} successfully`
+    //            )
+    //        } else {
+    //            // Handle error
+    //            console.error('Favorite error:', error)
+    //        }
+    //    }
 
     export let form: ActionData | undefined
     console.log({ form })
@@ -155,16 +156,16 @@
                                 </h1>
                                 <Addtolist
                                     itemId={Number(cartoon.id)}
-                                    itemType="cartoon"
                                     maxEpisodes={cartoon.episodes || undefined}
                                     userListEntry={cartoon.userListEntry}
                                 />
                                 <Favorite
                                     itemId={Number(cartoon.id)}
-                                    itemType="cartoon"
-                                    isFavorite={cartoon.isFavorited}
-                                    onFavorite={handleFavoriteResult}
+                                    itemType="cartoons"
+                                    userFavoriteEntry={cartoon.userFavoriteEntry}
                                 />
+                                <!--     onFavorite={handleFavoriteResult} -->
+                                <!-- /> -->
                             </div>
 
                             <!-- Tags/Badges -->

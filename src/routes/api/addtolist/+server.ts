@@ -23,7 +23,7 @@ interface uCHDelete {
 }
 
 export const POST: RequestHandler = async ({ request, locals }) => {
-    const { itemId, t, s, sc, sD, fD, r, e, n, f } = await request.json()
+    const { itemId, s = 0, sc, sD, fD, r, e, n, f } = await request.json()
 
     // validate user
     if (!locals?.session) {
@@ -33,9 +33,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
     const session = locals.session
     console.log('server received list', {
-        session: session.id,
+        user: session.fkUserId,
         itemId,
-        t,
         s,
         sc,
         sD,
@@ -46,15 +45,9 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         f,
     })
 
+
     // validate input
-    if (
-        isNaN(itemId) ||
-        !t ||
-        s == undefined ||
-        !session.id ||
-        s < 0 ||
-        s > 5
-    ) {
+    if (isNaN(itemId) || !session.id) {
         console.log('incomplete request')
         error(400, 'Incomplete request')
     }
@@ -62,7 +55,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     const entry: uCHEntry = {
         fkUserId: session.fkUserId,
         fkCartoonId: itemId,
-        status: s,
+        status: (s == undefined || s < 0 || s > 5) ? 0 : s,
         score: sc,
         startDate: sD,
         finishDate: fD,

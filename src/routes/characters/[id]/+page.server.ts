@@ -1,15 +1,27 @@
 import type { PageServerLoad } from './$types'
 import { error } from '@sveltejs/kit'
 import { db } from '$lib/server/db'
-import { eq } from 'drizzle-orm'
-import { characters } from '$lib/server/db/schema'
+import { eq, and } from 'drizzle-orm'
+import { characters, userCharacterFavorites } from '$lib/server/db/schema'
 import '$lib/server/db/relations'
+/* TODO add in type guard for characterID */
 
-/* TODO
-add in type guard for characterID
-*/
+        // Fetches user's favorites entry for the CompanyFer
+async function getUserFavoriteEntry(userId: number, characterId: number) {
+    try {
+        return await db.query.userCharacterFavorites.findFirst({
+            where: and(
+                eq(userCharacterFavorites.fkUserId, userId),
+                eq(userCharacterFavorites.fkCharacterId, characterId)
+            ),
+        })
+    } catch (err) {
+        console.error('Error fetching user favorites entry:', err)
+        return null
+    }
+}
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, locals }) => {
     const { id } = params
 
     // Only allow numeric IDs
@@ -25,6 +37,13 @@ export const load: PageServerLoad = async ({ params }) => {
     }
 
     try {
+        // Fetch user list entry if user is authenticated
+        let userFavoriteEntry = null
+
+        if (locals.user?.id) {
+            userFavoriteEntry = await getUserFavoriteEntry(locals.user.id, characterID)
+        }
+
         const tmpCharacter = await db.query.characters.findFirst({
             where: eq(characters.id, characterID),
             with: {
@@ -76,8 +95,9 @@ export const load: PageServerLoad = async ({ params }) => {
             birthday: tmpCharacter.birthday,
             inception: tmpCharacter.inception,
             roles,
+            userFavoriteEntry,
         }
-        console.log(character.roles)
+        // console.log('loaded new', character)
 
         return {
             character,

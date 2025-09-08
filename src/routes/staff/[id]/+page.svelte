@@ -64,7 +64,11 @@
                             <!--TODO: Add action buttons like add to watched, dropped, etc -->
 
                             <!-- Favorite Button -->
-                            <Favorite></Favorite>
+                            <Favorite
+                                itemId={Number(staffer.id)}
+                                itemType="staff"
+                                userFavoriteEntry={staffer.userFavoriteEntry}
+                            />
                         </div>
                     </div>
 
