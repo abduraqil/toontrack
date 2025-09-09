@@ -245,7 +245,7 @@ advanced / hidden:
     >
         <!-- SEARCH BAR -->
         <div id="query_elements" class="mb-6">
-            <div class="flex flex-wrap gap-4 items-end mb-4" id="search_input">
+            <div class="flex flex-wrap gap-4 items-end mb-4 py-4 mr-8 justify-between" id="search_input">
                 <!-- <input
                     type="text"
                     id="name"
