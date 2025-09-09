@@ -31,7 +31,7 @@ TODO
 - Update href links
 -->
 
-<div class="h-screen">
+<div class="h-screen flex flex-col">
     <nav class="bg-base-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <div class="flex items-center">
@@ -153,9 +153,11 @@ TODO
         </div>
     </nav>
 
-    {@render children()}
+    <main class="flex-1">
+        {@render children()}
+    </main>
 
-    <footer class="bg-base-300 mt-auto">
+    <footer class="bg-base-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <footer class="footer sm:footer-horizontal p-10">
                 <nav>
