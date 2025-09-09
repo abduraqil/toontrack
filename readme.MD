@@ -4,7 +4,7 @@ ToonTrack is a modern web application for tracking cartoons, managing favorites,
 
 ## Development Status
 
-> **This project is currently in active development.**\
+> **This project is currently in active development.**
 > Features, UI, and APIs are subject to change. Contributions and feedback are welcome!
 
 ## Features
@@ -23,3 +23,5 @@ ToonTrack is a modern web application for tracking cartoons, managing favorites,
 - [Drizzle ORM](https://orm.drizzle.team/)
 - [Marked](https://marked.js.org/)
 - [DOMPurify](https://github.com/cure53/DOMPurify)
+- [Prettier](https://prettier.io)
+- [ESLint](https://eslint.org)
