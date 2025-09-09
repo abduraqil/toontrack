@@ -154,16 +154,18 @@
                                 >
                                     {cartoon.name}
                                 </h1>
-                                <Addtolist
-                                    itemId={Number(cartoon.id)}
-                                    maxEpisodes={cartoon.episodes || undefined}
-                                    userListEntry={cartoon.userListEntry}
-                                />
-                                <Favorite
-                                    itemId={Number(cartoon.id)}
-                                    itemType="cartoons"
-                                    userFavoriteEntry={cartoon.userFavoriteEntry}
-                                />
+                                <div class="flex items-center gap-2">
+                                    <Addtolist
+                                        itemId={Number(cartoon.id)}
+                                        maxEpisodes={cartoon.episodes || undefined}
+                                        userListEntry={cartoon.userListEntry}
+                                    />
+                                    <Favorite
+                                        itemId={Number(cartoon.id)}
+                                        itemType="cartoons"
+                                        userFavoriteEntry={cartoon.userFavoriteEntry}
+                                    />
+                                </div>
                                 <!--     onFavorite={handleFavoriteResult} -->
                                 <!-- /> -->
                             </div>
