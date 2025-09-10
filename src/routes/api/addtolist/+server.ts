@@ -45,7 +45,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         f,
     })
 
-
     // validate input
     if (isNaN(itemId) || !session.id) {
         console.log('incomplete request')
@@ -55,7 +54,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     const entry: uCHEntry = {
         fkUserId: session.fkUserId,
         fkCartoonId: itemId,
-        status: (s == undefined || s < 0 || s > 5) ? 0 : s,
+        status: s == undefined || s < 0 || s > 5 ? 0 : s,
         score: sc,
         startDate: sD,
         finishDate: fD,

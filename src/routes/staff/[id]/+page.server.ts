@@ -40,7 +40,10 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         let userFavoriteEntry = null
 
         if (locals.user?.id) {
-            userFavoriteEntry = await getUserFavoriteEntry(locals.user.id, staffID)
+            userFavoriteEntry = await getUserFavoriteEntry(
+                locals.user.id,
+                staffID
+            )
         }
 
         const tmpStaffer = await db.query.staff.findFirst({

@@ -28,11 +28,14 @@ import {
     follows,
     sessions,
     profileComments,
-    collections,
-    userCartoonFavorites,
     staffStats,
     userCartoonHistory,
+    collections,
     jtCollectionsUsers,
+    userCharacterFavorites,
+    userCartoonFavorites,
+    userStaffFavorites,
+    userCompanyFavorites,
 } from './schema'
 
 export const jtCartoonsCharactersRelations = relations(
@@ -87,6 +90,7 @@ export const staffRelations = relations(staff, ({ many }) => ({
     jtLanguagesStaff: many(jtLanguagesStaff),
     characters: many(characters),
     jtOccupationsStaff: many(jtOccupationsStaff),
+    userStaffFavorites: many(userStaffFavorites),
 }))
 
 export const charactersRelations = relations(characters, ({ one, many }) => ({
@@ -95,6 +99,7 @@ export const charactersRelations = relations(characters, ({ one, many }) => ({
         fields: [characters.fkOriginalCreator],
         references: [staff.id],
     }),
+    userCharacterFavorites: many(userCharacterFavorites),
 }))
 
 export const jtCartoonsCompaniesRelations = relations(
@@ -115,6 +120,7 @@ export const companiesRelations = relations(companies, ({ many }) => ({
     jtCartoonsCompanies: many(jtCartoonsCompanies),
     jtCompaniesCompanyTags: many(jtCompaniesCompanyTags),
     jtCompaniesCountries: many(jtCompaniesCountries),
+    userCompanyFavorites: many(userCompanyFavorites),
 }))
 
 export const jtCountriesStaffRelations = relations(
@@ -308,7 +314,10 @@ export const usersRelations = relations(users, ({ many }) => ({
     }),
     userCartoonHistory: many(userCartoonHistory),
     collections: many(collections),
+    userCharacterFavorites: many(userCharacterFavorites),
     userCartoonFavorites: many(userCartoonFavorites),
+    userStaffFavorites: many(userStaffFavorites),
+    userCompanyFavorites: many(userCompanyFavorites),
 }))
 
 export const cartoonStatsRelations = relations(cartoonStats, ({ one }) => ({
@@ -371,6 +380,84 @@ export const userCartoonHistoryRelations = relations(
         user: one(users, {
             fields: [userCartoonHistory.fkUserId],
             references: [users.id],
+        }),
+    })
+)
+
+export const collectionsRelations = relations(collections, ({ one, many }) => ({
+    user: one(users, {
+        fields: [collections.fkUserId],
+        references: [users.id],
+    }),
+    jtCollectionsUsers: many(jtCollectionsUsers),
+}))
+
+export const jtCollectionsUsersRelations = relations(
+    jtCollectionsUsers,
+    ({ one }) => ({
+        collection: one(collections, {
+            fields: [jtCollectionsUsers.fkCollectionId],
+            references: [collections.id],
+        }),
+        cartoon: one(cartoons, {
+            fields: [jtCollectionsUsers.fkCartoonId],
+            references: [cartoons.id],
+        }),
+    })
+)
+
+export const userCharacterFavoritesRelations = relations(
+    userCharacterFavorites,
+    ({ one }) => ({
+        user: one(users, {
+            fields: [userCharacterFavorites.fkUserId],
+            references: [users.id],
+        }),
+        character: one(characters, {
+            fields: [userCharacterFavorites.fkCharacterId],
+            references: [characters.id],
+        }),
+    })
+)
+
+export const userCartoonFavoritesRelations = relations(
+    userCartoonFavorites,
+    ({ one }) => ({
+        user: one(users, {
+            fields: [userCartoonFavorites.fkUserId],
+            references: [users.id],
+        }),
+        cartoon: one(cartoons, {
+            fields: [userCartoonFavorites.fkCartoonId],
+            references: [cartoons.id],
+        }),
+    })
+)
+
+export const userStaffFavoritesRelations = relations(
+    userStaffFavorites,
+    ({ one }) => ({
+        user: one(users, {
+            fields: [userStaffFavorites.fkUserId],
+            references: [users.id],
+        }),
+        staff: one(staff, {
+            fields: [userStaffFavorites.fkStaffId],
+            references: [staff.id],
+        }),
+    })
+)
+
+export const userCompanyFavoritesRelations = relations(
+    userCompanyFavorites,
+    ({ one }) => ({
+        user: one(users, {
+            fields: [userCompanyFavorites.fkUserId],
+            references: [users.id],
+        }),
+        company: one(companies, {
+            fields: [userCompanyFavorites.fkCompanyId],
+            references: [companies.id],
         }),
     })
 )

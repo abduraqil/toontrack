@@ -6,7 +6,7 @@ import { characters, userCharacterFavorites } from '$lib/server/db/schema'
 import '$lib/server/db/relations'
 /* TODO add in type guard for characterID */
 
-        // Fetches user's favorites entry for the CompanyFer
+// Fetches user's favorites entry for the CompanyFer
 async function getUserFavoriteEntry(userId: number, characterId: number) {
     try {
         return await db.query.userCharacterFavorites.findFirst({
@@ -41,7 +41,10 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         let userFavoriteEntry = null
 
         if (locals.user?.id) {
-            userFavoriteEntry = await getUserFavoriteEntry(locals.user.id, characterID)
+            userFavoriteEntry = await getUserFavoriteEntry(
+                locals.user.id,
+                characterID
+            )
         }
 
         const tmpCharacter = await db.query.characters.findFirst({
