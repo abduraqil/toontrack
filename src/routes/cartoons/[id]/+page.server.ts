@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from './$types'
-import { error, redirect } from '@sveltejs/kit'
+import { error, json, redirect } from '@sveltejs/kit'
 import { db } from '$lib/server/db'
 import { and, eq } from 'drizzle-orm'
 import {
@@ -298,7 +298,7 @@ async function getUserFavoriteEntry(userId: number, cartoonId: number) {
 }
 
 // Main load function
-export const load: PageServerLoad = async ({ params, locals, cookies }) => {
+export const load: PageServerLoad = async ({ params, locals }) => {
     const { id } = params
 
     // Validate inputform
@@ -387,49 +387,40 @@ export const load: PageServerLoad = async ({ params, locals, cookies }) => {
             userFavoriteEntry,
         }
 
-        // const user: User = {
-        //     id: locals.user?.id,
-        //     name: locals.user?.name,
-        //     token: locals.session?.token,
-        //     sessionId: locals.session?.id,
-        // }
+        const session = locals?.session
 
-        const session = cookies.get(SESSION_COOKIE_NAME)
-
-        console.log('User Cookies', session)
-        console.log('Loaded cartoon:', cartoon.name, `(ID: ${cartoon.id})`)
-        console.log('cartoonid', id)
-        console.log('User list entry:', userListEntry)
-        console.log('User favorite entry:', userFavoriteEntry)
+        console.log({
+            'User Cookies': session,
+            'Loaded cartoon:': cartoon.name,
+            cartoonid: id,
+            'User list entry:': userListEntry,
+            'User favorite entry:': userFavoriteEntry,
+        })
 
         let userReview
 
-        if (session) {
-            const { session: s } = await validateSessionToken(session)
-            if (s?.id) {
-                const x = (
-                    await db
-                        .select()
-                        .from(reviews)
-                        .where(
-                            and(
-                                eq(reviews.fkUserId, s?.fkUserId),
-                                eq(reviews.fkCartoonId, cartoonID)
-                            )
+        if (locals?.session.fkUserId) {
+            const x = (
+                await db
+                    .select()
+                    .from(reviews)
+                    .where(
+                        and(
+                            eq(reviews.fkUserId, locals.session.fkUserId),
+                            eq(reviews.fkCartoonId, cartoonID)
                         )
-                        .limit(1)
-                )[0]
-                console.log('raw review query', x)
-                userReview = {
-                    id: x?.id, // this will be used to remove the logged in user's review from the rest of the reviews
-                    review: x?.review,
-                    score: x?.score,
-                    created: x?.edited,
-                }
+                    )
+                    .limit(1)
+            )[0]
+            userReview = {
+                id: x?.id, // this will be used to remove the logged in user's review from the rest of the reviews
+                review: x?.review,
+                score: x?.score,
+                created: x?.edited,
             }
         }
 
-        console.log('Existing User Review:', userReview)
+        // console.log('Existing User Review:', userReview)
 
         return {
             cartoon,
@@ -462,17 +453,15 @@ export interface ActionData {
     }
 }
 export const actions = {
-    postReview: async ({ request }) => {
+    postReview: async ({ request, locals }) => {
         const formData = await request.formData()
         const review = formData.get('review')?.toString()
         const score = parseInt(formData.get('score')?.toString()!)
-        const token = formData.get('token')?.toString()
         const fkCartoonId = parseInt(formData.get('fkCartoonId')?.toString()!)
         console.log('Review post attempt:', {
             review,
             score,
             fkCartoonId,
-            token,
         })
         if (!score || !review) {
             console.log('fail')
@@ -507,80 +496,119 @@ export const actions = {
         }
 
         try {
-            console.log('Review post attempt:', { token, score, review })
+            console.log('Review post attempt:', { fkCartoonId, score, review })
 
-            const cartoon = (
-                await db
-                    .select()
-                    .from(cartoons)
-                    .where(eq(cartoons.id, fkCartoonId))
-                    .limit(1)
-            )[0]
+            // const cartoon = (
+            //     await db
+            //         .select()
+            //         .from(cartoons)
+            //         .where(eq(cartoons.id, fkCartoonId))
+            //         .limit(1)
+            // )[0]
 
-            if (!cartoon) {
-                console.log(`Unable to find cartoon: ${fkCartoonId}`)
-                return fail(400, {
-                    errors: { general: 'Invalid cartoon' },
-                    fields: { fkCartoonId },
-                })
-            }
+            // if (!cartoon) {
+            //     console.log(`Unable to find cartoon: ${fkCartoonId}`)
+            //     return fail(400, {
+            //         errors: { general: 'Invalid cartoon' },
+            //         fields: { fkCartoonId },
+            //     })
+            // }
 
-            if (!token) {
-                console.log(`Unable to find user token: ${token}`)
-                return fail(400, {
-                    errors: { general: 'Invalid user, are you signed in?' },
-                })
-            }
+            // if (!token) {
+            //     console.log(`Unable to find user token: ${token}`)
+            //     return fail(400, {
+            //         errors: { general: 'Invalid user, are you signed in?' },
+            //     })
+            // }
 
             // validate session
-            const { session } = await validateSessionToken(token)
+            // const { session } = await validateSessionToken(token)
 
-            if (!session?.fkUserId || !session) {
-                console.log(`Unable to find user id: ${session?.fkUserId}`)
-                return fail(400, {
+            if (!locals.session?.fkUserId) {
+                console.log('Unauthorized user attempted posting review')
+                return fail(401, {
                     errors: { general: 'Invalid user, are you signed in?' },
                 })
             }
+            const fkUserId = locals.session.fkUserId
 
-            const reviewExists = await db
-                .select()
-                .from(reviews)
-                .where(
-                    and(
-                        eq(reviews.fkUserId, session?.fkUserId),
-                        eq(reviews.fkCartoonId, fkCartoonId)
-                    )
-                )
-                .limit(1)
-
-            if (reviewExists.length > 0) {
-                console.log(
-                    `Attempted double reviewing of cartoonid: ${fkCartoonId}`
-                )
-                return fail(400, {
-                    errors: { general: 'you have already posted a review' },
-                })
-            }
-
-            console.log(`Attempting to post with`, { session, token })
+            // const reviewExists = await db
+            //     .select()
+            //     .from(reviews)
+            //     .where(
+            //         and(
+            //             eq(reviews.fkUserId, session?.fkUserId),
+            //             eq(reviews.fkCartoonId, fkCartoonId)
+            //         )
+            //     )
+            //     .limit(1)
+            //
+            // if (reviewExists.length > 0) {
+            //     console.log(
+            //         `Attempted double reviewing of cartoonid: ${fkCartoonId}`
+            //     )
+            //     return fail(400, {
+            //         errors: { general: 'you have already posted a review' },
+            //     })
+            // }
 
             // insert review if user passes authentication
-            await db.insert(reviews).values({
-                review: review,
-                score: score,
-                fkUserId: session.fkUserId,
-                fkCartoonId: fkCartoonId,
-            })
+            console.log('Review post attempt:', { fkUserId })
+            await db
+                .insert(reviews)
+                .values({
+                    review: review,
+                    score: score,
+                    fkUserId: fkUserId,
+                    fkCartoonId: fkCartoonId,
+                })
+                .onConflictDoUpdate({
+                    target: [reviews.fkUserId, reviews.fkCartoonId],
+                    set: {
+                        review: review,
+                        score: score,
+                    },
+                })
 
-            console.log(`New review posted by uid ${session.fkUserId}`, {
-                score,
-                review,
-            })
+            console.log('Review post successful:', { fkUserId, score })
         } catch (error) {
             console.error('Review post error:', error)
             return fail(500, {
                 errors: { general: 'Error. Please try again.' },
                 fields: { review, score },
+            })
+        }
+        redirect(303, '/cartoons/'.concat(fkCartoonId.toString()))
+    },
+    deleteReview: async ({ request, locals }) => {
+        const formData = await request.formData()
+        const fkCartoonId = parseInt(formData.get('fkCartoonId')?.toString()!)
+        if (!locals.session?.fkUserId) {
+            console.log('Unauthorized user attempted deleting review')
+            return fail(401, {
+                errors: { general: 'Invalid user, are you signed in?' },
+            })
+        }
+        const fkUserId = locals.session.fkUserId
+        try {
+            console.log('Review deletion attempt:', { fkUserId })
+            await db
+                .delete(reviews)
+                .where(
+                    and(
+                        eq(reviews.fkUserId, fkUserId),
+                        eq(reviews.fkCartoonId, fkCartoonId)
+                    )
+                )
+            console.log('Review deletion successful:', {
+                fkUserId,
+                fkCartoonId,
+            })
+            return
+        } catch (error) {
+            console.error('Review post error:', error)
+            return fail(500, {
+                errors: { general: 'Error. Please try again.' },
             })
         }
         redirect(303, '/cartoons/'.concat(fkCartoonId.toString()))

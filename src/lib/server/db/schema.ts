@@ -447,6 +447,7 @@ export const reviews = pgTable(
             foreignColumns: [users.id],
             name: 'reviews_fk_user_id_fkey',
         }),
+        unique('uq_user_review').on(table.fkUserId, table.fkCartoonId),
     ]
 )
 
