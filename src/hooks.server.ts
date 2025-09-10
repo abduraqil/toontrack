@@ -23,6 +23,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     event.locals.session = session
     event.locals.user = user
-    console.log('User session validated:', user)
+    console.log('User session validated:', { id: user?.id, name: user?.name })
     return await resolve(event)
 }

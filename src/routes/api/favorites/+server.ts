@@ -40,7 +40,10 @@ async function getTable(itemType: string | undefined, itemId: number) {
             entry = { fkCharacterId: itemId }
             break
         default:
-            return json({ error: 'Favoriting: must give type' }, { status: 400 })
+            return json(
+                { error: 'Favoriting: must give type' },
+                { status: 400 }
+            )
     }
     return { tbl, tblCol, entry }
 }
@@ -60,7 +63,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     const userId = locals.user.id
 
     try {
-        console.log('Favorites API Recieved: ', { favorite, userId: locals.user.id })
+        console.log('Favorites API Recieved: ', {
+            favorite,
+            userId: locals.user.id,
+        })
 
         const { tbl, tblCol, entry } = await getTable(itemType, itemId)
 
@@ -74,12 +80,9 @@ export const POST: RequestHandler = async ({ request, locals }) => {
             .insert(tbl)
             .values(entry)
             .onConflictDoUpdate({
-                target: [
-                    tbl.fkUserId,
-                    tblCol
-                ],
+                target: [tbl.fkUserId, tblCol],
                 set: {
-                    favorite: favorite
+                    favorite: favorite,
                 },
             })
 
@@ -106,7 +109,7 @@ export const DELETE: RequestHandler = async ({ locals, url }) => {
     const e: uCFDelete = {
         fkUserId: locals.session.fkUserId,
         itemId: parseInt(url.searchParams.get('itemId')!),
-        itemType: url.searchParams.get('itemType')?.toString()
+        itemType: url.searchParams.get('itemType')?.toString(),
     }
     console.log('server received delete request', e)
 
@@ -121,12 +124,7 @@ export const DELETE: RequestHandler = async ({ locals, url }) => {
     // modify db
     await db
         .delete(tbl)
-        .where(
-            and(
-                eq(tbl.fkUserId, e.fkUserId),
-                eq(tblCol, e.itemId)
-            )
-        )
+        .where(and(eq(tbl.fkUserId, e.fkUserId), eq(tblCol, e.itemId)))
     console.log(`user ${e.fkUserId}: favorite delete request successful`)
 
     return json('ok')

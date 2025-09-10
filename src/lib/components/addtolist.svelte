@@ -47,7 +47,7 @@
                     n: notes,
                 }),
             })
-            status = { k: 'Watching', v: 0 } // there is probably a better way than this
+            if (statusv == -1) status = { k: 'Watching', v: 0 } // there is probably a better way than this
         }
 
         console.log('got status', response.status)
@@ -134,9 +134,18 @@ status:
     //         })
     //     )
     // })
+    if (typeof window !== 'undefined') {
+        document.addEventListener('click', handleClickOutside)
+    }
+    function handleClickOutside(event: MouseEvent) {
+        const dropdown = document.getElementById('list-dropdown')
+        if (dropdown && !dropdown.contains(event.target as Node)) {
+            isDropdownOpen = false
+        }
+    }
 </script>
 
-<div id="sort-dropdown" class="relative">
+<div id="list-dropdown" class="relative">
     <button
         type="button"
         onclick={toggleListEditor}
@@ -152,7 +161,7 @@ status:
             onclick={toggleDropdown}
             aria-expanded={isDropdownOpen}
             aria-haspopup="true"
-            aria-label="Sort reviews by"
+            aria-label="Add this cartoon to your list"
             class="text-sm font-semibold btn btn-primary hover:btn-info"
         >
             <svg

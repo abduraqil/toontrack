@@ -2,7 +2,12 @@ import type { Actions, PageServerLoad } from './$types'
 import { error, redirect } from '@sveltejs/kit'
 import { db } from '$lib/server/db'
 import { and, eq } from 'drizzle-orm'
-import { cartoons, userCartoonHistory, reviews, userCartoonFavorites } from '$lib/server/db/schema'
+import {
+    cartoons,
+    userCartoonHistory,
+    reviews,
+    userCartoonFavorites,
+} from '$lib/server/db/schema'
 import '$lib/server/db/relations'
 import { fail } from '@sveltejs/kit'
 import { SESSION_COOKIE_NAME } from '$lib/constants/auth'
@@ -306,7 +311,10 @@ export const load: PageServerLoad = async ({ params, locals, cookies }) => {
 
         if (locals.user?.id) {
             userListEntry = await getUserListEntry(locals.user.id, cartoonID)
-            userFavoriteEntry = await getUserFavoriteEntry(locals.user.id, cartoonID)
+            userFavoriteEntry = await getUserFavoriteEntry(
+                locals.user.id,
+                cartoonID
+            )
         }
 
         // Fetch cartoon data

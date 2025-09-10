@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { goto } from '$app/navigation'
     import { page } from '$app/state'
 
     // props
@@ -74,6 +75,7 @@
                 })
             }
 
+            console.log('got status', response.status)
             if (response.ok) {
                 onFavorite({
                     success: true,
@@ -81,6 +83,13 @@
                     itemId,
                     itemType: detectType,
                 })
+            } else if (response.status == 401) {
+                goto(
+                    '/login?reference='.concat(
+                        encodeURIComponent(page.url.pathname)
+                    )
+                )
+                console.log('redirection')
             } else {
                 // revert
                 localFavorited = previousState
