@@ -2,6 +2,7 @@
     import Friend from '$lib/components/friend.svelte'
     import Message from '$lib/components/message.svelte'
     import OverviewTab from './tabs/OverviewTab.svelte'
+    import cartoonList from './tabs/CartoonList.svelte'
     // import VoiceActorsTab from './tabs/VoiceActorsTab.svelte'
     // import StaffTab from './tabs/StaffTab.svelte'
     // import CompaniesTab from './tabs/CompaniesTab.svelte'
@@ -15,6 +16,7 @@
 
     const tabs = [
         { id: 'overview', label: 'Overview', component: OverviewTab },
+        { id: 'cartoons', label: 'Cartoons', component: cartoonList },
         // { id: 'voice actors', label: 'Characters', component: VoiceActorsTab },
         // { id: 'staff', label: 'Staff', component: StaffTab },
         // { id: 'companies', label: 'Companies', component: CompaniesTab },
@@ -83,8 +85,10 @@
                                 </p>
                             </div>
                             <div>
-                                <Friend/>
-                                <Message/>
+                                
+                                <Friend />
+                                <Message />
+                                
                             </div>
                          </div>
 
