@@ -399,7 +399,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
         let userReview
 
-        if (locals?.session.fkUserId) {
+        if (locals?.session?.fkUserId) {
             const x = (
                 await db
                     .select()
