@@ -157,7 +157,8 @@
                                 <div class="flex items-center gap-2">
                                     <Addtolist
                                         itemId={Number(cartoon.id)}
-                                        maxEpisodes={cartoon.episodes || undefined}
+                                        maxEpisodes={cartoon.episodes ||
+                                            undefined}
                                         userListEntry={cartoon.userListEntry}
                                     />
                                     <Favorite

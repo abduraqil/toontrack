@@ -21,26 +21,22 @@
     }
 
     let { cartoon, session, form, userReview } = $props()
-    //userReview = '**qwdqw**'
-    console.log({ reviews: cartoon.reviews, userReview })
     cartoon.reviews = cartoon.reviews.filter((a: Review) => {
         if (a.id != userReview?.id) return a
-        else
-            console.log(
-                `excluding reviewid ${userReview?.id} by user ${a.user.id}`
-            )
     })
-    //console.log({ edqwe })
     let isDropdownOpen = $state(false)
     let currentSort = $state('Date')
     let isAscending = $state(false) // false = descending (newest first), true = ascending (oldest first)
     let isAscendingArrow = $state('')
 
-    // let reviewBoxVisible = $state(true);
+    let score = $state('')
     let reviewBoxVisible = $state(false)
     let reviewBoxContents = $state('')
+
+    if (userReview?.review) reviewBoxContents = userReview?.review
+    if (userReview?.id) score = userReview?.score
+
     let reviewBoxLength = $derived(reviewBoxContents.length)
-    let formToken = $state('')
 
     const MINREVIEWLEN = 1000
     const MAXREVIEWLEN = 5000
@@ -95,11 +91,6 @@
             return null // this prevents any further animations playing
         }
         reviewBoxVisible = !reviewBoxVisible
-
-        // put user token in place. this is not placed in by default because it might be a security issue?
-        // TODO: this is really stupid and does not need to be here
-        if (reviewBoxVisible) formToken = session
-        else formToken = ''
     }
 
     // Close dropdown when clicking outside
@@ -143,8 +134,6 @@
     $effect(() => {
         sortReviews()
     })
-
-    console.log({ form })
 </script>
 
 {#snippet addReviewButton()}
@@ -170,7 +159,7 @@
                     d="M12 4.5v15m7.5-7.5h-15"
                 />
             </svg>
-            <p>Add Review</p>
+            <p>{!userReview?.id ? 'Add' : 'Edit'} Review</p>
         </button>
     </div>
 {/snippet}
@@ -212,21 +201,35 @@
                 {/if}
             </div>
             <label for="score">Score</label>
-            <div class="container relative py-5 flex items-center">
-                <input
-                    required
-                    type="number"
-                    id="quantity"
-                    name="score"
-                    min="0"
-                    max="10"
-                    class="absolute rounded-md bg-purple-50 text-sm font-semibold text-gray-900 hover:bg-purple-100 p-2"
-                />
+            <!-- <div class="container relative py-5 flex items-center"> -->
+            <div class="grid grid-cols-5 gap-4">
+                <div class="col-start-1 col-end-1">
+                    <input
+                        required
+                        type="number"
+                        id="quantity"
+                        name="score"
+                        min="0"
+                        max="10"
+                        bind:value={score}
+                        class="rounded-md bg-purple-50 text-sm font-semibold text-gray-900 hover:bg-purple-100 p-2"
+                    />
+                    <b class="font-bold text-md">/ 10</b>
+                </div>
+                {#if userReview?.review}
+                    <!-- TODO: this does not work unless all fields are present -->
+                    <button
+                        formaction="?/deleteReview"
+                        class="col-start-3 col-end-3 rounded-md bg-purple-50 text-sm font-semibold text-gray-900 hover:bg-purple-100 p-2 px-4"
+                    >
+                        Delete
+                    </button>
+                {/if}
 
                 {#if reviewBoxLength > MINREVIEWLEN - 1}
                     <button
                         type="submit"
-                        class="absolute bottom-0 right-0 rounded-md bg-purple-50 text-sm font-semibold text-gray-900 hover:bg-purple-100 p-2 px-4"
+                        class="col-start-5 col-end-5 rounded-md bg-purple-50 text-sm font-semibold text-gray-900 hover:bg-purple-100 p-2 px-4"
                     >
                         Post
                     </button>
@@ -238,13 +241,6 @@
                 id="fkCartoonId"
                 name="fkCartoonId"
                 value={cartoon.id}
-            />
-            <input
-                hidden
-                type="text"
-                id="token"
-                name="token"
-                value={formToken}
             />
             {#if form?.errors?.general}
                 <p class="mt-1 text-sm text-red-600">
@@ -279,12 +275,12 @@ instead of being able to write a new one -->
                         </svg>
                     </div>
                     <span class="ml-2 text-sm font-medium text-gray-600"
-                        >{userReview.score} / 10</span
+                        >{userReview?.score} / 10</span
                     >
                 </div>
             </div>
             <span class="text-xs text-gray-400 uppercase tracking-wider"
-                >{new Date(userReview.created).toLocaleDateString(undefined, {
+                >{new Date(userReview?.created).toLocaleDateString(undefined, {
                     month: 'short',
                     day: '2-digit',
                     year: 'numeric',
@@ -292,29 +288,29 @@ instead of being able to write a new one -->
             >
         </div>
         <p class="text-wrap break-words text-gray-700 leading-relaxed">
-            {#if userReview.review.length > 300}
-                {#if expanded.has(userReview.id)}
-                    {@html DOMPurify.sanitize(marked(userReview.review))}
+            {#if userReview?.review.length > 300}
+                {#if expanded.has(userReview?.id)}
+                    {@html DOMPurify.sanitize(marked(userReview?.review))}
 
                     <button
                         class="ml-2 text-purple-600 underline text-sm cursor-pointer"
-                        onclick={() => toggleExpand(userReview.id)}
+                        onclick={() => toggleExpand(userReview?.id)}
                     >
                         View Less
                     </button>
                 {:else}
                     {@html DOMPurify.sanitize(
-                        marked(userReview.review.slice(0, 300).concat('...'))
+                        marked(userReview?.review.slice(0, 300).concat('...'))
                     )}
                     <button
                         class="ml-2 text-purple-600 underline text-sm cursor-pointer"
-                        onclick={() => toggleExpand(userReview.id)}
+                        onclick={() => toggleExpand(userReview?.id)}
                     >
                         View More
                     </button>
                 {/if}
             {:else}
-                {@html DOMPurify.sanitize(marked(userReview.review))}
+                {@html DOMPurify.sanitize(marked(userReview?.review))}
             {/if}
         </p>
     </div>
@@ -416,16 +412,16 @@ instead of being able to write a new one -->
                     </button>
                 </div>
                 <!-- Add/Edit Review Button -->
-                {#if !userReview?.review}
-                    {@render addReviewButton()}
-                {/if}
+                {@render addReviewButton()}
             </div>
 
             <!-- Review Box -->
-            {#if !userReview?.review}
+            {#if userReview?.review && !reviewBoxVisible}
+                {@render addUserReview()}
+            {:else if userReview?.review && reviewBoxVisible}
                 {@render addReviewBox()}
             {:else}
-                {@render addUserReview()}
+                {@render addReviewBox()}
             {/if}
 
             {#if cartoon.reviews[0].id}
@@ -519,11 +515,13 @@ instead of being able to write a new one -->
             <div class="flex items-center gap-2">
                 <div class="flex items-center gap-2 pb-3.5"></div>
                 <!-- Add/Edit Review Button -->
-                {#if !userReview?.review}
-                    {@render addReviewButton()}
-                {/if}
+                {@render addReviewButton()}
             </div>
-            {#if !userReview?.review}
+            {#if userReview?.review && !reviewBoxVisible}
+                {@render addUserReview()}
+            {:else if userReview?.review && reviewBoxVisible}
+                {@render addReviewBox()}
+            {:else if !userReview?.review && !reviewBoxVisible}
                 {@render addReviewBox()}
                 <!-- No Reviews Placeholder -->
                 <div class="bg-gray-50 rounded-lg p-8 text-center">
@@ -548,7 +546,7 @@ instead of being able to write a new one -->
                     </p>
                 </div>
             {:else}
-                {@render addUserReview()}
+                {@render addReviewBox()}
             {/if}
         {/if}
     </div>
