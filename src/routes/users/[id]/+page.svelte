@@ -1,8 +1,9 @@
 <script lang="ts">
     import Friend from '$lib/components/friend.svelte'
-    import Message from '$lib/components/message.svelte'
     import OverviewTab from './tabs/OverviewTab.svelte'
     import cartoonList from './tabs/CartoonList.svelte'
+    import Favorites from './tabs/Favorites.svelte'
+    import Reviews from './tabs/Reviews.svelte'
     // import VoiceActorsTab from './tabs/VoiceActorsTab.svelte'
     // import StaffTab from './tabs/StaffTab.svelte'
     // import CompaniesTab from './tabs/CompaniesTab.svelte'
@@ -17,6 +18,8 @@
     const tabs = [
         { id: 'overview', label: 'Overview', component: OverviewTab },
         { id: 'cartoons', label: 'Cartoons', component: cartoonList },
+        { id: 'favorites', label: 'Favorites', component: Favorites },
+        { id: 'reviews', label: 'Reviews', component: Reviews },
         // { id: 'voice actors', label: 'Characters', component: VoiceActorsTab },
         // { id: 'staff', label: 'Staff', component: StaffTab },
         // { id: 'companies', label: 'Companies', component: CompaniesTab },
@@ -57,13 +60,13 @@
 
     <!-- Profile Section -->
      <div class="relative -mt-24 pb-8">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <!-- Profile -->
             <div class="bg-base-100 rounded-lg shadow-lg p-8 mb-8">
                 <div class="flex flex-col md:flex-row gap-8">
                     <!-- Avatar -->
                      <div class="flex-shrink-0">
-                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-base-content shadow-lg bg-neutral-content">
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-accent shadow-lg bg-neutral-content">
                             <img
                                 src={userPage.coverPic || '/nocover.jpg'}
                                 alt={userPage.name}
@@ -87,7 +90,6 @@
                             <div>
                                 
                                 <Friend />
-                                <Message />
                                 
                             </div>
                          </div>
