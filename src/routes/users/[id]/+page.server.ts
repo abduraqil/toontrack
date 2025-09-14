@@ -6,6 +6,7 @@ import {
     userCartoonFavorites,
     userCartoonHistory,
     userCharacterFavorites,
+    userCompanyFavorites,
     users,
     userStaffFavorites,
 } from '$lib/server/db/schema'
@@ -132,6 +133,22 @@ export const load: PageServerLoad = async ({ params, locals }) => {
                         orderBy: [asc(userCharacterFavorites.favorite)],
                         with: {
                             character: {
+                                columns: {
+                                    name: true,
+                                    coverPic: true,
+                                },
+                            },
+                        },
+                    },
+                    userCompanyFavorites: {
+                        columns: {
+                            created: false,
+                            edited: false,
+                            fkUserId: false,
+                        },
+                        orderBy: [asc(userCompanyFavorites.favorite)],
+                        with: {
+                            company: {
                                 columns: {
                                     name: true,
                                     coverPic: true,
