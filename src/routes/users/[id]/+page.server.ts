@@ -84,7 +84,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
                                     edited: false,
                                     id: false,
                                     description: false,
-                                    duration: false,
+                                    // duration: false,
                                     seasons: false,
                                     links: false,
                                 },
