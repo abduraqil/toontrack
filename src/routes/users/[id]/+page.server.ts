@@ -73,7 +73,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
                     userCartoonHistory: {
                         columns: {
                             created: false,
-                            edited: false,
+                            // edited: false,
                             fkUserId: false,
                             notes: false,
                         },
@@ -85,7 +85,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
                                     edited: false,
                                     id: false,
                                     description: false,
-                                    duration: false,
+                                    // duration: false,
                                     seasons: false,
                                     links: false,
                                 },
