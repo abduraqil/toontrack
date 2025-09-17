@@ -290,7 +290,7 @@ instead of being able to write a new one -->
         <p class="text-wrap break-words text-gray-700 leading-relaxed">
             {#if userReview?.review.length > 300}
                 {#if expanded.has(userReview?.id)}
-                    {@html DOMPurify.sanitize(marked(userReview?.review))}
+                    {@html DOMPurify.sanitize(marked.parse(userReview?.review) as string)}
 
                     <button
                         class="ml-2 text-purple-600 underline text-sm cursor-pointer"
@@ -300,7 +300,7 @@ instead of being able to write a new one -->
                     </button>
                 {:else}
                     {@html DOMPurify.sanitize(
-                        marked(userReview?.review.slice(0, 300).concat('...'))
+                        marked.parse(userReview?.review.slice(0, 300).concat('...'))
                     )}
                     <button
                         class="ml-2 text-purple-600 underline text-sm cursor-pointer"
@@ -310,7 +310,7 @@ instead of being able to write a new one -->
                     </button>
                 {/if}
             {:else}
-                {@html DOMPurify.sanitize(marked(userReview?.review))}
+                {@html DOMPurify.sanitize(marked.parse(userReview?.review) as string)}
             {/if}
         </p>
     </div>
