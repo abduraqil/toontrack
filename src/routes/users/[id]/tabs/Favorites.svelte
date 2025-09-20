@@ -2,7 +2,9 @@
     import { marked } from 'marked'
     import DOMPurify from 'dompurify'
 
-    export let userPage: any
+    let { userPage } = $props<{
+        userPage: any
+    }>()
 </script>
 
 <div class="space-y-8">

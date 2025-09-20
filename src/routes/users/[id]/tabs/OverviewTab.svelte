@@ -236,7 +236,7 @@ Cartoon List
                         <img
                             src={cartoon.cartoon?.coverPic || '/nocover.jpg'}
                             alt={cartoon.cartoon?.name}
-                            class="w-32 h-32 object-cover rounded-lg transition-all duration-300"
+                            class="w-32 h-32 object-contain rounded-lg transition-all duration-300"
                             style="aspect-ratio: 1 / 1;"
                         />
                     </figure>
