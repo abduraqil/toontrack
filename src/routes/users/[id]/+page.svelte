@@ -65,7 +65,6 @@
 <div class="min-h-screen bg-base-200">
     <!-- Header Banner -->
     <div class="relative bg-gradient-to-r from-primary to-secondary h-48"></div>
-    <div class="relative bg-gradient-to-r from-primary to-secondary h-48"></div>
 
     <!-- Profile Section -->
     <div class="relative -mt-24 pb-8">
@@ -136,9 +135,6 @@
                                 <span class="text-2xl font-bold text-gray-900"
                                     >0</span
                                 >
-                                <span class="text-2xl font-bold text-gray-900"
-                                    >0</span
-                                >
                                 <span class="text-gray-600">Friends</span>
                             </div>
                             <div class="flex flex-col items-center">
@@ -168,20 +164,7 @@
                 >
                     {#each tabs as tab}
                         <button
-                            class="px-6 py-3 text-sm font-medium border-b-2 transition-colors duration-200
-                        <button
-                            class="px-6 py-3 text-sm font-medium border-b-2 transition-colors duration-200
-                                    {activeTab === tab.id
-                                ? 'border-secondary text-secondary bg-secondary/10'
-                                : 'border-transparent text-base-content hover:text-secondary hover:border-secondary/50'}"
-                            type="button"
-                            onclick={() => setActiveTab(tab.id)}
-                        >
-                            {tab.label}
-                        </button>
-                    {/each}
-                                ? 'border-secondary text-secondary bg-secondary/10'
-                                : 'border-transparent text-base-content hover:text-secondary hover:border-secondary/50'}"
+                            class="px-6 py-3 text-sm font-medium border-b-2 transition-colors duration-200 {activeTab === tab.id ? 'border-secondary text-secondary bg-secondary/10' : 'border-transparent text-base-content hover:text-secondary hover:border-secondary/50'}"
                             type="button"
                             onclick={() => setActiveTab(tab.id)}
                         >
