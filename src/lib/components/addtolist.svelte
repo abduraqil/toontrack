@@ -145,7 +145,7 @@ status:
     }
 </script>
 
-<div id="list-dropdown" class="relative">
+<div id="list-dropdown bg-purple-50" class="relative">
     <button
         type="button"
         onclick={toggleListEditor}

@@ -9,6 +9,7 @@
     import StatsTab from './tabs/StatsTab.svelte'
 
     import type { ActionData, PageData } from './$types'
+    import { page } from '$app/state'
     export let data: PageData
 
     $: cartoon = data.cartoon
@@ -155,6 +156,27 @@
                                     {cartoon.name}
                                 </h1>
                                 <div class="flex items-center gap-2">
+                                    <a
+                                        href="{page.url.pathname}/edit"
+                                        type="button"
+                                        aria-label="edit"
+                                        class=" btn btn-primary hover:btn-info inline-block hover:accent-blue-100 text-sm font-semibold items-center justify-center w-10 h-10"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 20"
+                                            stroke-width="1.5"
+                                            stroke="currentColor"
+                                            class="size-6 center"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                                            />
+                                        </svg>
+                                    </a>
                                     <Addtolist
                                         itemId={Number(cartoon.id)}
                                         maxEpisodes={cartoon.episodes ||
@@ -321,22 +343,19 @@
                         {/each}
                     </dl>
                 </div>
-                <div class="bg-base-100 rounded-lg shadow-md p-6">
-                    <h2 class="text-2xl font-semibold mb-4">Tags</h2>
-                    <dl class="space-y-3">
-                        <!-- {#each [cartoonTags && cartoonTags.length > 0 ? -->
-                        <!-- { value: cartoonTags.map(ct => ct.name) } : null, -->
-                        <!-- ].filter(detail => detail !== null) as detail} -->
-                        <!--     <div> -->
-                        <!--         <dd class="mt-1 text-gray-900">{detail.value}</dd> -->
-                        <!--     </div> -->
-                        <!-- {/each} -->
-                        {#each cartoon.tags as tag}
-                            <!-- TODO: clicking these takes you to the search page -->
-                            <dd class="mt-1 text-base-content">{tag.name}</dd>
-                        {/each}
-                    </dl>
-                </div>
+                {#if cartoon.tags[0]}
+                    <div class="bg-base-100 rounded-lg shadow-md p-6">
+                        <h2 class="text-2xl font-semibold mb-4">Tags</h2>
+                        <dl class="space-y-3">
+                            {#each cartoon.tags as tag}
+                                <!-- TODO: clicking these takes you to the search page -->
+                                <dd class="mt-1 text-base-content">
+                                    {tag.name}
+                                </dd>
+                            {/each}
+                        </dl>
+                    </div>
+                {/if}
             </div>
             <!-- Right Content Area -->
             <div class="lg:col-span-3 space-y-6">

@@ -60,6 +60,7 @@ export async function validateSessionToken(
 
     const { user, session } = result[0]
 
+    // TODO this may be better implemented as psql trigger
     if (Date.now() > session.expiresAt.getTime()) {
         await db.delete(sessions).where(eq(sessions.id, session.id))
         return { session: null, user: null }

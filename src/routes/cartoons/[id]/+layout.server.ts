@@ -157,7 +157,6 @@ function transformCartoonData(
         tmpCartoon.jtCartoonsLanguages?.map((lang: any) => ({
             id: lang.fkLanguageId,
             name: lang.language.name,
-            iso639: lang.language.iso639,
             score: lang.score,
         })) ?? []
 

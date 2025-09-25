@@ -472,6 +472,28 @@ export const cartoonStats = pgTable(
     ]
 )
 
+export const friendRequests = pgTable(
+    'friend_requests',
+    {
+        fkSenderId: integer('fk_sender_id').notNull(),
+        fkTargetId: integer('fk_target_id').notNull(),
+        created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+    },
+    (table) => [
+        foreignKey({
+            columns: [table.fkTargetId],
+            foreignColumns: [users.id],
+            name: 'friend_requests_fk_target_id_fkey',
+        }),
+        foreignKey({
+            columns: [table.fkSenderId],
+            foreignColumns: [users.id],
+            name: 'friend_requests_fk_sender_id_fkey',
+        }),
+        unique('uq_follow').on(table.fkSenderId, table.fkTargetId),
+    ]
+)
+
 export const follows = pgTable(
     'follows',
     {
@@ -492,6 +514,29 @@ export const follows = pgTable(
             name: 'follows_fk_following_id_fkey',
         }),
         unique('uq_follow').on(table.fkFollowingId, table.fkFollowerId),
+    ]
+)
+
+export const friends = pgTable(
+    'friends',
+    {
+        fkUser1: integer('fk_user1').notNull(),
+        fkUser2: integer('fk_user2').notNull(),
+        created: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+        edited: timestamp({ withTimezone: true, mode: 'date' }).defaultNow(),
+    },
+    (table) => [
+        foreignKey({
+            columns: [table.fkUser1],
+            foreignColumns: [users.id],
+            name: 'friends_fk_user1_fkey',
+        }),
+        foreignKey({
+            columns: [table.fkUser2],
+            foreignColumns: [users.id],
+            name: 'friends_fk_user2_fkey',
+        }),
+        unique('uq_friend').on(table.fkUser1, table.fkUser2),
     ]
 )
 
