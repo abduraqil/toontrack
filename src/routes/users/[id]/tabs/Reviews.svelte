@@ -6,7 +6,5 @@
 </script>
 
 <div class="space-y-4">
-    <div class="prose max-w-none">
-        
-    </div>
+    <div class="prose max-w-none"></div>
 </div>

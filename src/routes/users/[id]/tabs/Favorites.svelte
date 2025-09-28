@@ -115,8 +115,7 @@
                     >
                         <figure class="px-2 pt-3">
                             <img
-                                src={favorite.staff.coverPic ||
-                                    '/nocover.jpg'}
+                                src={favorite.staff.coverPic || '/nocover.jpg'}
                                 alt={favorite.staff.name}
                                 class="w-full h-40 object-contain rounded-md transition-all duration-300"
                             />
@@ -186,5 +185,4 @@
             </div>
         {/if}
     </div>
-
 </div>

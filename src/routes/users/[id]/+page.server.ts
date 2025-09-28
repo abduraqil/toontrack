@@ -1,8 +1,9 @@
 import type { PageServerLoad } from './$types'
 import { error } from '@sveltejs/kit'
-import { eq, asc, sql } from 'drizzle-orm'
+import { eq, asc, sql, and } from 'drizzle-orm'
 import { db } from '$lib/server/db'
 import {
+    friends,
     userCartoonFavorites,
     userCartoonHistory,
     userCharacterFavorites,
@@ -38,7 +39,7 @@ function validateId(id: string): number {
 //         })
 //     } catch (err) {
 //         console.error('Error fetching user favorites entry:', err)
-//         return null
+//         return nullel
 //     }
 // }
 
@@ -51,13 +52,27 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
     try {
         // Fetch user list entry if user is authenticated
+        let userFriends = false
 
         if (locals.user?.id) {
             // userFriendEntry = await getUserFriendEntry(locals.user.id, userID) // TODO
-            if (locals.user?.id == userID)
+            if (locals.user?.id == userID) {
                 console.log(
                     `user ${locals.user.name} (${userID}) is looking at his own page`
                 )
+            }
+            userFriends =
+                (
+                    await db
+                        .select()
+                        .from(friends)
+                        .where(
+                            and(
+                                eq(friends.fkUser1, locals.user?.id),
+                                eq(friends.fkUser2, userID)
+                            )
+                        )
+                ).length > 0
         }
 
         // Fetch cartoon data
@@ -156,9 +171,6 @@ export const load: PageServerLoad = async ({ params, locals }) => {
                             },
                         },
                     },
-                    // userFriends: {
-                    //     columns: { created: false, edited: false, fkUserId: false },
-                    // },
                     reviews: {
                         columns: {
                             created: false,
@@ -176,14 +188,14 @@ export const load: PageServerLoad = async ({ params, locals }) => {
             throw error(404, 'User not found')
         }
 
-        return { userPage }
+        return { userPage, userFriends }
     } catch (err) {
         // Re-throw SvelteKit errors
         if (err && typeof err === 'object' && 'status' in err) {
             throw err
         }
 
-        console.error('Error fetching cartoon:', err)
-        throw error(500, 'Failed to load cartoon')
+        console.error('Error fetching user:', err)
+        throw error(500, 'Failed to load user')
     }
 }

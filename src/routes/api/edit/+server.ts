@@ -162,8 +162,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     // redirect(303, '/cartoons/'.concat(fkCartoonId.toString()))
 }
 
-function diff(k: any) {
-}
+function diff(k: any) {}
 
 function findFK(k: string) {
     switch (k) {
@@ -194,45 +193,52 @@ async function getOld(id: number) {
         with: {
             jtCartoonsCartoonTypes: {
                 columns: {
-                    fkCartoonId: false, created: false,
+                    fkCartoonId: false,
+                    created: false,
                     edited: false,
-                }
+                },
             },
             jtCartoonsLanguages: {
                 columns: {
-                    fkCartoonId: false, created: false,
+                    fkCartoonId: false,
+                    created: false,
                     edited: false,
-                }
+                },
             },
             jtCartoonsCountries: {
                 columns: {
-                    fkCartoonId: false, created: false,
+                    fkCartoonId: false,
+                    created: false,
                     edited: false,
-                }
+                },
             },
             jtCartoonsCompanies: {
                 columns: {
-                    fkCartoonId: false, created: false,
+                    fkCartoonId: false,
+                    created: false,
                     edited: false,
-                }
+                },
             },
             jtCartoonsStaff: {
                 columns: {
-                    fkCartoonId: false, created: false,
+                    fkCartoonId: false,
+                    created: false,
                     edited: false,
-                }
+                },
             },
             jtCartoonsCharacters: {
                 columns: {
-                    fkCartoonId: false, created: false,
+                    fkCartoonId: false,
+                    created: false,
                     edited: false,
-                }
+                },
             },
             jtCartoonsTags: {
                 columns: {
-                    fkCartoonId: false, created: false,
+                    fkCartoonId: false,
+                    created: false,
                     edited: false,
-                }
+                },
             },
         },
     })

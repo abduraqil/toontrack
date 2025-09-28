@@ -25,3 +25,4 @@ ToonTrack is a modern web application for tracking cartoons, managing favorites,
 - [DOMPurify](https://github.com/cure53/DOMPurify)
 - [Prettier](https://prettier.io)
 - [ESLint](https://eslint.org)
+- [Heroicons](https://heroicons.com/)

@@ -36,6 +36,8 @@ import {
     userCartoonFavorites,
     userStaffFavorites,
     userCompanyFavorites,
+    friendRequests,
+    friends,
 } from './schema'
 
 export const jtCartoonsCharactersRelations = relations(
@@ -313,11 +315,23 @@ export const usersRelations = relations(users, ({ many }) => ({
         relationName: 'profileComments_fkUserId_users_id',
     }),
     userCartoonHistory: many(userCartoonHistory),
-    collections: many(collections),
     userCharacterFavorites: many(userCharacterFavorites),
     userCartoonFavorites: many(userCartoonFavorites),
     userStaffFavorites: many(userStaffFavorites),
     userCompanyFavorites: many(userCompanyFavorites),
+    collections: many(collections),
+    friendRequests_fkSenderId: many(friendRequests, {
+        relationName: 'friendRequests_fkSenderId_users_id',
+    }),
+    friendRequests_fkTargetId: many(friendRequests, {
+        relationName: 'friendRequests_fkTargetId_users_id',
+    }),
+    friends_fkUser1: many(friends, {
+        relationName: 'friends_fkUser1_users_id',
+    }),
+    friends_fkUser2: many(friends, {
+        relationName: 'friends_fkUser2_users_id',
+    }),
 }))
 
 export const cartoonStatsRelations = relations(cartoonStats, ({ one }) => ({
@@ -384,14 +398,6 @@ export const userCartoonHistoryRelations = relations(
     })
 )
 
-export const collectionsRelations = relations(collections, ({ one, many }) => ({
-    user: one(users, {
-        fields: [collections.fkUserId],
-        references: [users.id],
-    }),
-    jtCollectionsUsers: many(jtCollectionsUsers),
-}))
-
 export const jtCollectionsUsersRelations = relations(
     jtCollectionsUsers,
     ({ one }) => ({
@@ -405,6 +411,14 @@ export const jtCollectionsUsersRelations = relations(
         }),
     })
 )
+
+export const collectionsRelations = relations(collections, ({ one, many }) => ({
+    jtCollectionsUsers: many(jtCollectionsUsers),
+    user: one(users, {
+        fields: [collections.fkUserId],
+        references: [users.id],
+    }),
+}))
 
 export const userCharacterFavoritesRelations = relations(
     userCharacterFavorites,
@@ -461,3 +475,29 @@ export const userCompanyFavoritesRelations = relations(
         }),
     })
 )
+
+export const friendRequestsRelations = relations(friendRequests, ({ one }) => ({
+    user_fkSenderId: one(users, {
+        fields: [friendRequests.fkSenderId],
+        references: [users.id],
+        relationName: 'friendRequests_fkSenderId_users_id',
+    }),
+    user_fkTargetId: one(users, {
+        fields: [friendRequests.fkTargetId],
+        references: [users.id],
+        relationName: 'friendRequests_fkTargetId_users_id',
+    }),
+}))
+
+export const friendsRelations = relations(friends, ({ one }) => ({
+    user_fkUser1: one(users, {
+        fields: [friends.fkUser1],
+        references: [users.id],
+        relationName: 'friends_fkUser1_users_id',
+    }),
+    user_fkUser2: one(users, {
+        fields: [friends.fkUser2],
+        references: [users.id],
+        relationName: 'friends_fkUser2_users_id',
+    }),
+}))

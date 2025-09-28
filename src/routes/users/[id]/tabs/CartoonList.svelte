@@ -287,12 +287,17 @@
                                                         </div>
                                                         <div class="flex-1">
                                                             <a
-                                                              href={`/cartoons/${entry.fkCartoonId}`}
-                                                              class="block hover:text-primary transition-colors"
+                                                                href={`/cartoons/${entry.fkCartoonId}`}
+                                                                class="block hover:text-primary transition-colors"
                                                             >
-                                                              <h3 class="font-semibold">
-                                                                {entry.cartoon?.name || 'Unknown'}
-                                                              </h3>
+                                                                <h3
+                                                                    class="font-semibold"
+                                                                >
+                                                                    {entry
+                                                                        .cartoon
+                                                                        ?.name ||
+                                                                        'Unknown'}
+                                                                </h3>
                                                             </a>
                                                             <div
                                                                 class="flex items-center gap-4 mt-1 text-sm text-base-content/70"
@@ -400,14 +405,14 @@
                                                 </div>
                                             </div>
                                             <div class="flex-1">
-                                              <a
-                                                              href={`/cartoons/${entry.fkCartoonId}`}
-                                                              class="block hover:text-primary transition-colors"
-                                                            >
-                                                <h3 class="font-semibold">
-                                                    {entry.cartoon?.name ||
-                                                        'Unknown'}
-                                                </h3>
+                                                <a
+                                                    href={`/cartoons/${entry.fkCartoonId}`}
+                                                    class="block hover:text-primary transition-colors"
+                                                >
+                                                    <h3 class="font-semibold">
+                                                        {entry.cartoon?.name ||
+                                                            'Unknown'}
+                                                    </h3>
                                                 </a>
                                                 <div
                                                     class="flex items-center gap-4 mt-1 text-sm text-base-content/70"

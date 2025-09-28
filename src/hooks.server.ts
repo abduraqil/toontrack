@@ -4,10 +4,10 @@ import {
     deleteSessionTokenCookie,
 } from '$lib/server/auth/session'
 import { db } from '$lib/server/db'
-import { friendRequests } from '$lib/server/db/schema'
+import { friendRequests, friends } from '$lib/server/db/schema'
 
 import type { Handle } from '@sveltejs/kit'
-import { eq } from 'drizzle-orm'
+import { eq, or } from 'drizzle-orm'
 
 export const handle: Handle = async ({ event, resolve }) => {
     const token = event.cookies.get('session') || null
@@ -18,22 +18,28 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
 
     let fR = null
+    let f = null
     const { session, user } = await validateSessionToken(token)
     if (session !== null) {
         setSessionTokenCookie(event, token, session.expiresAt)
-        console.log({ fR })
         fR = await db.query.friendRequests.findMany({
-            where:
+            where: or(
                 eq(friendRequests.fkTargetId, user.id),
+                eq(friendRequests.fkSenderId, user.id)
+            ),
         })
+        // f = await db.query.friends.findMany({
+        //     where: eq(friends.fkUser1, user.id),
+        // })
     } else {
         deleteSessionTokenCookie(event)
     }
 
-
+    // TODO: locals likely does not need both of these
     event.locals.session = session
     event.locals.user = user
     event.locals.user.friendRequests = fR
+    // event.locals.user.friends = f
     console.log('User session validated:', { id: user?.id, name: user?.name })
     return await resolve(event)
 }
