@@ -222,7 +222,7 @@ async function resolveQuery(
             : ilike(tbl.name, '%' + name + '%')
     /* END: BUILDING SQL QUERY FROM URL PARAMETERS */
 
-    const { edited, links, airEnd, ...rest } = getTableColumns(tbl) // exclude the specified columns
+    const { edited, airEnd, ...rest } = getTableColumns(tbl) // exclude the specified columns
 
     query = db.selectDistinct({ ...rest }).from(tbl)
 

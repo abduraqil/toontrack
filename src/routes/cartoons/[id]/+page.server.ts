@@ -66,13 +66,13 @@ export const actions = {
         try {
             console.log('Review post attempt:', { fkCartoonId, score, review })
 
-            if (!locals.session?.fkUserId) {
+            if (!locals.session?.userId) {
                 console.log('Unauthorized user attempted posting review')
                 return fail(401, {
                     errors: { general: 'Invalid user, are you signed in?' },
                 })
             }
-            const fkUserId = locals.session.fkUserId
+            const fkUserId = locals.session.userId
 
             // insert review if user passes authentication
             console.log('Review post attempt:', { fkUserId })
@@ -106,13 +106,13 @@ export const actions = {
     deleteReview: async ({ request, locals }) => {
         const formData = await request.formData()
         const fkCartoonId = parseInt(formData.get('fkCartoonId')?.toString()!)
-        if (!locals.session?.fkUserId) {
+        if (!locals.session?.userId) {
             console.log('Unauthorized user attempted deleting review')
             return fail(401, {
                 errors: { general: 'Invalid user, are you signed in?' },
             })
         }
-        const fkUserId = locals.session.fkUserId
+        const fkUserId = locals.session.userId
         try {
             console.log('Review deletion attempt:', { fkUserId })
             await db

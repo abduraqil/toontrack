@@ -24,7 +24,7 @@ import { fail } from '@sveltejs/kit'
 
 export const load: PageServerLoad = async ({ locals, url }) => {
     // redirect to login page if not signed in
-    if (!locals?.session?.fkUserId) {
+    if (!locals?.session?.userId) {
         redirect(
             303,
             '/login?reference='.concat(encodeURIComponent(url.pathname))
@@ -141,7 +141,7 @@ export interface ActionData {
 
 export const actions = {
     default: async ({ request, locals, params }) => {
-        if (!locals.user?.id) {
+        if (!locals.session?.userId) {
             console.log('Unauthorized attempted edit')
             return fail(401, {
                 errors: { general: 'Invalid user, are you signed in?' },
@@ -237,7 +237,7 @@ export const actions = {
         // }
 
         try {
-            const fkUserId = locals.session.fkUserId
+            const fkUserId = locals.session.userId
 
             const { jts, ...rest } = form.fields
             const mainTable = { ...rest }

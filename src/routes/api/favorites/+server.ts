@@ -50,7 +50,7 @@ async function getTable(itemType: string | undefined, itemId: number) {
 
 export const POST: RequestHandler = async ({ request, locals }) => {
     // take session id if it exists then user is logged in
-    if (!locals.user) {
+    if (!locals.session) {
         return json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -60,12 +60,12 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     // if (itemType != 'cartoons')
     //     return json({ error: 'Favoriting is for cartoons only at this time' }, { status: 501 })
 
-    const userId = locals.user.id
+    const userId = locals.session.userId
 
     try {
         console.log('Favorites API Recieved: ', {
             favorite,
-            userId: locals.user.id,
+            userId: locals.session.userId,
         })
 
         const { tbl, tblCol, entry } = await getTable(itemType, itemId)
@@ -101,20 +101,20 @@ export const DELETE: RequestHandler = async ({ locals, url }) => {
     }
 
     interface uCFDelete {
-        fkUserId: number
+        id: number
         itemId: number
         itemType?: string
     }
 
     const e: uCFDelete = {
-        fkUserId: locals.session.fkUserId,
+        id: locals.session.userId,
         itemId: parseInt(url.searchParams.get('itemId')!),
         itemType: url.searchParams.get('itemType')?.toString(),
     }
     console.log('server received delete request', e)
 
     // validate input
-    if (isNaN(e.itemId) || !e.fkUserId || !e.itemType) {
+    if (isNaN(e.itemId) || !e.id || !e.itemType) {
         console.log('incomplete request')
         error(400, 'Incomplete request')
     }
@@ -124,8 +124,8 @@ export const DELETE: RequestHandler = async ({ locals, url }) => {
     // modify db
     await db
         .delete(tbl)
-        .where(and(eq(tbl.fkUserId, e.fkUserId), eq(tblCol, e.itemId)))
-    console.log(`user ${e.fkUserId}: favorite delete request successful`)
+        .where(and(eq(tbl.fkUserId, e.id), eq(tblCol, e.itemId)))
+    console.log(`user ${e.id}: favorite delete request successful`)
 
     return json('ok')
 }

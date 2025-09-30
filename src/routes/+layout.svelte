@@ -5,13 +5,12 @@
     import Friend from '$lib/components/friend.svelte'
     let { children } = $props()
 
-    const user = $derived(page.data.user)
-    // user.friendRequests.filter(
+    const session = $derived(page.data.session)
+    // session.friendRequests.filter(
     //     (e: { fkSenderId: any }) => {
-    //         return e.fkSenderId != user.id
+    //         return e.fkSenderId != session.userId
     //     }
     // )
-    console.log(user)
 
     let theme = $state(
         typeof window !== 'undefined' &&
@@ -32,11 +31,6 @@
         if (saved) theme = saved
     }
 </script>
-
-<!--
-TODO
-- Update href links
--->
 
 <div class="h-screen flex flex-col">
     <nav class="bg-base-300">
@@ -78,12 +72,12 @@ TODO
 
                 <!-- Right: Auth + darkmode toggle -->
                 <div class="flex items-center space-x-2 ml-4">
-                    {#if user?.id}
-                        <a href="/users/{user.id}" class="btn">
-                            {user.name}
+                    {#if session?.userId}
+                        <a href="/users/{session.userId}" class="btn">
+                            {session.name}
                         </a>
-                        <!-- friends menu -->
-                        <Friend {user} />
+                        <!-- TODO: this does not update the friend indicator on the user page -->
+                        <Friend {session} />
                         <form
                             method="POST"
                             action="/login?/logout"
@@ -171,36 +165,63 @@ TODO
             <footer class="footer sm:footer-horizontal p-10">
                 <nav>
                     <h6 class="footer-title">Search</h6>
-                    <a href="/search/cartoons" class="link link-hover"
-                        >Cartoons</a
+                    <a
+                        href="/search/cartoons"
+                        class="link link-hover"
+                        data-sveltekit-reload>Cartoons</a
                     >
-                    <a href="/search/staff" class="link link-hover">Staff</a>
-                    <a href="/search/companies" class="link link-hover"
-                        >Companies</a
+                    <a
+                        href="/search/staff"
+                        class="link link-hover"
+                        data-sveltekit-reload>Staff</a
                     >
-                    <a href="/search/characters" class="link link-hover"
-                        >Characters</a
+                    <a
+                        href="/search/companies"
+                        class="link link-hover"
+                        data-sveltekit-reload>Companies</a
+                    >
+                    <a
+                        href="/search/characters"
+                        class="link link-hover"
+                        data-sveltekit-reload>Characters</a
+                    >
+                    <a
+                        href="/search/users"
+                        class="link link-hover"
+                        data-sveltekit-reload>Users</a
                     >
                 </nav>
+
+                <!-- TODO - Update these links -->
                 <nav>
                     <h6 class="footer-title">Company</h6>
-                    <a href="/search/cartoons" class="link link-hover"
-                        >About Us</a
+                    <a
+                        href="/search/cartoons"
+                        class="link link-hover"
+                        data-sveltekit-reload>About Us</a
                     >
-                    <a href="/search/cartoons" class="link link-hover"
-                        >Contact</a
+                    <a
+                        href="/search/cartoons"
+                        class="link link-hover"
+                        data-sveltekit-reload>Contact</a
                     >
                 </nav>
                 <nav>
                     <h6 class="footer-title">Legal</h6>
-                    <a href="/search/cartoons" class="link link-hover"
-                        >Terms of Use</a
+                    <a
+                        href="/search/cartoons"
+                        class="link link-hover"
+                        data-sveltekit-reload>Terms of Use</a
                     >
-                    <a href="/search/cartoons" class="link link-hover"
-                        >Privacy Policy</a
+                    <a
+                        href="/search/cartoons"
+                        class="link link-hover"
+                        data-sveltekit-reload>Privacy Policy</a
                     >
-                    <a href="/search/cartoons" class="link link-hover"
-                        >Cookie Policy</a
+                    <a
+                        href="/search/cartoons"
+                        class="link link-hover"
+                        data-sveltekit-reload>Cookie Policy</a
                     >
                 </nav>
             </footer>

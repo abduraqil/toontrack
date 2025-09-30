@@ -1,7 +1,7 @@
 import { error, json } from '@sveltejs/kit'
 import type { RequestHandler } from '@sveltejs/kit'
 import { db } from '$lib/server/db'
-import { friendRequests, friends, follows } from '$lib/server/db/schema'
+import { friendRequests, friends } from '$lib/server/db/schema'
 import { and, eq, or } from 'drizzle-orm'
 
 export const POST: RequestHandler = async ({ request, locals }) => {
@@ -14,18 +14,18 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
     const session = locals.session
     console.log('friend request: ', {
-        from: session.fkUserId,
+        from: session.userId,
         to: target,
     })
 
     // validate input
-    if (isNaN(target) || !session.id) {
+    if (isNaN(target) || !session.userId) {
         console.log('incomplete request')
         error(400, 'Incomplete request')
     }
 
     // cant request yourself TODO: needs postgres constraint
-    if (target == session.fkUserId) {
+    if (target == session.userId) {
         console.log("can't friend request yourself")
         error(400, 'Incomplete request')
     }
@@ -39,12 +39,12 @@ export const POST: RequestHandler = async ({ request, locals }) => {
                 .where(
                     or(
                         and(
-                            eq(friends.fkUser1, session.fkUserId),
+                            eq(friends.fkUser1, session.userId),
                             eq(friends.fkUser2, target)
                         ),
                         and(
                             eq(friends.fkUser1, target),
-                            eq(friends.fkUser2, session.fkUserId)
+                            eq(friends.fkUser2, session.userId)
                         )
                     )
                 )
@@ -62,7 +62,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
                 .from(friendRequests)
                 .where(
                     and(
-                        eq(friendRequests.fkSenderId, session.fkUserId),
+                        eq(friendRequests.fkSenderId, session.userId),
                         eq(friendRequests.fkTargetId, target)
                     )
                 )
@@ -79,7 +79,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         .where(
             and(
                 eq(friendRequests.fkSenderId, target),
-                eq(friendRequests.fkTargetId, session.fkUserId)
+                eq(friendRequests.fkTargetId, session.userId)
             )
         )
     // if request already exists with you as target then:
@@ -89,11 +89,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
             .insert(friends)
             .values([
                 {
-                    fkUser1: session.fkUserId,
+                    fkUser1: session.userId,
                     fkUser2: target,
                 },
                 {
-                    fkUser2: session.fkUserId,
+                    fkUser2: session.userId,
                     fkUser1: target,
                 },
             ])
@@ -104,12 +104,12 @@ export const POST: RequestHandler = async ({ request, locals }) => {
             .where(
                 or(
                     and(
-                        eq(friendRequests.fkSenderId, session.fkUserId),
+                        eq(friendRequests.fkSenderId, session.userId),
                         eq(friendRequests.fkTargetId, target)
                     ),
                     and(
                         eq(friendRequests.fkSenderId, target),
-                        eq(friendRequests.fkTargetId, session.fkUserId)
+                        eq(friendRequests.fkTargetId, session.userId)
                     )
                 )
             )
@@ -126,7 +126,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     await db
         .insert(friendRequests)
         .values({
-            fkSenderId: session.fkUserId,
+            fkSenderId: session.userId,
             fkTargetId: target,
         })
         .onConflictDoNothing()
@@ -150,7 +150,7 @@ export const DELETE: RequestHandler = async ({ locals, request }) => {
     try {
         const session = locals.session
         console.log('friend request: ', {
-            from: session.fkUserId,
+            from: session.userId,
             to: target,
         })
 
@@ -160,12 +160,12 @@ export const DELETE: RequestHandler = async ({ locals, request }) => {
             .where(
                 or(
                     and(
-                        eq(friendRequests.fkSenderId, session.fkUserId),
+                        eq(friendRequests.fkSenderId, session.userId),
                         eq(friendRequests.fkTargetId, target)
                     ),
                     and(
                         eq(friendRequests.fkSenderId, target),
-                        eq(friendRequests.fkTargetId, session.fkUserId)
+                        eq(friendRequests.fkTargetId, session.userId)
                     )
                 )
             )
@@ -174,12 +174,12 @@ export const DELETE: RequestHandler = async ({ locals, request }) => {
             .where(
                 or(
                     and(
-                        eq(friends.fkUser1, session.fkUserId),
+                        eq(friends.fkUser1, session.userId),
                         eq(friends.fkUser2, target)
                     ),
                     and(
                         eq(friends.fkUser1, target),
-                        eq(friends.fkUser2, session.fkUserId)
+                        eq(friends.fkUser2, session.userId)
                     )
                 )
             )

@@ -39,9 +39,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         // Fetch user list entry if user is authenticated
         let userFavoriteEntry = null
 
-        if (locals.user?.id) {
+        if (locals.session?.userId) {
             userFavoriteEntry = await getUserFavoriteEntry(
-                locals.user.id,
+                locals.session.userId,
                 staffID
             )
         }
