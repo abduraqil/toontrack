@@ -113,7 +113,6 @@ export const actions: Actions = {
                     name: username,
                     // email: email,
                     pwd: hashedPassword,
-                    // need to also add "created" timestamp
                 })
                 .returning({ insertedId: users.id })
             console.error(a)

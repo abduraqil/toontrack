@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { goto } from '$app/navigation'
+    import { goto, invalidateAll, replaceState } from '$app/navigation'
     import { page } from '$app/state'
     import { slide } from 'svelte/transition'
 
@@ -58,6 +58,8 @@
                 )
             )
             console.log('redirection')
+        } else if (response.status != 200) {
+            invalidateAll()
         }
     }
 

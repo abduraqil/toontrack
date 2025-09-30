@@ -23,7 +23,7 @@ import {
 import '$lib/server/db/relations'
 
 export const POST: RequestHandler = async ({ request, locals }) => {
-    if (!locals.user?.id) {
+    if (!locals.session?.userId) {
         console.log('Unauthorized attempted posting of review')
         error(401, 'Invalid user, are you signed in?')
     }

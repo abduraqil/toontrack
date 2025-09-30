@@ -305,10 +305,13 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         let userListEntry = null
         let userFavoriteEntry = null
 
-        if (locals.user?.id) {
-            userListEntry = await getUserListEntry(locals.user.id, cartoonID)
+        if (locals.session?.userId) {
+            userListEntry = await getUserListEntry(
+                locals.session.userId,
+                cartoonID
+            )
             userFavoriteEntry = await getUserFavoriteEntry(
-                locals.user.id,
+                locals.session.userId,
                 cartoonID
             )
         }
@@ -395,14 +398,14 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
         let userReview
 
-        if (locals?.session?.fkUserId) {
+        if (locals?.session?.userId) {
             const x = (
                 await db
                     .select()
                     .from(reviews)
                     .where(
                         and(
-                            eq(reviews.fkUserId, locals.session.fkUserId),
+                            eq(reviews.fkUserId, locals.session.userId),
                             eq(reviews.fkCartoonId, cartoonID)
                         )
                     )

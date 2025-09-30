@@ -1,0 +1,2 @@
+# delete expired friend requests at midnight on the 1st of every month
+0 0 1 * * psql toontrack -c 'delete FROM friend_requests WHERE created < CURRENT_DATE - INTERVAL \'30 days\';'

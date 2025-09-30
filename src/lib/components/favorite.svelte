@@ -20,7 +20,7 @@
             userFavoriteEntry: any
         }) => void
     }>()
-    console.log(userFavoriteEntry)
+    console.log({ userFavoriteEntry })
 
     let localFavorited = $derived(
         userFavoriteEntry?.favorite >= 0 ? true : false
