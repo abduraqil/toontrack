@@ -54,11 +54,11 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         // Fetch user list entry if user is authenticated
         let userFriends = false
 
-        if (locals.session?.userId) {
-            // userFriendEntry = await getUserFriendEntry(locals.session.userId, userID) // TODO
-            if (locals.session?.userId == userID) {
+        if (locals.user?.id) {
+            // userFriendEntry = await getUserFriendEntry(locals.user.id, userID) // TODO
+            if (locals.user?.id == userID) {
                 console.log(
-                    `user ${locals.session.name} (${userID}) is looking at his own page`
+                    `user ${locals.user.name} (${userID}) is looking at his own page`
                 )
             }
             userFriends =
@@ -68,7 +68,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
                         .from(friends)
                         .where(
                             and(
-                                eq(friends.fkUser1, locals.session?.userId),
+                                eq(friends.fkUser1, locals.user?.id),
                                 eq(friends.fkUser2, userID)
                             )
                         )

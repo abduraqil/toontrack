@@ -3,7 +3,7 @@ import type { RequestEvent } from '@sveltejs/kit'
 
 export function GET(event: RequestEvent) {
     // Authentication check
-    if (event.locals.session === null) {
+    if (event.locals.user === null) {
         return new Response(null, {
             status: 401,
             statusText: 'Unauthorized',

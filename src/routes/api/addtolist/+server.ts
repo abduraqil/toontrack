@@ -33,7 +33,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
     const session = locals.session
     console.log('server received list', {
-        user: session.userId,
+        user: session.fkUserId,
         itemId,
         s,
         sc,
@@ -46,13 +46,13 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     })
 
     // validate input
-    if (isNaN(itemId) || !session.userId) {
+    if (isNaN(itemId) || !session.id) {
         console.log('incomplete request')
         error(400, 'Incomplete request')
     }
 
     const entry: uCHEntry = {
-        fkUserId: session.userId,
+        fkUserId: session.fkUserId,
         fkCartoonId: itemId,
         status: s == undefined || s < 0 || s > 5 ? 0 : s,
         score: sc,
@@ -90,7 +90,7 @@ export const DELETE: RequestHandler = async ({ locals, url }) => {
     }
 
     const e: uCHDelete = {
-        fkUserId: locals.session.userId,
+        fkUserId: locals.session.fkUserId,
         fkCartoonId: parseInt(url.searchParams.get('itemId')!),
     }
     console.log('server received delete request', e)

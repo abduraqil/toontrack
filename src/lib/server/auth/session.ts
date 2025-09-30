@@ -6,6 +6,7 @@ import {
     encodeHexLowerCase,
 } from '@oslojs/encoding'
 import { sha256 } from '@oslojs/crypto/sha2'
+import type { Session, User } from '$lib/server/db/schema' // Import from your schema file
 import type { RequestEvent } from '@sveltejs/kit'
 import { SESSION_COOKIE_NAME } from '$lib/constants/auth'
 
@@ -19,7 +20,7 @@ export function generateSessionToken(): string {
 export async function createSession(
     token: string, // this is saved as the SESSION_COOKIE_NAME cookie value
     userID: number
-): Promise<Date> {
+): Promise<Session> {
     const sessionToken = encodeHexLowerCase(
         sha256(new TextEncoder().encode(token))
     )
@@ -32,7 +33,7 @@ export async function createSession(
         .insert(sessions)
         .values(sessionData)
         .returning()
-    return insertedSession.expiresAt
+    return insertedSession
 }
 
 /*
@@ -47,30 +48,22 @@ export async function validateSessionToken(
     const sessionToken = encodeHexLowerCase(
         sha256(new TextEncoder().encode(token))
     )
-    // this is much cleaner
     const result = await db
-        .select({
-            session: {
-                userId: users.id,
-                name: users.name,
-                sessionId: sessions.id,
-                expiresAt: sessions.expiresAt,
-            },
-        })
+        .select({ user: users, session: sessions })
         .from(sessions)
         .innerJoin(users, eq(sessions.fkUserId, users.id))
         .where(eq(sessions.token, sessionToken)) // Use token column
 
     if (result.length < 1) {
-        return { session: null }
+        return { session: null, user: null }
     }
 
-    const { session } = result[0]
+    const { user, session } = result[0]
 
     // TODO this may be better implemented as psql trigger
     if (Date.now() > session.expiresAt.getTime()) {
-        await db.delete(sessions).where(eq(sessions.id, session.sessionId))
-        return { session: null }
+        await db.delete(sessions).where(eq(sessions.id, session.id))
+        return { session: null, user: null }
     }
 
     // Refresh session if it's halfway to expiration (15 days left)
@@ -81,10 +74,10 @@ export async function validateSessionToken(
             .set({
                 expiresAt: session.expiresAt,
             })
-            .where(eq(sessions.id, session.sessionId))
+            .where(eq(sessions.id, session.id))
     }
 
-    return { session }
+    return { session, user }
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {
@@ -138,13 +131,6 @@ export async function deleteSessionTokenCookie(
     }
 }
 
-interface Session {
-    userId: number
-    name: string
-    sessionId: number
-    expiresAt: Date
-}
-
-export type SessionValidationResult = { session: Session | null }
-// | { session: Session; user: User }
-// | { session: null; user: null }
+export type SessionValidationResult =
+    | { session: Session; user: User }
+    | { session: null; user: null }

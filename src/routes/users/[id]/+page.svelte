@@ -9,7 +9,7 @@
 
     let { data } = $props()
     const { userPage } = data
-    const session = $state(page.data.session)
+    const user = $state(page.data.user)
     let userFriends = $state(data.userFriends)
 
     let activeTab = $state('overview')
@@ -60,13 +60,12 @@
             }
         })
     }
-    function getFriendOptions() {
+    function getSortOptions() {
         if (
-            session?.friendRequests.filter(
+            user?.friendRequests.filter(
                 (e: { fkTargetId: any; fkSenderId: number }) => {
                     return (
-                        e.fkTargetId == session.userId &&
-                        e.fkSenderId == userPage.id
+                        e.fkTargetId == user.id && e.fkSenderId == userPage.id
                     )
                 }
             ).length > 0
@@ -77,11 +76,10 @@
                 { label: 'Deny request', value: deleteFriend },
             ]
         } else if (
-            session?.friendRequests.filter(
+            user?.friendRequests.filter(
                 (e: { fkSenderId: any; fkTargetId: number }) => {
                     return (
-                        e.fkSenderId == session.userId &&
-                        e.fkTargetId == userPage.id
+                        e.fkSenderId == user.id && e.fkTargetId == userPage.id
                     )
                 }
             ).length > 0
@@ -99,11 +97,11 @@
             return [{ label: 'Send request', value: requestFriend }]
         }
     }
-    let sortOptions = $derived(getFriendOptions())
+    let sortOptions = $derived(getSortOptions())
 
     // console.log(e
-    //     session?.friendRequests.filter((e) => {
-    //         return e.fkSenderId == session.userId && e.fkTargetId == userPage.id
+    //     user?.friendRequests.filter((e) => {
+    //         return e.fkSenderId == user.id && e.fkTargetId == userPage.id
     //     })
     //    // .length > 0
     // )
@@ -123,31 +121,30 @@
                 switch (method) {
                     case 'POST':
                         if (action == 'request')
-                            session.friendRequests.push({
-                                fkSenderId: session.userId,
+                            user.friendRequests.push({
+                                fkSenderId: user.id,
                                 fkTargetId: userPage.id,
                             })
                         else if (action == 'accept') {
-                            session.friendRequests =
-                                session.friendRequests.filter(
-                                    (e: {
-                                        fkSenderId: number
-                                        fkTargetId: number
-                                    }) => {
-                                        return e.fkSenderId != userPage.id
-                                    }
-                                )
+                            user.friendRequests = user.friendRequests.filter(
+                                (e: {
+                                    fkSenderId: number
+                                    fkTargetId: number
+                                }) => {
+                                    return e.fkSenderId != userPage.id
+                                }
+                            )
                             userFriends = true
                         }
                         break
                     case 'DELETE':
-                        session.friendRequests = session.friendRequests.filter(
+                        user.friendRequests = user.friendRequests.filter(
                             (e: { fkSenderId: number; fkTargetId: number }) => {
                                 return (
-                                    e.fkSenderId != session.userId &&
+                                    e.fkSenderId != user.id &&
                                     e.fkTargetId != userPage.id &&
                                     e.fkSenderId != userPage.id &&
-                                    e.fkTargetId != session.userId
+                                    e.fkTargetId != user.id
                                 )
                             }
                         )
@@ -225,7 +222,7 @@
                                 </p>
                             </div>
                             <div>
-                                {#if session?.userId != userPage.id && session?.userId}
+                                {#if user?.id != userPage.id && user?.id}
                                     <div
                                         class="relative inline-block text-left"
                                         id="user-page-dropdown"

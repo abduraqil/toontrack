@@ -1,8 +1,5 @@
 <script lang="ts">
-    import { goto, invalidateAll } from '$app/navigation'
-    import { page } from '$app/state'
-
-    const { session } = $props()
+    const { user } = $props()
 
     let isDropdownOpen = $state(false)
     function toggleDropdown() {
@@ -16,70 +13,6 @@
             }
         })
     }
-    let friendRequests = $derived(
-        session.friendRequests.filter((e) => {
-            return e.fkSenderId != session.userId
-        })
-    )
-    let yourRequests = $derived(
-        session.friendRequests.filter((e) => {
-            return e.fkSenderId == session.userId
-        })
-    )
-    async function friendAPI(target: number, method: string, action?: string) {
-        try {
-            let response = await (
-                await fetch('/api/friend', {
-                    method: method,
-                    body: JSON.stringify({ target: target }),
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                })
-            ).json()
-            if (response.ok) {
-                switch (method) {
-                    case 'POST':
-                        if (action == 'request')
-                            session.friendRequests.push({
-                                fkSenderId: session.userId,
-                                fkTargetId: target,
-                            })
-                        else if (action == 'accept') {
-                            session.friendRequests =
-                                session.friendRequests.filter(
-                                    (e: {
-                                        fkSenderId: number
-                                        fkTargetId: number
-                                    }) => {
-                                        return e.fkSenderId != target
-                                    }
-                                )
-                        }
-                        break
-                    case 'DELETE':
-                        session.friendRequests = session.friendRequests.filter(
-                            (e: { fkSenderId: number; fkTargetId: number }) => {
-                                return (
-                                    e.fkSenderId != session.userId &&
-                                    e.fkTargetId != target &&
-                                    e.fkSenderId != target &&
-                                    e.fkTargetId != session.userId
-                                )
-                            }
-                        )
-                        break
-                }
-            }
-            // TODO: this only updates the layout but not the page on users it does not update but in
-            invalidateAll()
-            // goto(page.url.href, { invalidateAll: true })
-            goto('/home', { invalidateAll: true })
-            // replaceState(page.url, {})
-        } catch (error) {
-            console.error('e', error)
-        }
-    }
 </script>
 
 <button
@@ -89,12 +22,8 @@
     aria-expanded={isDropdownOpen}
     aria-haspopup="true"
 >
-    {#if session?.friendRequests.filter((e) => {
-        return e.fkSenderId != session.userId
-    }).length > 0}
-        {session.friendRequests.filter((e) => {
-            return e.fkSenderId != session.userId
-        }).length}
+    {#if user?.friendRequests.length > 0}
+        {user.friendRequests.length}
         <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -127,133 +56,22 @@
     {/if}
 </button>
 {#if isDropdownOpen}
-    <!-- TODO: position this under the button, or somewhere else that looks nice -->
     <div
         role="menu"
-        class="relative left-0 z-10 mt-2 w-32 origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none overflow-auto"
+        class="absolute left-0 z-10 mt-2 w-32 origin-top-left divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
     >
         <div role="none" class="py-1">
-            {#if friendRequests.length > 0}
-                Friend requests:
-            {/if}
-            {#each friendRequests as option, index}
-                <div role="none" class="flex w-full justify-between">
-                    <a
-                        href={`/users/${option.fkSenderId}`}
-                        id="menu-item-{index}"
-                        role="menuitem"
-                        tabindex="-1"
-                        onclick={option.value}
-                        class="flex w-full justify-between text-left px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                        data-sveltekit-reload
-                    >
-                        {option.name}
-                    </a>
-                    <div role="none" class="flex">
-                        <button
-                            aria-label="accept"
-                            class="hover:bg-green-300 hover:text-gray-900"
-                            onclick={() => {
-                                friendAPI(option.fkSenderId, 'POST', 'accept')
-                            }}
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="-3 -3 30 30"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="size-6"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="m4.5 12.75 6 6 9-13.5"
-                                />
-                            </svg>
-                        </button>
-
-                        <button
-                            aria-label="deny"
-                            class="hover:bg-red-300 hover:text-gray-900"
-                            onclick={() => {
-                                friendAPI(option.fkSenderId, 'DELETE')
-                            }}
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="-3 -3 30 30"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="size-6"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M6 18 18 6M6 6l12 12"
-                                />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            {/each}
-            {#if yourRequests.length > 0}
-                Your requests:
-            {/if}
-            {#each yourRequests as option, index}
-                <div role="none" class="flex w-full justify-between">
-                    <a
-                        href={`/users/${option.fkTargetId}`}
-                        id="menu-item-{index}"
-                        role="menuitem"
-                        tabindex="-1"
-                        onclick={option.value}
-                        class="flex w-full justify-between text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                        data-sveltekit-reload
-                    >
-                        {option.name}
-                    </a>
-                    <button
-                        onclick={() => {
-                            friendAPI(option.fkTargetId, 'DELETE')
-                        }}
-                        aria-label="deny"
-                        class="hover:bg-red-300 hover:text-gray-900"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="-3 -3 30 30"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="size-6"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M6 18 18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </button>
-                </div>
-            {/each}
-            Friends:
-            {#each session.friend as option, index}
-                <a
-                    href={`/users/${option.fkUser2}`}
+            {#each user.friendRequests as option, index}
+                <button
                     id="menu-item-{index}"
                     role="menuitem"
                     tabindex="-1"
                     onclick={option.value}
-                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                    data-sveltekit-reload
+                    class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900
+                                                                "
                 >
-                    {option.name}
-                </a>
-            {:else}
-                <br />
-                No friends, add some
+                    {option.fkSenderId}
+                </button>
             {/each}
         </div>
     </div>

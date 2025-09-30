@@ -6,6 +6,7 @@ import { users } from '$lib/server/db/schema'
 import argon2 from 'argon2'
 import { SECRET, SESSION_COOKIE_NAME } from '$lib/constants/auth'
 import {
+    validateSessionToken,
     setSessionTokenCookie,
     deleteSessionTokenCookie,
     generateSessionToken,
@@ -41,7 +42,7 @@ export const actions = {
         const formData = await event.request.formData()
         const username = formData.get('username')?.toString()
         const password = formData.get('password')?.toString()
-        let reference = formData.get('reference')?.toString()
+        const reference = formData.get('reference')?.toString()
 
         if (!username || !password) {
             return fail(400, {
@@ -78,9 +79,11 @@ export const actions = {
                     fields: { username },
                 })
             }
+            console.log(63)
 
             const token = generateSessionToken()
-            const expiresAt = await createSession(token, user.id)
+            const { expiresAt } = await createSession(token, user.id)
+            console.log(2)
 
             // Convert expiresAt to Date if it's a string
             const expiresDate =
@@ -104,7 +107,7 @@ export const actions = {
         }
 
         if (!reference || reference === null || reference == '') {
-            reference = POST_LOGIN_REDIRECT
+            reference == POST_LOGIN_REDIRECT
         }
         console.log('going to', reference)
         // throw redirect(303, POST_LOGIN_REDIRECT)

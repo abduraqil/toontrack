@@ -9,6 +9,8 @@ import {
     varchar,
     date,
 } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
+import type { InferSelectModel } from 'drizzle-orm'
 
 export const jtCartoonsCharacters = pgTable(
     'jt_cartoons_characters',
@@ -913,3 +915,14 @@ export const friends = pgTable(
         unique('uq_friend').on(table.fkUser1, table.fkUser2),
     ]
 )
+
+export type User = InferSelectModel<typeof users>
+// export type Session = InferSelectModel<typeof sessions>;
+export interface Session {
+    id: number
+    token: string | null // Add this
+    fkUserId: number
+    expiresAt: Date
+    created: Date | null
+    edited: Date | null
+}
